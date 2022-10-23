@@ -1,0 +1,27 @@
+.board {
+  width : 100vw;
+  height : 50vh;
+}
+
+.board-line {
+  display : flex;
+  height : 25%;
+}
+
+.card {
+  width : 7.6%;
+  height : 100%;
+  outline: 1px solid black;
+}
+
+.card-player {
+
+}
+
+.card-player-1 {
+  background : red;
+}
+
+.card-player-2 {
+  background : blue;
+}
