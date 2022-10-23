@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import Gun from "gun"
+import { Subject } from "rxjs"
 import "./App.css"
 
-type CardStatus = "DECK" | "PLAYER1" | "PLAYER2"
+type CardStatus = "DECK" | "PLAYER1" | "PLAYER2" | "GARBAGE"
 
+const START_NBR_CARDS = 10
 const FIELD_WIDTH = 13
 const FIELD_HEIGHT = 4
 
@@ -11,7 +13,13 @@ const engine = () => {
   const state = {
     board: getNewBoard(),
     playerTurn: "PLAYER1",
+    started: false,
+    pick: null as null | ReturnType<typeof getNewBoard>[number][number],
+    nextAction: "TAKE" as "TAKE" | "GIVE"
   }
+
+  const stateEvent = new Subject<typeof state>()
+  stateEvent.next(state);
 
   function getNewBoard() {
     return Array.from({ length: FIELD_HEIGHT })
@@ -20,8 +28,8 @@ const engine = () => {
           x,
           y,
           status: "DECK",
+          isTopPick: false,
         })))
-
   }
 
   function pickRandomFromDeck() {
@@ -35,7 +43,7 @@ const engine = () => {
   }
 
   const distribute = (player: string) => {
-    for (let i = 0; i < 1; i++) {
+    for (let i = 0; i < START_NBR_CARDS; i++) {
       const card = pickRandomFromDeck()
       card.status = player;
     }
@@ -47,11 +55,14 @@ const engine = () => {
     ["PLAYER1", "PLAYER2"].forEach(player => {
       distribute(player);
     })
+    state.started = true;
+    state.pick = pickRandomFromDeck();
+    state.pick.isTopPick = true;
+    stateEvent.next(state)
   }
 
-
-
   return {
+    stateEvent,
     state,
     startGame,
   }
@@ -60,38 +71,52 @@ const engine = () => {
 const game = engine();
 
 function App() {
-
-  const [gameState, setGameState] = useState<ReturnType<typeof engine>["state"]>(game.state)
-  const [board, setBoard] = useState(game.state.board);
+  const [hero, setHero] = useState("PLAYER1")
+  const [state, setState] = useState<ReturnType<typeof engine>["state"]>(game.state)
 
   const refresh = () => {
-    setBoard([...game.state.board]);
+    setHero(game.state.playerTurn);
+    setState({ ...game.state })
   }
 
   useEffect(() => {
     // const gun = Gun(['https://gun-manhattan.herokuapp.com/gun']);
     // const network = gun.get('gin-board').get('987tre');
+    const listener = game.stateEvent.subscribe((state) => { refresh() })
     game.startGame()
-    console.log(game.state.board);
-    refresh();
+
+    return () => {
+      listener.unsubscribe();
+    }
   }, [])
 
   return <>
     <div className='board'>
-      {board.map((line, y) => <div className='board-line' key={y}>
-        {line.map((card, x) => <div key={x} className={`
-        card 
-        ${card.status === "PLAYER1" || card.status === "PLAYER2" ? "card-player" : ""}
-        ${card.status === "PLAYER1" ? "card-player-1" : ""}
-        ${card.status === "PLAYER2" ? "card-player-2" : ""}
+      {state.board.map((line, y) => <div className='board-line' key={y}>
+        {line.map((card, x) => <div key={x} className="card-flex-col">
+          <div className='card-flex-row'>
+            <div className={`
+            card-paper
+            ${card.status === hero ? "card-player-1" : ""}
+            ${card.isTopPick ? "card-top-pick" : ""}
         `}>
-
+            </div>
+          </div>
         </div>
-
         )}
 
       </div>)}
 
+    </div>
+    <div className='buttons'>
+      {state.nextAction === "TAKE" && <>
+        <div className='button button-take-pick'>
+          Take Pick
+        </div>
+        <div className='button button-take-random'>
+          Take Random
+        </div>
+      </>}
     </div>
   </>
     ;
