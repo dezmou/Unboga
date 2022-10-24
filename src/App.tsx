@@ -318,13 +318,14 @@ function App() {
 
   const updateNet = () => {
     const net = gun.get('gin-board').get(game.state.game.id);
+    console.log("SET UPDATE", game.state);
     net.put(JSON.stringify(game.state));
   }
 
   const listenNet = (id: string) => {
     const net = gun.get('gin-board').get(id);
     net.on((value) => {
-      console.log("UPDATE");
+      console.log("GET UPDATE");
       const data = JSON.parse(value)
       game.state = data;
       console.log(game);
@@ -342,11 +343,11 @@ function App() {
         setPlayer("PLAYER1")
         game.state.game.id = gameId;
         game.state.game.player1.seated = true;
-        listenNet(gameId);
       } else {
         console.log("JOINING");
         game.state = JSON.parse(value);
         game.state.game.player2.seated = true;
+        console.log("FJPOR 1", game.state.game.player2.seated);
         const localPlayer = localStorage.getItem(gameId);
         if (!localPlayer) {
           localStorage.setItem(gameId, "PLAYER2")
@@ -354,14 +355,14 @@ function App() {
         } else {
           setPlayer(localPlayer as Player)
         }
-        listenNet(gameId);
       }
       window.history.replaceState(null, "", `${window.location.origin}?game=${game.state.game.id}`);
       if (game.state.game.player1.seated && game.state.game.player2.seated && !game.state.game.ready) {
         game.state.game.ready = true;
       }
       updateNet()
-    }, { wait: 1000 })
+      listenNet(gameId);
+    }, { wait: 10000 })
   }
 
   useEffect(() => {
