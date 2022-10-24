@@ -354,12 +354,11 @@ function App() {
         } else {
           setPlayer(localPlayer as Player)
         }
-
         listenNet(gameId);
         updateNet()
       }
+      window.history.replaceState(null, "", `${window.location.origin}?game=${game.state.game.id}`);
     })
-    // refresh()
   }
 
   useEffect(() => {
