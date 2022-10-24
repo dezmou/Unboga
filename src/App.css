@@ -1,6 +1,6 @@
 .board {
   width: 100vw;
-  height: 50vh;
+  height: 30vh;
 }
 
 .board-line {
@@ -26,7 +26,7 @@
 .card-paper {
   width: 95%;
   border-radius: 5%;
-  outline : 1px solid black;
+  outline: 1px solid black;
 }
 
 .card-player-1 {
@@ -41,7 +41,9 @@
   background: #22ff55bb;
 }
 
-.card-paper {}
+.card-clickable {
+  outline: 2px solid black;
+}
 
 .button-take-pick {
   background: #22ff55bb;
@@ -67,4 +69,8 @@
   text-align: center;
   border-radius: 20px;
   margin: 5px;
+}
+
+.bottom {
+  height : 300px;
 }

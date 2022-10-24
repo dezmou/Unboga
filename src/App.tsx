@@ -3,18 +3,21 @@ import Gun from "gun"
 import { Subject } from "rxjs"
 import "./App.css"
 
-type CardStatus = "DECK" | "PLAYER1" | "PLAYER2" | "GARBAGE"
+type CardStatus = "DECK" | "PLAYER1" | "PLAYER2" | "PICK"
+type Player = "PLAYER1" | "PLAYER2"
 
 const START_NBR_CARDS = 10
 const FIELD_WIDTH = 13
 const FIELD_HEIGHT = 4
 
 const engine = () => {
+  type Card = ReturnType<typeof getNewBoard>[number][number];
+
   const state = {
     board: getNewBoard(),
-    playerTurn: "PLAYER1",
+    playerTurn: "PLAYER1" as "PLAYER1" | "PLAYER2",
     started: false,
-    pick: null as null | ReturnType<typeof getNewBoard>[number][number],
+    pick: null as null | Card,
     nextAction: "TAKE" as "TAKE" | "GIVE"
   }
 
@@ -27,7 +30,7 @@ const engine = () => {
         .map((ee, x) => ({
           x,
           y,
-          status: "DECK",
+          status: "DECK" as CardStatus,
           isTopPick: false,
         })))
   }
@@ -42,17 +45,51 @@ const engine = () => {
     }
   }
 
-  const distribute = (player: string) => {
+  const distribute = (player: Player) => {
     for (let i = 0; i < START_NBR_CARDS; i++) {
       const card = pickRandomFromDeck()
       card.status = player;
     }
   }
 
+  function endAction() {
+    state.nextAction = state.nextAction === "GIVE" ? "TAKE" : "GIVE";
+    if (state.nextAction === "TAKE") {
+      state.playerTurn = state.playerTurn === "PLAYER1" ? "PLAYER2" : "PLAYER1"
+    }
+    stateEvent.next(state);
+  }
+
+  const give = (card: Card) => {
+    if (!state.started) return;
+    if (state.nextAction !== "GIVE") return;
+    card.status = "PICK"
+    card.isTopPick = true;
+    state.pick = card;
+    endAction();
+  }
+
+  const takePick = () => {
+    if (!state.pick) return;
+    if (!state.started) return;
+    if (state.nextAction !== "TAKE") return;
+    state.pick.isTopPick = false
+    state.pick.status = state.playerTurn
+    endAction();
+  }
+
+  const isCardClickable = (card: Card, player: Player) => {
+    return (
+      state.playerTurn === player
+      && state.nextAction === "GIVE"
+      && card.status === player
+    )
+  }
+
   const startGame = () => {
     state.playerTurn = state.playerTurn === "PLAYER1" ? "PLAYER2" : "PLAYER1";
     state.board = getNewBoard();
-    ["PLAYER1", "PLAYER2"].forEach(player => {
+    (["PLAYER1", "PLAYER2"] as Player[]).forEach(player => {
       distribute(player);
     })
     state.started = true;
@@ -64,18 +101,21 @@ const engine = () => {
   return {
     stateEvent,
     state,
+    takePick,
     startGame,
+    isCardClickable,
+    give,
   }
 }
 
 const game = engine();
 
-function App() {
-  const [hero, setHero] = useState("PLAYER1")
+function Board(p: { hero: Player }) {
+  // const [hero, setHero] = useState<Player>("PLAYER1")
   const [state, setState] = useState<ReturnType<typeof engine>["state"]>(game.state)
 
   const refresh = () => {
-    setHero(game.state.playerTurn);
+    // setHero(game.state.playerTurn);
     setState({ ...game.state })
   }
 
@@ -97,9 +137,18 @@ function App() {
           <div className='card-flex-row'>
             <div className={`
             card-paper
-            ${card.status === hero ? "card-player-1" : ""}
+            ${card.status === p.hero ? "card-player-1" : ""}
             ${card.isTopPick ? "card-top-pick" : ""}
-        `}>
+            ${game.isCardClickable(card, p.hero) ? "card-clickable" : ""}
+        `}
+              style={{
+                cursor: game.isCardClickable(card, p.hero) ? "pointer" : "inherit"
+              }}
+              onClick={() => {
+                if (!game.isCardClickable(card, p.hero)) return;
+                game.give(card);
+              }}
+            >
             </div>
           </div>
         </div>
@@ -108,18 +157,39 @@ function App() {
       </div>)}
 
     </div>
-    <div className='buttons'>
-      {state.nextAction === "TAKE" && <>
-        <div className='button button-take-pick'>
-          Take Pick
+    <div className='bottom'>
+      {state.playerTurn === p.hero && <>
+        <div className='buttons'>
+          {state.nextAction === "TAKE" && state.playerTurn === p.hero && <>
+            <div className='button button-take-pick' onClick={() => {
+              game.takePick()
+            }}>
+              Take Pick
+            </div>
+            <div className='button button-take-random'>
+              Take Random
+            </div>
+          </>}
+          {state.nextAction === "GIVE" && <>
+            redonne une carte
+          </>}
+
         </div>
-        <div className='button button-take-random'>
-          Take Random
-        </div>
+        {state.playerTurn !== p.hero && <div>
+          A l'autre de jouer et tout
+        </div>}
       </>}
     </div>
   </>
     ;
+
+}
+
+function App() {
+  return <>
+    <Board hero='PLAYER1'></Board>
+    <Board hero='PLAYER2'></Board>
+  </>
 }
 
 export default App;
