@@ -26,6 +26,7 @@ const engine = () => {
       id: "",
       player1: { seated: false },
       player2: { seated: false },
+      ready: false,
     },
     board: getNewBoard(),
     playerTurn: "PLAYER1" as "PLAYER1" | "PLAYER2",
@@ -326,6 +327,7 @@ function App() {
       console.log("UPDATE");
       const data = JSON.parse(value)
       game.state = data;
+      console.log(game);
       setState({ ...game.state })
     })
 
@@ -336,13 +338,11 @@ function App() {
     net.once((value) => {
       if (!value) {
         console.log("CREATING");
-
         localStorage.setItem(gameId, "PLAYER1")
         setPlayer("PLAYER1")
         game.state.game.id = gameId;
         game.state.game.player1.seated = true;
         listenNet(gameId);
-        updateNet()
       } else {
         console.log("JOINING");
         game.state = JSON.parse(value);
@@ -355,10 +355,13 @@ function App() {
           setPlayer(localPlayer as Player)
         }
         listenNet(gameId);
-        updateNet()
       }
       window.history.replaceState(null, "", `${window.location.origin}?game=${game.state.game.id}`);
-    })
+      if (game.state.game.player1.seated && game.state.game.player2.seated && !game.state.game.ready) {
+        game.state.game.ready = true;
+      }
+      updateNet()
+    }, { wait: 1000 })
   }
 
   useEffect(() => {
@@ -390,8 +393,12 @@ function App() {
       }}>GO !</button>
     </div>}
     {state.game.id && <>
-      game id : {state.game.id}
-      {/* <Board state={state} hero={player}></Board> */}
+      game id : {state.game.id}<br />
+      you are {player}<br />
+      {state.game.ready && <>
+        <Board state={state} hero={player}></Board>
+      </>}
+
       {/* <Board state={state} hero='PLAYER2'></Board> */}
     </>}
   </>
