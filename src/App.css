@@ -41,6 +41,10 @@
   background: #22ff55bb;
 }
 
+.card-just-took {
+  background: #009423bb;
+}
+
 .card-clickable {
   outline: 2px solid black;
 }

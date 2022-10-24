@@ -31,7 +31,7 @@ const engine = () => {
           x,
           y,
           status: "DECK" as CardStatus,
-          isTopPick: false,
+          justTook: false,
         })))
   }
 
@@ -62,9 +62,10 @@ const engine = () => {
 
   const give = (card: Card) => {
     if (!state.started) return;
+    if (!state.started) return;
     if (state.nextAction !== "GIVE") return;
+
     card.status = "PICK"
-    card.isTopPick = true;
     state.pick = card;
     endAction();
   }
@@ -73,8 +74,17 @@ const engine = () => {
     if (!state.pick) return;
     if (!state.started) return;
     if (state.nextAction !== "TAKE") return;
-    state.pick.isTopPick = false
     state.pick.status = state.playerTurn
+    state.pick.justTook = true;
+    endAction();
+  }
+
+  const takeRandom = () => {
+    if (!state.started) return;
+    if (state.nextAction !== "TAKE") return;
+    const card = pickRandomFromDeck();
+    card.status = state.playerTurn;
+    card.justTook = true;
     endAction();
   }
 
@@ -94,7 +104,6 @@ const engine = () => {
     })
     state.started = true;
     state.pick = pickRandomFromDeck();
-    state.pick.isTopPick = true;
     stateEvent.next(state)
   }
 
@@ -105,13 +114,13 @@ const engine = () => {
     startGame,
     isCardClickable,
     give,
+    takeRandom,
   }
 }
 
 const game = engine();
 
 function Board(p: { hero: Player }) {
-  // const [hero, setHero] = useState<Player>("PLAYER1")
   const [state, setState] = useState<ReturnType<typeof engine>["state"]>(game.state)
 
   const refresh = () => {
@@ -138,7 +147,7 @@ function Board(p: { hero: Player }) {
             <div className={`
             card-paper
             ${card.status === p.hero ? "card-player-1" : ""}
-            ${card.isTopPick ? "card-top-pick" : ""}
+            ${card === game.state.pick ? "card-top-pick" : ""}
             ${game.isCardClickable(card, p.hero) ? "card-clickable" : ""}
         `}
               style={{
@@ -166,7 +175,9 @@ function Board(p: { hero: Player }) {
             }}>
               Take Pick
             </div>
-            <div className='button button-take-random'>
+            <div className='button button-take-random' onClick={() => {
+              game.takeRandom()
+            }}>
               Take Random
             </div>
           </>}
