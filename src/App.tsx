@@ -225,8 +225,6 @@ const game = engine();
 
 function Board(p: { state: ReturnType<typeof engine>["state"], hero: Player }) {
   useEffect(() => {
-    // const gun = Gun(['https://gun-manhattan.herokuapp.com/gun']);
-    // const network = gun.get('gin-board').get('987tre');
 
     if (game.state.playerTurn === p.hero) {
       setTimeout(() => {
@@ -303,25 +301,100 @@ function Board(p: { state: ReturnType<typeof engine>["state"], hero: Player }) {
   </>
 }
 
+const gun = Gun(['https://gun-manhattan.herokuapp.com/gun']);
+
+const queryString = window.location.search;
+const urlRoomId = new URLSearchParams(queryString).get("game");
+
 function App() {
   const [state, setState] = useState<ReturnType<typeof engine>["state"]>(game.state)
+  const [tgameId, setTgameId] = useState("")
+  const [player, setPlayer] = useState<Player>("PLAYER1");
 
-  const refresh = () => {
-    setState({ ...game.state })
+  // const refresh = (state: ) => {
+  //   setState({ ...game.state })
+  // }
+
+  const updateNet = () => {
+    const net = gun.get('gin-board').get(game.state.game.id);
+    net.put(JSON.stringify(game.state));
+  }
+
+  const listenNet = (id: string) => {
+    const net = gun.get('gin-board').get(id);
+    net.on((value) => {
+      console.log("UPDATE");
+      const data = JSON.parse(value)
+      game.state = data;
+      setState({ ...game.state })
+    })
+
+  }
+
+  const openGame = (gameId: string) => {
+    const net = gun.get('gin-board').get(gameId);
+    net.once((value) => {
+      if (!value) {
+        console.log("CREATING");
+
+        localStorage.setItem(gameId, "PLAYER1")
+        setPlayer("PLAYER1")
+        game.state.game.id = gameId;
+        game.state.game.player1.seated = true;
+        listenNet(gameId);
+        updateNet()
+      } else {
+        console.log("JOINING");
+        game.state = JSON.parse(value);
+        game.state.game.player2.seated = true;
+        const localPlayer = localStorage.getItem(gameId);
+        if (!localPlayer) {
+          localStorage.setItem(gameId, "PLAYER2")
+          setPlayer("PLAYER2")
+        } else {
+          setPlayer(localPlayer as Player)
+        }
+
+        listenNet(gameId);
+        updateNet()
+      }
+    })
+    // refresh()
   }
 
   useEffect(() => {
-    const listener = game.stateEvent.subscribe((state) => { refresh() })
+    const listener = game.stateEvent.subscribe((state) => () => {
+      // const net = gun.get('gin-board').get(id);
 
-    game.startGame()
+    })
+    // const network = gun.get('gin-board').get('987tre');
+
+    if (urlRoomId) {
+      openGame(urlRoomId);
+    }
+
+    // game.startGame()
     return () => {
       listener.unsubscribe();
     }
   }, [])
 
   return <>
-    <Board state={state} hero='PLAYER1'></Board>
-    <Board state={state} hero='PLAYER2'></Board>
+    {!state.game.id && <div>
+      Create or join room <br />
+      <input type="text" value={tgameId} onChange={(e) => {
+        setTgameId(e.target.value)
+      }} placeholder='game id'></input>
+      <button disabled={!tgameId} onClick={() => {
+        openGame(tgameId);
+
+      }}>GO !</button>
+    </div>}
+    {state.game.id && <>
+      game id : {state.game.id}
+      {/* <Board state={state} hero={player}></Board> */}
+      {/* <Board state={state} hero='PLAYER2'></Board> */}
+    </>}
   </>
 }
 
