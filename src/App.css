@@ -18,19 +18,19 @@
 
 .card-flex-row {
   width: 100%;
-  height: 95%;
+  height: 85%;
   display: flex;
   justify-content: center;
 }
 
 .card-paper {
-  width: 95%;
+  width: 85%;
   border-radius: 5%;
   outline: 1px solid black;
 }
 
 .card-player-1 {
-  background: #ff5500bb;
+  background: #bb5500bb;
 }
 
 .card-player-2 {
@@ -43,6 +43,10 @@
 
 .card-just-took {
   background: #009423bb;
+}
+
+.card-op-took {
+  background: #ff0000bb;
 }
 
 .card-clickable {

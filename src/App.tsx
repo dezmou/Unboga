@@ -13,6 +13,14 @@ const FIELD_HEIGHT = 4
 const engine = () => {
   type Card = ReturnType<typeof getNewBoard>[number][number];
 
+  const op = {
+    PLAYER1: "PLAYER2",
+    PLAYER2: "PLAYER1",
+  } as {
+    "PLAYER1": Player
+    "PLAYER2": Player
+  }
+
   const state = {
     board: getNewBoard(),
     playerTurn: "PLAYER1" as "PLAYER1" | "PLAYER2",
@@ -31,8 +39,8 @@ const engine = () => {
           x,
           y,
           status: "DECK" as CardStatus,
-          PLAYER1: { justTook: false, status: "DECK" as CardStatus },
-          PLAYER2: { justTook: false, status: "DECK" as CardStatus },
+          PLAYER1: { justTook: false, opTook: false, status: "DECK" as CardStatus },
+          PLAYER2: { justTook: false, opTook: false, status: "DECK" as CardStatus },
         })))
   }
 
@@ -76,6 +84,7 @@ const engine = () => {
     card.status = "PICK"
     state.pick = card;
     card[state.playerTurn].status = "PICK";
+    state.pick[op[state.playerTurn]].opTook = false;
     endAction();
   }
 
@@ -86,6 +95,7 @@ const engine = () => {
     state.pick.status = state.playerTurn
     state.pick[state.playerTurn].status = state.playerTurn;
     state.pick[state.playerTurn].justTook = true;
+    state.pick[op[state.playerTurn]].opTook = true;
     state.pick = null;
     endAction();
   }
@@ -109,6 +119,43 @@ const engine = () => {
     )
   }
 
+  const evaluate = (player: Player) => {
+    const horiStreak = []
+    const vertiStreak = []
+    for (let y = 0; y < FIELD_HEIGHT; y++) {
+      let streak = [];
+      for (let x = 0; x < FIELD_WIDTH; x++) {
+        const card = state.board[y][x]
+        if (card.status === player) {
+          streak.push(card);
+        }
+        if (card.status !== player || x + 1 === FIELD_WIDTH) {
+          if (streak.length >= 3) {
+            horiStreak.push(streak);
+          }
+          streak = [];
+        }
+      }
+    }
+
+    for (let x = 0; x < FIELD_WIDTH; x++) {
+      let streak = [];
+      for (let y = 0; y < FIELD_HEIGHT; y++) {
+        const card = state.board[y][x]
+        if (card.status === player) {
+          streak.push(card);
+        }
+        if (card.status !== player || y + 1 === FIELD_HEIGHT) {
+          if (streak.length >= 3) {
+            vertiStreak.push(streak);
+          }
+          streak = [];
+        }
+      }
+    }
+    console.log(player, { horiStreak }, { vertiStreak });
+  }
+
   const startGame = () => {
     state.playerTurn = state.playerTurn === "PLAYER1" ? "PLAYER2" : "PLAYER1";
     state.board = getNewBoard();
@@ -117,6 +164,8 @@ const engine = () => {
     })
     state.started = true;
     state.pick = pickRandomFromDeck();
+    evaluate("PLAYER1")
+    evaluate("PLAYER2")
     stateEvent.next(state)
   }
 
@@ -145,7 +194,12 @@ function Board(p: { hero: Player }) {
     // const gun = Gun(['https://gun-manhattan.herokuapp.com/gun']);
     // const network = gun.get('gin-board').get('987tre');
     const listener = game.stateEvent.subscribe((state) => { refresh() })
-    game.startGame()
+
+    if (game.state.playerTurn === p.hero) {
+      setTimeout(() => {
+        game.startGame()
+      }, 0)
+    }
 
     return () => {
       listener.unsubscribe();
@@ -161,6 +215,7 @@ function Board(p: { hero: Player }) {
             card-paper
             ${card[p.hero].status === p.hero ? "card-player-1" : ""}
             ${card[p.hero].status === p.hero && card[p.hero].justTook ? "card-just-took" : ""}
+            ${card[p.hero].opTook ? "card-op-took" : ""}
             ${card === game.state.pick && game.state.playerTurn === p.hero ? "card-top-pick" : ""}
             ${game.isCardClickable(card, p.hero) ? "card-clickable" : ""}
         `}
