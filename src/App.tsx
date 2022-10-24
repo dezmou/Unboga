@@ -3,8 +3,6 @@ import Gun from "gun"
 import { Subject } from "rxjs"
 import "./App.css"
 
-// GiCardDiscard
-
 type CardStatus = "DECK" | "PLAYER1" | "PLAYER2" | "PICK"
 type Player = "PLAYER1" | "PLAYER2"
 
@@ -90,10 +88,6 @@ const engine = () => {
     card[op[state.playerTurn]].opDiscarded = true;
     state.pick = card;
     card[state.playerTurn].status = "PICK";
-    // card[state.playerTurn].inStreak = false;
-    // card[state.playerTurn].verti = false;
-    // card[state.playerTurn].hori = false;
-
     state.pick[op[state.playerTurn]].opTook = false;
     endAction();
   }
@@ -185,6 +179,16 @@ const engine = () => {
         card[player].verti = true;
       }
     }
+
+    const pointsRemaining = [];
+    for (let line of state.board) {
+      for (let card of line) {
+        if (!card[player].inStreak) {
+          pointsRemaining.push(card.value);
+        }
+      }
+    }
+    console.log(pointsRemaining);
   }
 
   const startGame = () => {
@@ -217,7 +221,6 @@ function Board(p: { hero: Player }) {
   const [state, setState] = useState<ReturnType<typeof engine>["state"]>(game.state)
 
   const refresh = () => {
-    // setHero(game.state.playerTurn);
     setState({ ...game.state })
   }
 
