@@ -36,7 +36,7 @@ const engine = () => {
   }
 
   const stateEvent = new Subject<typeof state>()
-  stateEvent.next(state);
+  // stateEvent.next(state);
 
   function getNewBoard() {
     return Array.from({ length: FIELD_HEIGHT })
@@ -82,7 +82,8 @@ const engine = () => {
     }
     evaluate("PLAYER1")
     evaluate("PLAYER2")
-    stateEvent.next(state);
+    console.log("TRIGGER STATE EVENT", state);
+    stateEvent.next({ ...state });
   }
 
   const give = (card: Card) => {
@@ -195,7 +196,7 @@ const engine = () => {
       }
     }
     pointsRemaining.sort((a, b) => a - b);
-    console.log(pointsRemaining);
+    // console.log(pointsRemaining);
   }
 
   const startGame = () => {
@@ -223,6 +224,7 @@ const engine = () => {
 }
 
 const game = engine();
+
 
 function Board(p: { state: ReturnType<typeof engine>["state"], hero: Player }) {
   useEffect(() => {
@@ -319,19 +321,16 @@ function App() {
 
   const updateNet = () => {
     const net = gun.get('gin-board').get(game.state.game.id);
-    console.log("SET UPDATE", game.state);
     net.put(JSON.stringify(game.state));
   }
 
   const listenNet = (id: string) => {
     const net = gun.get('gin-board').get(id);
     net.on((value) => {
-      console.log("GET UPDATE");
       const data = JSON.parse(value) as ReturnType<typeof engine>["state"];
       Object.keys(game.state).forEach((key) => {
         (game.state as any)[key] = (data as any)[key];
       })
-      console.log(game);
       setState({ ...game.state })
     })
 
@@ -365,7 +364,6 @@ function App() {
       if (game.state.game.player1.seated && game.state.game.player2.seated && !game.state.game.ready) {
         game.state.game.ready = true;
         game.startGame()
-        console.log("GAME STARTED", JSON.stringify(game.state.board, null, 2));
       }
       updateNet()
       listenNet(gameId);
@@ -373,7 +371,10 @@ function App() {
   }
 
   useEffect(() => {
-    const listener = game.stateEvent.subscribe((state) => () => {
+    console.log("LISTEN TO EVENT");
+
+    const listener = game.stateEvent.subscribe((state) => {
+      console.log("state listener triggered");
       if (game.state.game.ready) {
         console.log("state listener");
         updateNet()
@@ -385,9 +386,8 @@ function App() {
       openGame(urlRoomId);
     }
 
-    // game.startGame()
     return () => {
-      listener.unsubscribe();
+      // listener.unsubscribe();
     }
   }, [])
 
