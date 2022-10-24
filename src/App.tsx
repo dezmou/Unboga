@@ -294,10 +294,11 @@ function Board(p: { state: ReturnType<typeof engine>["state"], hero: Player }) {
           </>}
 
         </div>
-        {p.state.playerTurn !== p.hero && <div>
-          A l'autre de jouer et tout
-        </div>}
       </>}
+      {p.state.playerTurn !== p.hero && <div>
+        A l'autre de jouer et tout
+      </div>}
+
     </div>
   </>
 }
@@ -326,8 +327,10 @@ function App() {
     const net = gun.get('gin-board').get(id);
     net.on((value) => {
       console.log("GET UPDATE");
-      const data = JSON.parse(value)
-      game.state = data;
+      const data = JSON.parse(value) as ReturnType<typeof engine>["state"];
+      Object.keys(game.state).forEach((key) => {
+        (game.state as any)[key] = (data as any)[key];
+      })
       console.log(game);
       setState({ ...game.state })
     })
@@ -338,16 +341,18 @@ function App() {
     const net = gun.get('gin-board').get(gameId);
     net.once((value) => {
       if (!value) {
-        console.log("CREATING");
         localStorage.setItem(gameId, "PLAYER1")
         setPlayer("PLAYER1")
         game.state.game.id = gameId;
         game.state.game.player1.seated = true;
       } else {
-        console.log("JOINING");
-        game.state = JSON.parse(value);
+        // game.state = JSON.parse(value);
+        const data = JSON.parse(value) as ReturnType<typeof engine>["state"];
+        Object.keys(game.state).forEach((key) => {
+          (game.state as any)[key] = (data as any)[key];
+        })
+
         game.state.game.player2.seated = true;
-        console.log("FJPOR 1", game.state.game.player2.seated);
         const localPlayer = localStorage.getItem(gameId);
         if (!localPlayer) {
           localStorage.setItem(gameId, "PLAYER2")
@@ -359,6 +364,8 @@ function App() {
       window.history.replaceState(null, "", `${window.location.origin}?game=${game.state.game.id}`);
       if (game.state.game.player1.seated && game.state.game.player2.seated && !game.state.game.ready) {
         game.state.game.ready = true;
+        game.startGame()
+        console.log("GAME STARTED", JSON.stringify(game.state.board, null, 2));
       }
       updateNet()
       listenNet(gameId);
@@ -367,8 +374,10 @@ function App() {
 
   useEffect(() => {
     const listener = game.stateEvent.subscribe((state) => () => {
-      // const net = gun.get('gin-board').get(id);
-
+      if (game.state.game.ready) {
+        console.log("state listener");
+        updateNet()
+      }
     })
     // const network = gun.get('gin-board').get('987tre');
 
