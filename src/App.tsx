@@ -9,6 +9,9 @@ type Player = "PLAYER1" | "PLAYER2"
 const START_NBR_CARDS = 12
 const FIELD_WIDTH = 8
 const FIELD_HEIGHT = 8
+const POINT_MIN_TO_KNOCK = 100
+const FULL_WIN_BONUS = 50;
+const SANCTION_KNOCK_SUPERIOR = 50;
 
 const engine = () => {
   type Card = ReturnType<typeof getNewBoard>[number][number];
@@ -24,15 +27,21 @@ const engine = () => {
   const state = {
     game: {
       id: "",
-      player1: { seated: false },
-      player2: { seated: false },
+      player1: { seated: false, score: 0 },
+      player2: { seated: false, score: 0 },
       ready: false,
     },
     board: getNewBoard(),
     playerTurn: "PLAYER1" as "PLAYER1" | "PLAYER2",
     started: false,
     pick: null as null | { x: number, y: number },
-    nextAction: "TAKE" as "TAKE" | "GIVE"
+    nextAction: "TAKE" as "TAKE" | "GIVE",
+    PLAYER1: { pointsRemaining: [0], total: 0 },
+    PLAYER2: { pointsRemaining: [0], total: 0 },
+    gameResult: null as null | {
+      winner: Player
+      score: number
+    }
   }
 
   const stateEvent = new Subject<typeof state>()
@@ -82,7 +91,6 @@ const engine = () => {
     }
     evaluate("PLAYER1")
     evaluate("PLAYER2")
-    console.log("TRIGGER STATE EVENT", state);
     stateEvent.next({ ...state });
   }
 
@@ -190,13 +198,23 @@ const engine = () => {
     const pointsRemaining = [];
     for (let line of state.board) {
       for (let card of line) {
-        if (!card[player].inStreak) {
+        if (card.status === player && !card[player].inStreak) {
           pointsRemaining.push(card.value);
         }
       }
     }
     pointsRemaining.sort((a, b) => a - b);
-    // console.log(pointsRemaining);
+    let amount = 0;
+    for (let point of pointsRemaining) {
+      amount += point;
+    }
+    state[player].pointsRemaining = pointsRemaining
+    state[player].total = amount
+  }
+
+  const getPointsForKnock = (player: Player) => {
+    // return state[player].total - state[player].pointsRemaining[state[player].pointsRemaining.length - 1]
+    return state[player].total
   }
 
   const startGame = () => {
@@ -210,6 +228,32 @@ const engine = () => {
     evaluate("PLAYER1")
     evaluate("PLAYER2")
     stateEvent.next(state)
+    state.PLAYER1 = { pointsRemaining: [0], total: 0 };
+    state.PLAYER2 = { pointsRemaining: [0], total: 0 };
+  }
+
+  const knock = (player: Player) => {
+    const points = getPointsForKnock(player);
+    const pointsOp = getPointsForKnock(op[player]);
+    if (points > POINT_MIN_TO_KNOCK) return;
+
+    let score = 0;
+    let winner = player;
+    if (points === 0) {
+      score += FULL_WIN_BONUS
+    }
+    const diff = pointsOp - points;
+    if (diff <= 0) {
+      winner = op[player];
+      score += SANCTION_KNOCK_SUPERIOR;
+    }
+    score += Math.abs(diff);
+    state.gameResult = {
+      score,
+      winner,
+    }
+    state.started = false;
+    stateEvent.next({ ...state });
   }
 
   const isCardPick = (card: Card) => {
@@ -226,6 +270,8 @@ const engine = () => {
     give,
     takeRandom,
     isCardPick,
+    getPointsForKnock,
+    knock,
   }
 }
 
@@ -283,7 +329,7 @@ function Board(p: { state: ReturnType<typeof engine>["state"], hero: Player }) {
       </div>
     </div>
     <div className='bottom'>
-      {p.state.playerTurn === p.hero && <>
+      {p.state.started && p.state.playerTurn === p.hero && <>
         <div className='buttons'>
           {p.state.nextAction === "TAKE" && p.state.playerTurn === p.hero && <>
             <div className='button button-take-pick' onClick={() => {
@@ -298,7 +344,21 @@ function Board(p: { state: ReturnType<typeof engine>["state"], hero: Player }) {
             </div>
           </>}
           {p.state.nextAction === "GIVE" && <>
-            redonne une carte
+            <div className='give-flex'>
+              <div className='give-a-card'>
+                redonne une carte ou knock
+              </div>
+              <div className='knock'
+                onClick={() => {
+                  game.knock(p.hero)
+                }}
+                style={{
+                  opacity: game.getPointsForKnock(p.hero) > POINT_MIN_TO_KNOCK ? "0.3" : "1",
+                  pointerEvents: game.getPointsForKnock(p.hero) > POINT_MIN_TO_KNOCK ? "none" : "initial",
+                }}>
+                Knock {game.getPointsForKnock(p.hero)}
+              </div>
+            </div>
           </>}
 
         </div>
@@ -311,7 +371,9 @@ function Board(p: { state: ReturnType<typeof engine>["state"], hero: Player }) {
   </>
 }
 
-const gun = Gun(['https://gun-manhattan.herokuapp.com/gun']);
+// const gun = Gun(['https://gun-manhattan.herokuapp.com/gun']);
+const gun = Gun(['http://51.15.246.203:8765/gun']);
+
 
 const queryString = window.location.search;
 const urlRoomId = new URLSearchParams(queryString).get("game");
@@ -373,16 +435,13 @@ function App() {
       }
       updateNet()
       listenNet(gameId);
-    }, { wait: 10000 })
+    }, { wait: 1000 })
   }
 
   useEffect(() => {
-    console.log("LISTEN TO EVENT");
 
     const listener = game.stateEvent.subscribe((state) => {
-      console.log("state listener triggered");
       if (game.state.game.ready) {
-        console.log("state listener");
         updateNet()
       }
     })
@@ -413,6 +472,7 @@ function App() {
       you are {player}<br />
       {state.game.ready && <>
         <Board state={state} hero={player}></Board>
+        {/* <Board state={state} hero={player === "PLAYER1" ? "PLAYER2" : "PLAYER1"}></Board> */}
       </>}
 
       {/* <Board state={state} hero='PLAYER2'></Board> */}
