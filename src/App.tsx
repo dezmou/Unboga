@@ -31,7 +31,7 @@ const engine = () => {
     board: getNewBoard(),
     playerTurn: "PLAYER1" as "PLAYER1" | "PLAYER2",
     started: false,
-    pick: null as null | Card,
+    pick: null as null | { x: number, y: number },
     nextAction: "TAKE" as "TAKE" | "GIVE"
   }
 
@@ -93,9 +93,9 @@ const engine = () => {
 
     card.status = "PICK"
     card[op[state.playerTurn]].opDiscarded = true;
-    state.pick = card;
+    state.pick = { x: card.x, y: card.y };
     card[state.playerTurn].status = "PICK";
-    state.pick[op[state.playerTurn]].opTook = false;
+    state.board[state.pick.y][state.pick.x][op[state.playerTurn]].opTook = false;
     endAction();
   }
 
@@ -103,10 +103,10 @@ const engine = () => {
     if (!state.pick) return;
     if (!state.started) return;
     if (state.nextAction !== "TAKE") return;
-    state.pick.status = state.playerTurn
-    state.pick[state.playerTurn].status = state.playerTurn;
-    state.pick[state.playerTurn].justTook = true;
-    state.pick[op[state.playerTurn]].opTook = true;
+    state.board[state.pick.y][state.pick.x].status = state.playerTurn
+    state.board[state.pick.y][state.pick.x][state.playerTurn].status = state.playerTurn;
+    state.board[state.pick.y][state.pick.x][state.playerTurn].justTook = true;
+    state.board[state.pick.y][state.pick.x][op[state.playerTurn]].opTook = true;
     state.pick = null;
     endAction();
   }
@@ -115,7 +115,7 @@ const engine = () => {
     if (!state.started) return;
     if (state.nextAction !== "TAKE") return;
     const card = pickRandomFromDeck();
-    state.pick![op[state.playerTurn]].opDiscarded = true;
+    state.board[state.pick!.y][state.pick!.x][op[state.playerTurn]].opDiscarded = true;
     card.status = state.playerTurn;
     card[state.playerTurn].status = state.playerTurn;
     card[state.playerTurn].justTook = true;
@@ -212,6 +212,11 @@ const engine = () => {
     stateEvent.next(state)
   }
 
+  const isCardPick = (card: Card) => {
+    if (!state.pick) return false;
+    return card.x === state.pick.x && card.y === state.pick.y
+  }
+
   return {
     stateEvent,
     state,
@@ -220,6 +225,7 @@ const engine = () => {
     isCardClickable,
     give,
     takeRandom,
+    isCardPick,
   }
 }
 
@@ -248,7 +254,7 @@ function Board(p: { state: ReturnType<typeof engine>["state"], hero: Player }) {
             ${card[p.hero].status === p.hero ? "card-player-1" : ""}
             ${card[p.hero].status === p.hero && card[p.hero].justTook ? "card-just-took" : ""}
             ${card[p.hero].opTook ? "card-op-took" : ""}
-            ${card === p.state.pick && p.state.playerTurn === p.hero ? "card-top-pick" : ""}
+            ${game.isCardPick(card) && p.state.playerTurn === p.hero ? "card-top-pick" : ""}
             ${game.isCardClickable(card, p.hero) ? "card-clickable" : ""}
         `}
                 style={{
