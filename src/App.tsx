@@ -261,6 +261,10 @@ const engine = () => {
 
   const setReady = (player: Player) => {
     state.game[player].ready = true;
+    if (state.game.PLAYER1.ready && state.game.PLAYER2.ready) {
+      game.state.game.ready = true;
+      game.startGame()
+    }
     stateEvent.next({ ...state });
   }
 
@@ -402,10 +406,6 @@ function App() {
   const [tgameId, setTgameId] = useState("")
   const [player, setPlayer] = useState<Player>("PLAYER1");
 
-  // const refresh = (state: ) => {
-  //   setState({ ...game.state })
-  // }
-
   const updateNet = () => {
     const net = gun.get('gin-board').get(game.state.game.id);
     net.put(JSON.stringify(game.state));
@@ -460,9 +460,9 @@ function App() {
   useEffect(() => {
 
     const listener = game.stateEvent.subscribe((state) => {
-      if (game.state.game.ready) {
-        updateNet()
-      }
+      // if (game.state.game.ready) {
+      updateNet()
+      // }
     })
 
     if (urlRoomId) {
