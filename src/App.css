@@ -1,15 +1,21 @@
+.board-flex {
+  width : 100vw;
+  display : flex;
+  justify-content: center;
+}
+
 .board {
-  width: 100vw;
-  height: 30vh;
+  width: 500px;
+  height: 500px;
 }
 
 .board-line {
   display: flex;
-  height: 25%;
+  height: 50px;
 }
 
 .card-flex-col {
-  width: 7.6%;
+  width: 50px;
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -27,6 +33,7 @@
   width: 85%;
   border-radius: 5%;
   outline: 1px solid black;
+  position : relative;
 }
 
 .card-player-1 {
@@ -49,6 +56,20 @@
   background: #ff0000bb;
 }
 
+.streak-verti {
+  position : absolute;
+  width: 10%;
+  height: 100%;
+  background: purple;
+}
+
+.streak-hori {
+  position : absolute;
+  width: 100%;
+  height: 10%;
+  background: purple;
+}
+
 .card-clickable {
   outline: 2px solid black;
 }
@@ -62,7 +83,8 @@
 }
 
 .buttons {
-  margin-top: 20px;
+  /* margin-top: 20px;
+  margin-bottom: 20px; */
   display: flex;
   width: 100vw;
   justify-content: center;
@@ -80,5 +102,5 @@
 }
 
 .bottom {
-  height : 300px;
+  height: 200px;
 }

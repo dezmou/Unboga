@@ -6,9 +6,9 @@ import "./App.css"
 type CardStatus = "DECK" | "PLAYER1" | "PLAYER2" | "PICK"
 type Player = "PLAYER1" | "PLAYER2"
 
-const START_NBR_CARDS = 10
-const FIELD_WIDTH = 13
-const FIELD_HEIGHT = 4
+const START_NBR_CARDS = 13
+const FIELD_WIDTH = 10
+const FIELD_HEIGHT = 10
 
 const engine = () => {
   type Card = ReturnType<typeof getNewBoard>[number][number];
@@ -39,8 +39,8 @@ const engine = () => {
           x,
           y,
           status: "DECK" as CardStatus,
-          PLAYER1: { justTook: false, opTook: false, status: "DECK" as CardStatus },
-          PLAYER2: { justTook: false, opTook: false, status: "DECK" as CardStatus },
+          PLAYER1: { justTook: false, opTook: false, status: "DECK" as CardStatus, inStreak: false, hori: false, verti: false },
+          PLAYER2: { justTook: false, opTook: false, status: "DECK" as CardStatus, inStreak: false, hori: false, verti: false },
         })))
   }
 
@@ -73,6 +73,8 @@ const engine = () => {
       }
       state.playerTurn = state.playerTurn === "PLAYER1" ? "PLAYER2" : "PLAYER1"
     }
+    evaluate("PLAYER1")
+    evaluate("PLAYER2")
     stateEvent.next(state);
   }
 
@@ -84,6 +86,9 @@ const engine = () => {
     card.status = "PICK"
     state.pick = card;
     card[state.playerTurn].status = "PICK";
+    // card[state.playerTurn].inStreak = false;
+    // card[state.playerTurn].verti = false;
+    // card[state.playerTurn].hori = false;
     state.pick[op[state.playerTurn]].opTook = false;
     endAction();
   }
@@ -153,7 +158,27 @@ const engine = () => {
         }
       }
     }
-    console.log(player, { horiStreak }, { vertiStreak });
+
+    for (let line of state.board) {
+      for (let card of line) {
+        card[player].inStreak = false;
+        card[player].hori = false;
+        card[player].verti = false;
+      }
+    }
+
+    for (let hori of horiStreak) {
+      for (let card of hori) {
+        card[player].inStreak = true;
+        card[player].hori = true;
+      }
+    }
+    for (let verti of vertiStreak) {
+      for (let card of verti) {
+        card[player].inStreak = true;
+        card[player].verti = true;
+      }
+    }
   }
 
   const startGame = () => {
@@ -207,11 +232,12 @@ function Board(p: { hero: Player }) {
   }, [])
 
   return <>
-    <div className='board'>
-      {state.board.map((line, y) => <div className='board-line' key={y}>
-        {line.map((card, x) => <div key={x} className="card-flex-col">
-          <div className='card-flex-row'>
-            <div className={`
+    <div className="board-flex">
+      <div className='board'>
+        {state.board.map((line, y) => <div className='board-line' key={y}>
+          {line.map((card, x) => <div key={x} className="card-flex-col">
+            <div className='card-flex-row'>
+              <div className={`
             card-paper
             ${card[p.hero].status === p.hero ? "card-player-1" : ""}
             ${card[p.hero].status === p.hero && card[p.hero].justTook ? "card-just-took" : ""}
@@ -219,21 +245,24 @@ function Board(p: { hero: Player }) {
             ${card === game.state.pick && game.state.playerTurn === p.hero ? "card-top-pick" : ""}
             ${game.isCardClickable(card, p.hero) ? "card-clickable" : ""}
         `}
-              style={{
-                cursor: game.isCardClickable(card, p.hero) ? "pointer" : "inherit"
-              }}
-              onClick={() => {
-                if (!game.isCardClickable(card, p.hero)) return;
-                game.give(card);
-              }}
-            >
+                style={{
+                  cursor: game.isCardClickable(card, p.hero) ? "pointer" : "inherit"
+                }}
+                onClick={() => {
+                  if (!game.isCardClickable(card, p.hero)) return;
+                  game.give(card);
+                }}
+              >
+                {card[p.hero].verti && <div className='streak-verti'></div>}
+                {card[p.hero].hori && <div className='streak-hori'></div>}
+              </div>
             </div>
           </div>
-        </div>
-        )}
+          )}
 
-      </div>)}
+        </div>)}
 
+      </div>
     </div>
     <div className='bottom'>
       {state.playerTurn === p.hero && <>
