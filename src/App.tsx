@@ -227,6 +227,7 @@ const engine = () => {
     state.pick = pickRandomFromDeck();
     evaluate("PLAYER1")
     evaluate("PLAYER2")
+    state.nextAction = "TAKE";
     stateEvent.next(state)
     state.PLAYER1 = { pointsRemaining: [0], total: 0 };
     state.PLAYER2 = { pointsRemaining: [0], total: 0 };
