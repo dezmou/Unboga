@@ -22,6 +22,11 @@ const engine = () => {
   }
 
   const state = {
+    game: {
+      id: "",
+      player1: { seated: false },
+      player2: { seated: false },
+    },
     board: getNewBoard(),
     playerTurn: "PLAYER1" as "PLAYER1" | "PLAYER2",
     started: false,
@@ -188,6 +193,7 @@ const engine = () => {
         }
       }
     }
+    pointsRemaining.sort((a, b) => a - b);
     console.log(pointsRemaining);
   }
 
@@ -217,33 +223,23 @@ const engine = () => {
 
 const game = engine();
 
-function Board(p: { hero: Player }) {
-  const [state, setState] = useState<ReturnType<typeof engine>["state"]>(game.state)
-
-  const refresh = () => {
-    setState({ ...game.state })
-  }
-
+function Board(p: { state: ReturnType<typeof engine>["state"], hero: Player }) {
   useEffect(() => {
     // const gun = Gun(['https://gun-manhattan.herokuapp.com/gun']);
     // const network = gun.get('gin-board').get('987tre');
-    const listener = game.stateEvent.subscribe((state) => { refresh() })
 
     if (game.state.playerTurn === p.hero) {
       setTimeout(() => {
-        game.startGame()
+        // game.startGame()
       }, 0)
     }
 
-    return () => {
-      listener.unsubscribe();
-    }
   }, [])
 
   return <>
     <div className="board-flex">
       <div className='board'>
-        {state.board.map((line, y) => <div className='board-line' key={y}>
+        {p.state.board.map((line, y) => <div className='board-line' key={y}>
           {line.map((card, x) => <div key={x} className="card-flex-col">
             <div className='card-flex-row'>
               <div className={`
@@ -251,7 +247,7 @@ function Board(p: { hero: Player }) {
             ${card[p.hero].status === p.hero ? "card-player-1" : ""}
             ${card[p.hero].status === p.hero && card[p.hero].justTook ? "card-just-took" : ""}
             ${card[p.hero].opTook ? "card-op-took" : ""}
-            ${card === game.state.pick && game.state.playerTurn === p.hero ? "card-top-pick" : ""}
+            ${card === p.state.pick && p.state.playerTurn === p.hero ? "card-top-pick" : ""}
             ${game.isCardClickable(card, p.hero) ? "card-clickable" : ""}
         `}
                 style={{
@@ -280,9 +276,9 @@ function Board(p: { hero: Player }) {
       </div>
     </div>
     <div className='bottom'>
-      {state.playerTurn === p.hero && <>
+      {p.state.playerTurn === p.hero && <>
         <div className='buttons'>
-          {state.nextAction === "TAKE" && state.playerTurn === p.hero && <>
+          {p.state.nextAction === "TAKE" && p.state.playerTurn === p.hero && <>
             <div className='button button-take-pick' onClick={() => {
               game.takePick()
             }}>
@@ -294,12 +290,12 @@ function Board(p: { hero: Player }) {
               Take Random
             </div>
           </>}
-          {state.nextAction === "GIVE" && <>
+          {p.state.nextAction === "GIVE" && <>
             redonne une carte
           </>}
 
         </div>
-        {state.playerTurn !== p.hero && <div>
+        {p.state.playerTurn !== p.hero && <div>
           A l'autre de jouer et tout
         </div>}
       </>}
@@ -308,9 +304,24 @@ function Board(p: { hero: Player }) {
 }
 
 function App() {
+  const [state, setState] = useState<ReturnType<typeof engine>["state"]>(game.state)
+
+  const refresh = () => {
+    setState({ ...game.state })
+  }
+
+  useEffect(() => {
+    const listener = game.stateEvent.subscribe((state) => { refresh() })
+
+    game.startGame()
+    return () => {
+      listener.unsubscribe();
+    }
+  }, [])
+
   return <>
-    <Board hero='PLAYER1'></Board>
-    <Board hero='PLAYER2'></Board>
+    <Board state={state} hero='PLAYER1'></Board>
+    <Board state={state} hero='PLAYER2'></Board>
   </>
 }
 
