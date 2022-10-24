@@ -3,12 +3,14 @@ import Gun from "gun"
 import { Subject } from "rxjs"
 import "./App.css"
 
+// GiCardDiscard
+
 type CardStatus = "DECK" | "PLAYER1" | "PLAYER2" | "PICK"
 type Player = "PLAYER1" | "PLAYER2"
 
-const START_NBR_CARDS = 13
-const FIELD_WIDTH = 10
-const FIELD_HEIGHT = 10
+const START_NBR_CARDS = 12
+const FIELD_WIDTH = 8
+const FIELD_HEIGHT = 8
 
 const engine = () => {
   type Card = ReturnType<typeof getNewBoard>[number][number];
@@ -38,9 +40,10 @@ const engine = () => {
         .map((ee, x) => ({
           x,
           y,
+          value: x + 1 + y + 1,
           status: "DECK" as CardStatus,
-          PLAYER1: { justTook: false, opTook: false, status: "DECK" as CardStatus, inStreak: false, hori: false, verti: false },
-          PLAYER2: { justTook: false, opTook: false, status: "DECK" as CardStatus, inStreak: false, hori: false, verti: false },
+          PLAYER1: { justTook: false, opTook: false, opDiscarded: false, status: "DECK" as CardStatus, inStreak: false, hori: false, verti: false },
+          PLAYER2: { justTook: false, opTook: false, opDiscarded: false, status: "DECK" as CardStatus, inStreak: false, hori: false, verti: false },
         })))
   }
 
@@ -84,11 +87,13 @@ const engine = () => {
     if (state.nextAction !== "GIVE") return;
 
     card.status = "PICK"
+    card[op[state.playerTurn]].opDiscarded = true;
     state.pick = card;
     card[state.playerTurn].status = "PICK";
     // card[state.playerTurn].inStreak = false;
     // card[state.playerTurn].verti = false;
     // card[state.playerTurn].hori = false;
+
     state.pick[op[state.playerTurn]].opTook = false;
     endAction();
   }
@@ -109,6 +114,7 @@ const engine = () => {
     if (!state.started) return;
     if (state.nextAction !== "TAKE") return;
     const card = pickRandomFromDeck();
+    state.pick![op[state.playerTurn]].opDiscarded = true;
     card.status = state.playerTurn;
     card[state.playerTurn].status = state.playerTurn;
     card[state.playerTurn].justTook = true;
@@ -253,6 +259,12 @@ function Board(p: { hero: Player }) {
                   game.give(card);
                 }}
               >
+                {card[p.hero].opDiscarded && <div className='op-discarded-flex-col'>
+                  <div className='op-discarded-flex-row'>
+                    <div className='op-discarded'></div>
+                  </div>
+                </div>}
+                <div className='value'>{card.value}</div>
                 {card[p.hero].verti && <div className='streak-verti'></div>}
                 {card[p.hero].hori && <div className='streak-hori'></div>}
               </div>
