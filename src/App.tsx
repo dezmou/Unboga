@@ -31,7 +31,8 @@ const engine = () => {
           x,
           y,
           status: "DECK" as CardStatus,
-          justTook: false,
+          PLAYER1: { justTook: false, status: "DECK" as CardStatus },
+          PLAYER2: { justTook: false, status: "DECK" as CardStatus },
         })))
   }
 
@@ -49,12 +50,19 @@ const engine = () => {
     for (let i = 0; i < START_NBR_CARDS; i++) {
       const card = pickRandomFromDeck()
       card.status = player;
+      card[player].status = player;
     }
   }
 
   function endAction() {
     state.nextAction = state.nextAction === "GIVE" ? "TAKE" : "GIVE";
     if (state.nextAction === "TAKE") {
+      for (let line of state.board) {
+        for (let card of line) {
+          card.PLAYER1.justTook = false;
+          card.PLAYER2.justTook = false;
+        }
+      }
       state.playerTurn = state.playerTurn === "PLAYER1" ? "PLAYER2" : "PLAYER1"
     }
     stateEvent.next(state);
@@ -67,6 +75,7 @@ const engine = () => {
 
     card.status = "PICK"
     state.pick = card;
+    card[state.playerTurn].status = "PICK";
     endAction();
   }
 
@@ -75,7 +84,9 @@ const engine = () => {
     if (!state.started) return;
     if (state.nextAction !== "TAKE") return;
     state.pick.status = state.playerTurn
-    state.pick.justTook = true;
+    state.pick[state.playerTurn].status = state.playerTurn;
+    state.pick[state.playerTurn].justTook = true;
+    state.pick = null;
     endAction();
   }
 
@@ -84,7 +95,9 @@ const engine = () => {
     if (state.nextAction !== "TAKE") return;
     const card = pickRandomFromDeck();
     card.status = state.playerTurn;
-    card.justTook = true;
+    card[state.playerTurn].status = state.playerTurn;
+    card[state.playerTurn].justTook = true;
+    state.pick = null;
     endAction();
   }
 
@@ -146,8 +159,9 @@ function Board(p: { hero: Player }) {
           <div className='card-flex-row'>
             <div className={`
             card-paper
-            ${card.status === p.hero ? "card-player-1" : ""}
-            ${card === game.state.pick ? "card-top-pick" : ""}
+            ${card[p.hero].status === p.hero ? "card-player-1" : ""}
+            ${card[p.hero].status === p.hero && card[p.hero].justTook ? "card-just-took" : ""}
+            ${card === game.state.pick && game.state.playerTurn === p.hero ? "card-top-pick" : ""}
             ${game.isCardClickable(card, p.hero) ? "card-clickable" : ""}
         `}
               style={{
@@ -192,8 +206,6 @@ function Board(p: { hero: Player }) {
       </>}
     </div>
   </>
-    ;
-
 }
 
 function App() {
