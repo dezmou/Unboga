@@ -27,8 +27,8 @@ const engine = () => {
   const state = {
     game: {
       id: "",
-      player1: { seated: false, score: 0 },
-      player2: { seated: false, score: 0 },
+      PLAYER1: { seated: false, ready: false, score: 0 },
+      PLAYER2: { seated: false, ready: false, score: 0 },
       ready: false,
     },
     board: getNewBoard(),
@@ -230,6 +230,7 @@ const engine = () => {
     stateEvent.next(state)
     state.PLAYER1 = { pointsRemaining: [0], total: 0 };
     state.PLAYER2 = { pointsRemaining: [0], total: 0 };
+    state.gameResult = null;
   }
 
   const knock = (player: Player) => {
@@ -252,7 +253,14 @@ const engine = () => {
       score,
       winner,
     }
+    state.game.PLAYER1.ready = false;
+    state.game.PLAYER2.ready = false;
     state.started = false;
+    stateEvent.next({ ...state });
+  }
+
+  const setReady = (player: Player) => {
+    state.game[player].ready = true;
     stateEvent.next({ ...state });
   }
 
@@ -272,6 +280,7 @@ const engine = () => {
     isCardPick,
     getPointsForKnock,
     knock,
+    setReady,
   }
 }
 
@@ -328,46 +337,56 @@ function Board(p: { state: ReturnType<typeof engine>["state"], hero: Player }) {
 
       </div>
     </div>
-    <div className='bottom'>
-      {p.state.started && p.state.playerTurn === p.hero && <>
-        <div className='buttons'>
-          {p.state.nextAction === "TAKE" && p.state.playerTurn === p.hero && <>
-            <div className='button button-take-pick' onClick={() => {
-              game.takePick()
-            }}>
-              Take Pick
-            </div>
-            <div className='button button-take-random' onClick={() => {
-              game.takeRandom()
-            }}>
-              Take Random
-            </div>
-          </>}
-          {p.state.nextAction === "GIVE" && <>
-            <div className='give-flex'>
-              <div className='give-a-card'>
-                redonne une carte ou knock
-              </div>
-              <div className='knock'
-                onClick={() => {
-                  game.knock(p.hero)
-                }}
-                style={{
-                  opacity: game.getPointsForKnock(p.hero) > POINT_MIN_TO_KNOCK ? "0.3" : "1",
-                  pointerEvents: game.getPointsForKnock(p.hero) > POINT_MIN_TO_KNOCK ? "none" : "initial",
-                }}>
-                Knock {game.getPointsForKnock(p.hero)}
-              </div>
-            </div>
-          </>}
+    {p.state.gameResult && <>
+      game ended !<br />
+      <span style={{
+        color: p.state.gameResult.winner === p.hero ? "green" : "red",
+      }}>
+        {p.state.gameResult.winner === p.hero ? "You" : "he"} won {p.state.gameResult.score} points
+      </span>
 
-        </div>
-      </>}
-      {p.state.playerTurn !== p.hero && <div>
-        A l'autre de jouer et tout
-      </div>}
+    </>}
+    {p.state.started && <>
+      <div className='bottom'>
+        {p.state.playerTurn === p.hero && <>
+          <div className='buttons'>
+            {p.state.nextAction === "TAKE" && p.state.playerTurn === p.hero && <>
+              <div className='button button-take-pick' onClick={() => {
+                game.takePick()
+              }}>
+                Take Pick
+              </div>
+              <div className='button button-take-random' onClick={() => {
+                game.takeRandom()
+              }}>
+                Take Random
+              </div>
+            </>}
+            {p.state.nextAction === "GIVE" && <>
+              <div className='give-flex'>
+                <div className='give-a-card'>
+                  redonne une carte ou knock
+                </div>
+                <div className='knock'
+                  onClick={() => {
+                    game.knock(p.hero)
+                  }}
+                  style={{
+                    opacity: game.getPointsForKnock(p.hero) > POINT_MIN_TO_KNOCK ? "0.3" : "1",
+                    pointerEvents: game.getPointsForKnock(p.hero) > POINT_MIN_TO_KNOCK ? "none" : "initial",
+                  }}>
+                  Knock {game.getPointsForKnock(p.hero)}
+                </div>
+              </div>
+            </>}
 
-    </div>
+          </div>
+        </>}
+        {p.state.playerTurn !== p.hero && <div>
+          A l'autre de jouer et tout
+        </div>}
+      </div>
+    </>}
   </>
 }
 
@@ -411,7 +430,7 @@ function App() {
         localStorage.setItem(gameId, "PLAYER1")
         setPlayer("PLAYER1")
         game.state.game.id = gameId;
-        game.state.game.player1.seated = true;
+        game.state.game.PLAYER1.seated = true;
       } else {
         // game.state = JSON.parse(value);
         const data = JSON.parse(value) as ReturnType<typeof engine>["state"];
@@ -419,7 +438,7 @@ function App() {
           (game.state as any)[key] = (data as any)[key];
         })
 
-        game.state.game.player2.seated = true;
+        game.state.game.PLAYER2.seated = true;
         const localPlayer = localStorage.getItem(gameId);
         if (!localPlayer) {
           localStorage.setItem(gameId, "PLAYER2")
@@ -429,13 +448,13 @@ function App() {
         }
       }
       window.history.replaceState(null, "", `${window.location.origin}?game=${game.state.game.id}`);
-      if (game.state.game.player1.seated && game.state.game.player2.seated && !game.state.game.ready) {
-        game.state.game.ready = true;
-        game.startGame()
+      if (game.state.game.PLAYER1.seated && game.state.game.PLAYER2.seated && !game.state.game.ready) {
+        // game.state.game.ready = true;
+        // game.startGame()
       }
       updateNet()
       listenNet(gameId);
-    }, { wait: 1000 })
+    }, { wait: 2000 })
   }
 
   useEffect(() => {
@@ -445,7 +464,6 @@ function App() {
         updateNet()
       }
     })
-    // const network = gun.get('gin-board').get('987tre');
 
     if (urlRoomId) {
       openGame(urlRoomId);
@@ -474,8 +492,14 @@ function App() {
         <Board state={state} hero={player}></Board>
         {/* <Board state={state} hero={player === "PLAYER1" ? "PLAYER2" : "PLAYER1"}></Board> */}
       </>}
+      {!state.started && state.game.PLAYER1.seated && state.game.PLAYER2.seated && !state.game[player].ready && <>
+        <div className='button ready' onClick={() => {
+          game.setReady(player);
+        }}>
+          I am ready
+        </div>
+      </>}
 
-      {/* <Board state={state} hero='PLAYER2'></Board> */}
     </>}
   </>
 }
