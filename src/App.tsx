@@ -82,8 +82,8 @@ const engine = () => {
     pick: null as null | { x: number, y: number },
     nextAction: "TAKE" as "TAKE" | "GIVE",
     choosingHero: false,
-    PLAYER1: { pointsRemaining: [0], total: 0, hero: null as null | string },
-    PLAYER2: { pointsRemaining: [0], total: 0, hero: null as null | string },
+    PLAYER1: { pointsRemaining: [0], total: 0, hero: null as null | keyof typeof heros },
+    PLAYER2: { pointsRemaining: [0], total: 0, hero: null as null | keyof typeof heros },
     gameResult: null as null | {
       winner: Player
       score: number
@@ -263,7 +263,7 @@ const engine = () => {
     return state[player].total
   }
 
-  const chooseHero = (player: Player, hero: string) => {
+  const chooseHero = (player: Player, hero: keyof typeof heros) => {
     game.state[player].hero = hero;
     if (game.state[op[player]].hero) {
       game.state.choosingHero = false;
@@ -353,6 +353,21 @@ const game = engine();
 
 // root.style.setProperty('--mainframe-margin-left', `${marginLeft}px`);
 
+function Hero(p: { hero: typeof game.heros[(keyof (typeof game.heros))] }) {
+  return <><div className='hero-header'>
+    {p.hero.name}
+  </div>
+    <div className='hero-image-grid'>
+      <div className='hero-image' style={{
+        backgroundImage: `url(https://www.vetocanis.com/modules/prestablog/views/img/grid-for-1-7/up-img/157.jpg)`
+      }}>
+      </div>
+    </div>
+    <div className='hero-text' dangerouslySetInnerHTML={{ __html: p.hero.text }}>
+    </div>
+  </>
+}
+
 function Board(p: { state: ReturnType<typeof engine>["state"], player: Player }) {
   const [infos, setInfos] = useState("")
 
@@ -395,7 +410,9 @@ function Board(p: { state: ReturnType<typeof engine>["state"], player: Player })
   return <>
     <div className="board-flex">
       <div className='selected-hero-cont'>
-        chien
+        {!p.state.choosingHero && p.state[p.player].hero && <div className='selected-hero-cont-cont'>
+          <Hero hero={game.heros[p.state[p.player].hero!]}></Hero>
+        </div>}
       </div>
 
       <div className='board'>
@@ -451,7 +468,9 @@ function Board(p: { state: ReturnType<typeof engine>["state"], player: Player })
       </div>
 
       <div className='selected-hero-cont'>
-        chien
+        {!p.state.choosingHero && p.state[game.op[p.player]].hero && <div className='selected-hero-cont-cont'>
+          <Hero hero={game.heros[p.state[game.op[p.player]].hero!]}></Hero>
+        </div>}
       </div>
     </div>
     {p.state.started && <>
@@ -460,21 +479,13 @@ function Board(p: { state: ReturnType<typeof engine>["state"], player: Player })
           <div className='hero-cont'>
             {Object.values(game.heros).map((hero, i) => <div key={i} className="hero"
               onClick={() => {
-                game.chooseHero(p.player, hero.id)
+                game.chooseHero(p.player, hero.id as keyof typeof game.heros)
               }}
             >
-              <div className='hero-header'>
-                {hero.name}
-              </div>
-              <div className='hero-image-grid'>
-                <div className='hero-image' style={{
-                  backgroundImage: `url(https://www.vetocanis.com/modules/prestablog/views/img/grid-for-1-7/up-img/157.jpg)`
-                }}>
-                </div>
-              </div>
-              <div className='hero-text' dangerouslySetInnerHTML={{ __html: hero.text }}>
-              </div>
-            </div>)}
+              <Hero hero={hero}></Hero>
+            </div>
+
+            )}
           </div>
         </>}
         {!p.state.choosingHero && <>
