@@ -303,8 +303,9 @@ const game = engine();
 // root.style.setProperty('--mainframe-margin-left', `${marginLeft}px`);
 
 function Board(p: { state: ReturnType<typeof engine>["state"], hero: Player }) {
-  useEffect(() => {
+  const [infos, setInfos] = useState("")
 
+  useEffect(() => {
     if (game.state.playerTurn === p.hero) {
       setTimeout(() => {
         // game.startGame()
@@ -313,9 +314,38 @@ function Board(p: { state: ReturnType<typeof engine>["state"], hero: Player }) {
 
   }, [])
 
+  useEffect(() => {
+    const getInfos = () => {
+      if (p.state.playerTurn !== p.hero) {
+        return "It is the scumbag turn to play"
+      }
+      if (p.state.nextAction === "TAKE"){
+        return "Take the green card or a random card"
+      }
+      if (p.state.nextAction === "GIVE"){
+        return "Throw a card or knock"
+      }
+      return ""
+    }
+    setInfos(getInfos())
+
+  }, [p.state])
+
   return <>
     <div className="board-flex">
       <div className='board'>
+        <div className='score'>
+          <div className='score-item' style={{
+            width: `${(p.state.game[p.hero].score / (START_SCORE * 2)) * 100}%`,
+            background: "#16ff29",
+          }}>
+            You : {p.state.game[p.hero].score}
+          </div>
+          <div >
+            Scumbag : {p.state.game[game.op[p.hero]].score}
+          </div>
+        </div>
+
         {p.state.board.map((line, y) => <div className='board-line' key={y}>
           {line.map((card, x) => <div key={x} className="card-flex-col">
             <div className='card-flex-row'>
@@ -351,16 +381,8 @@ function Board(p: { state: ReturnType<typeof engine>["state"], hero: Player }) {
           )}
 
         </div>)}
-        <div className='score'>
-          <div className='score-item' style={{
-            width: `${(p.state.game[p.hero].score / (START_SCORE * 2)) * 100}%`,
-            background: "#16ff29",
-          }}>
-            Vous : {p.state.game[p.hero].score}
-          </div>
-          <div >
-            Fumier : {p.state.game[game.op[p.hero]].score}
-          </div>
+        <div className='infos'>
+          {infos}
         </div>
       </div>
     </div>
@@ -391,9 +413,6 @@ function Board(p: { state: ReturnType<typeof engine>["state"], hero: Player }) {
             </>}
             {p.state.nextAction === "GIVE" && <>
               <div className='give-flex'>
-                <div className='give-a-card'>
-                  redonne une carte ou knock
-                </div>
                 <div className='knock'
                   onClick={() => {
                     game.knock(p.hero)
@@ -409,9 +428,6 @@ function Board(p: { state: ReturnType<typeof engine>["state"], hero: Player }) {
 
           </div>
         </>}
-        {p.state.playerTurn !== p.hero && <div>
-          A l'autre de jouer et tout
-        </div>}
       </div>
     </>}
   </>

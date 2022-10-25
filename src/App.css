@@ -8,6 +8,10 @@
   --card-size: calc(var(--board-size) / var(--amount-card-width));
 }
 
+body {
+  font-family: verdana;
+}
+
 .board-flex {
   width: 100vw;
   display: flex;
@@ -16,8 +20,6 @@
 
 .board {
   width: var(--board-size);
-  /* height: var(--board-size); */
-  /* background: blue; */
 }
 
 .board-line {
@@ -174,11 +176,21 @@
   justify-content: space-between;
   outline: 1px solid black;
   background: rgb(255, 47, 47);
-  color: white;
+  /* color: white; */
   margin-top: 10px;
+  font-weight: bold;
 }
 
 .score-item {
   width: 200px;
   transition: width 1s;
+}
+
+.infos {
+  margin-top : 5px;
+  outline : 1px solid black;
+  text-align: center;
+  font-size: 1.2rem;
+  height : 30px;
+  line-height : 30px;
 }
