@@ -31,42 +31,61 @@ const engine = () => {
   }
 
   const heros = {
-    chien: {
-      id: "chien",
-      name: "Chien rouge",
-      image: "/heros/chien.jpg",
-      text: "Can throw away garbage at the store, if the store is full then die and stuff you know",
+    mirror: {
+      id: "mirror",
+      name: "Mirror of darkness",
+      image: "/heros/mirror.png",
+      text: "The points on the battlefield are on reverse order.<br/>Only for him",
     },
-    chien2: {
-      id: "chien",
-      name: "Chien rouge",
-      image: "/heros/chien.jpg",
-      text: "Can throw away garbage at the store<br/> if the store is full then die and stuff you know",
+    campion: {
+      id: "campion",
+      name: "Marcel Campion",
+      image: "/heros/campion.png",
+      text: "Can knok with 75 points maximum",
     },
-    chien3: {
-      id: "chien",
-      name: "Chien rouge",
-      image: "/heros/chien.jpg",
-      text: "Can throw away garbage at the store, if the store is full then die and stuff you know",
+    tank: {
+      id: "tank",
+      name: "Strong David",
+      image: "/heros/tank.png",
+      text: "When he win the round, win 30% more points",
     },
-    chien4: {
-      id: "chien",
-      name: "Chien rouge",
-      image: "/heros/chien.jpg",
-      text: "Can throw away garbage at the store, if the store is full then die and stuff you know",
+    cloporte: {
+      id: "cloporte",
+      name: "Weak joe",
+      image: "/heros/cloporte.png",
+      text: "When he loses the round, loses only 70% of the points",
     },
-    chien5: {
-      id: "chien",
-      name: "Chien rouge",
-      image: "/heros/chien.jpg",
-      text: "Can throw away garbage at the store, if the store is full then die and stuff you know",
-    },
-    chien6: {
-      id: "chien",
-      name: "Chien rouge",
-      image: "/heros/chien.jpg",
-      text: "Can throw away garbage at the store, if the store is full then die and stuff you know",
-    },
+
+    // chien2: {
+    //   id: "chien",
+    //   name: "Chien rouge",
+    //   image: "/heros/chien.jpg",
+    //   text: "Can throw away garbage at the store<br/> if the store is full then die and stuff you know",
+    // },
+    // chien3: {
+    //   id: "chien",
+    //   name: "Chien rouge",
+    //   image: "/heros/chien.jpg",
+    //   text: "Can throw away garbage at the store, if the store is full then die and stuff you know",
+    // },
+    // chien4: {
+    //   id: "chien",
+    //   name: "Chien rouge",
+    //   image: "/heros/chien.jpg",
+    //   text: "Can throw away garbage at the store, if the store is full then die and stuff you know",
+    // },
+    // chien5: {
+    //   id: "chien",
+    //   name: "Chien rouge",
+    //   image: "/heros/chien.jpg",
+    //   text: "Can throw away garbage at the store, if the store is full then die and stuff you know",
+    // },
+    // chien6: {
+    //   id: "chien",
+    //   name: "Chien rouge",
+    //   image: "/heros/chien.jpg",
+    //   text: "Can throw away garbage at the store, if the store is full then die and stuff you know",
+    // },
   }
 
   const state = {
@@ -359,7 +378,7 @@ function Hero(p: { hero: typeof game.heros[(keyof (typeof game.heros))] }) {
   </div>
     <div className='hero-image-grid'>
       <div className='hero-image' style={{
-        backgroundImage: `url(https://www.vetocanis.com/modules/prestablog/views/img/grid-for-1-7/up-img/157.jpg)`
+        backgroundImage: `url(${p.hero.image})`
       }}>
       </div>
     </div>
