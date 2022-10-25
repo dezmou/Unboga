@@ -14,6 +14,8 @@ const FULL_WIN_BONUS = 50;
 const SANCTION_KNOCK_SUPERIOR = 50;
 const START_SCORE = 200
 
+const HERO_EARLY_KNOCK_ADD = 15;
+
 export const makeId = () => {
   return Math.floor((1 + Math.random()) * 0x100000000000)
     .toString(32)
@@ -34,25 +36,25 @@ const engine = () => {
     mirror: {
       id: "mirror",
       name: "Mirror of darkness",
-      image: "/heros/mirror.png",
+      image: "/heros/mirror.jpg",
       text: "The points on the battlefield are on reverse order.<br/>Only for him",
     },
     watch: {
       id: "watch",
       name: "Early fang",
-      image: "/heros/watch.png",
-      text: `Can knock with ${POINT_MIN_TO_KNOCK + 25} points instead of ${POINT_MIN_TO_KNOCK}`,
+      image: "/heros/watch.jpg",
+      text: `Can knock with ${POINT_MIN_TO_KNOCK + HERO_EARLY_KNOCK_ADD} points instead of ${POINT_MIN_TO_KNOCK}`,
     },
     tank: {
       id: "tank",
       name: "Strong David",
-      image: "/heros/tank.png",
+      image: "/heros/tank.jpg",
       text: "When he win the round, win 30% more points",
     },
     cloporte: {
       id: "cloporte",
       name: "Weak joe",
-      image: "/heros/cloporte.png",
+      image: "/heros/cloporte.jpg",
       text: "When he loses the round, loses 30% less points",
     },
 
@@ -299,18 +301,18 @@ const engine = () => {
     state.started = true;
     state.choosingHero = true;
     state.pick = pickRandomFromDeck();
+    state.PLAYER1 = { pointsRemaining: [0], total: 0, hero: null };
+    state.PLAYER2 = { pointsRemaining: [0], total: 0, hero: null };
     evaluate("PLAYER1")
     evaluate("PLAYER2")
     state.nextAction = "TAKE";
-    state.PLAYER1 = { pointsRemaining: [0], total: 0, hero: null };
-    state.PLAYER2 = { pointsRemaining: [0], total: 0, hero: null };
     state.gameResult = null;
     stateEvent.next(state)
   }
 
   const canIKnock = (player: Player) => {
     const points = getPointsForKnock(player);
-    return (points <= (state[player].hero === "watch" ? (POINT_MIN_TO_KNOCK + 25) : POINT_MIN_TO_KNOCK))
+    return (points <= (state[player].hero === "watch" ? (POINT_MIN_TO_KNOCK + HERO_EARLY_KNOCK_ADD) : POINT_MIN_TO_KNOCK))
   }
 
   const knock = (player: Player) => {
@@ -496,6 +498,9 @@ function Board(p: { state: ReturnType<typeof engine>["state"], player: Player })
           )}
 
         </div>)}
+        <div className='infos'>
+          {p.state[p.player].total} points
+        </div>
         <div className='infos' dangerouslySetInnerHTML={{ __html: infos }}>
         </div>
       </div>
