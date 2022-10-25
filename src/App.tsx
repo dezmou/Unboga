@@ -30,6 +30,33 @@ const engine = () => {
     "PLAYER2": Player
   }
 
+  const heros = {
+    chien: {
+      id: "chien",
+      name: "Chien rouge",
+      image: "/heros/chien.jpg",
+      text: "Can throw away garbage at the store, if the store is full then die and stuff you know",
+    },
+    chien2: {
+      id: "chien",
+      name: "Chien rouge",
+      image: "/heros/chien.jpg",
+      text: "Can throw away garbage at the store, if the store is full then die and stuff you know",
+    },
+    chien3: {
+      id: "chien",
+      name: "Chien rouge",
+      image: "/heros/chien.jpg",
+      text: "Can throw away garbage at the store, if the store is full then die and stuff you know",
+    },
+    chien4: {
+      id: "chien",
+      name: "Chien rouge",
+      image: "/heros/chien.jpg",
+      text: "Can throw away garbage at the store, if the store is full then die and stuff you know",
+    },
+  }
+
   const state = {
     game: {
       id: "",
@@ -295,6 +322,7 @@ const engine = () => {
     knock,
     setReady,
     op,
+    heros,
   }
 }
 
