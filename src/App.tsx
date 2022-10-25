@@ -435,7 +435,7 @@ function Board(p: { state: ReturnType<typeof engine>["state"], hero: Player }) {
           )}
 
         </div>)}
-        <div className='infos' dangerouslySetInnerHTML={{__html : infos}}>
+        <div className='infos' dangerouslySetInnerHTML={{ __html: infos }}>
         </div>
       </div>
     </div>
@@ -443,7 +443,11 @@ function Board(p: { state: ReturnType<typeof engine>["state"], hero: Player }) {
       <div className='bottom'>
         {p.state.choosingHero && <>
           <div className='hero-cont'>
-            {Object.values(game.heros).map((hero, i) => <div key={i} className="hero">
+            {Object.values(game.heros).map((hero, i) => <div key={i} className="hero"
+              onClick={() => {
+                game.chooseHero(p.hero, hero.id)
+              }}
+            >
               <div className='hero-header'>
                 {hero.name}
               </div>
@@ -453,7 +457,7 @@ function Board(p: { state: ReturnType<typeof engine>["state"], hero: Player }) {
                 }}>
                 </div>
               </div>
-              <div className='hero-text' dangerouslySetInnerHTML={{__html : hero.text}}>
+              <div className='hero-text' dangerouslySetInnerHTML={{ __html: hero.text }}>
               </div>
             </div>)}
           </div>
