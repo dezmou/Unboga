@@ -41,7 +41,7 @@ const engine = () => {
       id: "chien",
       name: "Chien rouge",
       image: "/heros/chien.jpg",
-      text: "Can throw away garbage at the store, if the store is full then die and stuff you know",
+      text: "Can throw away garbage at the store<br/> if the store is full then die and stuff you know",
     },
     chien3: {
       id: "chien",
@@ -50,6 +50,18 @@ const engine = () => {
       text: "Can throw away garbage at the store, if the store is full then die and stuff you know",
     },
     chien4: {
+      id: "chien",
+      name: "Chien rouge",
+      image: "/heros/chien.jpg",
+      text: "Can throw away garbage at the store, if the store is full then die and stuff you know",
+    },
+    chien5: {
+      id: "chien",
+      name: "Chien rouge",
+      image: "/heros/chien.jpg",
+      text: "Can throw away garbage at the store, if the store is full then die and stuff you know",
+    },
+    chien6: {
       id: "chien",
       name: "Chien rouge",
       image: "/heros/chien.jpg",
@@ -69,8 +81,9 @@ const engine = () => {
     started: false,
     pick: null as null | { x: number, y: number },
     nextAction: "TAKE" as "TAKE" | "GIVE",
-    PLAYER1: { pointsRemaining: [0], total: 0 },
-    PLAYER2: { pointsRemaining: [0], total: 0 },
+    choosingHero: false,
+    PLAYER1: { pointsRemaining: [0], total: 0, hero: null as null | string },
+    PLAYER2: { pointsRemaining: [0], total: 0, hero: null as null | string },
     gameResult: null as null | {
       winner: Player
       score: number
@@ -250,6 +263,10 @@ const engine = () => {
     return state[player].total
   }
 
+  const chooseHero = (player: string, hero: string) => {
+
+  }
+
   const startGame = () => {
     state.playerTurn = state.playerTurn === "PLAYER1" ? "PLAYER2" : "PLAYER1";
     state.board = getNewBoard();
@@ -257,14 +274,15 @@ const engine = () => {
       distribute(player);
     })
     state.started = true;
+    state.choosingHero = true;
     state.pick = pickRandomFromDeck();
     evaluate("PLAYER1")
     evaluate("PLAYER2")
     state.nextAction = "TAKE";
-    stateEvent.next(state)
-    state.PLAYER1 = { pointsRemaining: [0], total: 0 };
-    state.PLAYER2 = { pointsRemaining: [0], total: 0 };
+    state.PLAYER1 = { pointsRemaining: [0], total: 0, hero: null };
+    state.PLAYER2 = { pointsRemaining: [0], total: 0, hero: null };
     state.gameResult = null;
+    stateEvent.next(state)
   }
 
   const knock = (player: Player) => {
@@ -312,6 +330,7 @@ const engine = () => {
   return {
     stateEvent,
     state,
+    chooseHero,
     takePick,
     startGame,
     isCardClickable,
@@ -347,6 +366,9 @@ function Board(p: { state: ReturnType<typeof engine>["state"], hero: Player }) {
       if (p.state.gameResult) {
         const winner = p.state.gameResult.winner === p.hero ? "You" : "Scumbag"
         return `${winner} won ${p.state.gameResult.score} points`
+      }
+      if (p.state.choosingHero) {
+        return "Choose a Hero";
       }
       if (p.state.playerTurn !== p.hero) {
         return "It is the scumbag turn to play"
@@ -413,43 +435,61 @@ function Board(p: { state: ReturnType<typeof engine>["state"], hero: Player }) {
           )}
 
         </div>)}
-        <div className='infos'>
-          {infos}
+        <div className='infos' dangerouslySetInnerHTML={{__html : infos}}>
         </div>
       </div>
     </div>
     {p.state.started && <>
       <div className='bottom'>
-        {p.state.playerTurn === p.hero && <>
-          <div className='buttons'>
-            {p.state.nextAction === "TAKE" && p.state.playerTurn === p.hero && <>
-              <div className='button button-take-pick' onClick={() => {
-                game.takePick()
-              }}>
-                Take Pick
+        {p.state.choosingHero && <>
+          <div className='hero-cont'>
+            {Object.values(game.heros).map((hero, i) => <div key={i} className="hero">
+              <div className='hero-header'>
+                {hero.name}
               </div>
-              <div className='button button-take-random' onClick={() => {
-                game.takeRandom()
-              }}>
-                Take Random
-              </div>
-            </>}
-            {p.state.nextAction === "GIVE" && <>
-              <div className='give-flex'>
-                <div className='knock'
-                  onClick={() => {
-                    game.knock(p.hero)
-                  }}
-                  style={{
-                    opacity: game.getPointsForKnock(p.hero) > POINT_MIN_TO_KNOCK ? "0.3" : "1",
-                    pointerEvents: game.getPointsForKnock(p.hero) > POINT_MIN_TO_KNOCK ? "none" : "initial",
-                  }}>
-                  Knock {game.getPointsForKnock(p.hero)}
+              <div className='hero-image-grid'>
+                <div className='hero-image' style={{
+                  backgroundImage: `url(https://www.vetocanis.com/modules/prestablog/views/img/grid-for-1-7/up-img/157.jpg)`
+                }}>
                 </div>
               </div>
-            </>}
-
+              <div className='hero-text' dangerouslySetInnerHTML={{__html : hero.text}}>
+              </div>
+            </div>)}
           </div>
+        </>}
+        {!p.state.choosingHero && <>
+          {p.state.playerTurn === p.hero && <>
+            <div className='buttons'>
+              {p.state.nextAction === "TAKE" && p.state.playerTurn === p.hero && <>
+                <div className='button button-take-pick' onClick={() => {
+                  game.takePick()
+                }}>
+                  Take Pick
+                </div>
+                <div className='button button-take-random' onClick={() => {
+                  game.takeRandom()
+                }}>
+                  Take Random
+                </div>
+              </>}
+              {p.state.nextAction === "GIVE" && <>
+                <div className='give-flex'>
+                  <div className='knock'
+                    onClick={() => {
+                      game.knock(p.hero)
+                    }}
+                    style={{
+                      opacity: game.getPointsForKnock(p.hero) > POINT_MIN_TO_KNOCK ? "0.3" : "1",
+                      pointerEvents: game.getPointsForKnock(p.hero) > POINT_MIN_TO_KNOCK ? "none" : "initial",
+                    }}>
+                    Knock {game.getPointsForKnock(p.hero)}
+                  </div>
+                </div>
+              </>}
+
+            </div>
+          </>}
         </>}
       </div>
     </>}

@@ -6,6 +6,7 @@
   --amount-card-width: 8;
   --amount-card-height: 8;
   --card-size: calc(var(--board-size) / var(--amount-card-width));
+  --hero-width: calc(var(--size) * 0.2)
 }
 
 body {
@@ -172,8 +173,8 @@ body {
 
 .score {
   width: var(--board-size);
-  height : 30px;
-  line-height : 30px;
+  height: 30px;
+  line-height: 30px;
   border-radius: 5px;
   display: flex;
   justify-content: space-between;
@@ -190,10 +191,63 @@ body {
 }
 
 .infos {
-  margin-top : 5px;
-  outline : 1px solid black;
+  margin-top: 5px;
+  outline: 1px solid black;
   text-align: center;
   font-size: 1.2rem;
-  height : 30px;
-  line-height : 30px;
+  height: 30px;
+  line-height: 30px;
+}
+
+.hero-cont {
+  margin-top: 30px;
+  width: 100vw;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, calc(var(--size) * 0.22));
+  justify-content: space-around;
+}
+
+.hero {
+  text-align: center;
+  outline: 1px solid black;
+  width: var(--hero-width);
+  margin-top: 10px;
+  transform-origin: center;
+  transition: transform 0.2s;
+  cursor : pointer;
+  background : white;
+}
+
+.hero:hover {
+  transform : scale(1.07);
+  z-index: 1;
+}
+
+.hero-header {
+  border-bottom: 1px solid black;
+  height: 30px;
+  line-height: 30px;
+  font-weight: bold;
+}
+
+.hero-image-grid {
+  width: var(--hero-width);
+  height: var(--hero-width);
+  display: grid;
+  align-content: center;
+  justify-content: center;
+}
+
+.hero-image {
+  width: calc(var(--hero-width) * 0.9);
+  height: calc(var(--hero-width) * 0.9);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  outline : 1px solid grey;
+}
+
+.hero-text {
+  padding : 7%;
+  padding-top : 0px;
 }
