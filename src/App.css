@@ -173,8 +173,9 @@
   display: flex;
   justify-content: space-between;
   outline: 1px solid black;
-  background: red;
+  background: rgb(255, 47, 47);
   color: white;
+  margin-top: 10px;
 }
 
 .score-item {

@@ -12,6 +12,7 @@ const FIELD_HEIGHT = 8
 const POINT_MIN_TO_KNOCK = 500
 const FULL_WIN_BONUS = 50;
 const SANCTION_KNOCK_SUPERIOR = 50;
+const START_SCORE = 200
 
 export const makeId = () => {
   return Math.floor((1 + Math.random()) * 0x100000000000)
@@ -32,8 +33,8 @@ const engine = () => {
   const state = {
     game: {
       id: "",
-      PLAYER1: { seated: false, ready: false, score: 500 },
-      PLAYER2: { seated: false, ready: false, score: 500 },
+      PLAYER1: { seated: false, ready: false, score: START_SCORE },
+      PLAYER2: { seated: false, ready: false, score: START_SCORE },
       ready: false,
     },
     board: getNewBoard(),
@@ -352,8 +353,8 @@ function Board(p: { state: ReturnType<typeof engine>["state"], hero: Player }) {
         </div>)}
         <div className='score'>
           <div className='score-item' style={{
-            width: `${(p.state.game[p.hero].score / 1000) * 100}%`,
-            background: "green",
+            width: `${(p.state.game[p.hero].score / (START_SCORE * 2)) * 100}%`,
+            background: "#16ff29",
           }}>
             Vous : {p.state.game[p.hero].score}
           </div>
