@@ -37,10 +37,10 @@ const engine = () => {
       image: "/heros/mirror.png",
       text: "The points on the battlefield are on reverse order.<br/>Only for him",
     },
-    campion: {
-      id: "campion",
-      name: "Marcel Campion",
-      image: "/heros/campion.png",
+    watch: {
+      id: "watch",
+      name: "Early fang",
+      image: "/heros/watch.png",
       text: `Can knock with ${POINT_MIN_TO_KNOCK + 25} points instead of ${POINT_MIN_TO_KNOCK}`,
     },
     tank: {
@@ -310,7 +310,7 @@ const engine = () => {
 
   const canIKnock = (player: Player) => {
     const points = getPointsForKnock(player);
-    return (points <= (state[player].hero === "campion" ? (POINT_MIN_TO_KNOCK + 25) : POINT_MIN_TO_KNOCK))
+    return (points <= (state[player].hero === "watch" ? (POINT_MIN_TO_KNOCK + 25) : POINT_MIN_TO_KNOCK))
   }
 
   const knock = (player: Player) => {
