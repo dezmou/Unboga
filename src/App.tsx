@@ -250,7 +250,7 @@ const engine = () => {
       score += FULL_WIN_BONUS
     }
     const diff = pointsOp - points;
-    if (diff <= 0) {
+    if (diff <= 0 && pointsOp !== 0) {
       winner = op[player];
       score += SANCTION_KNOCK_SUPERIOR;
     }
@@ -349,7 +349,16 @@ function Board(p: { state: ReturnType<typeof engine>["state"], hero: Player }) {
           )}
 
         </div>)}
-
+        <div className='score'>
+          <div className='score-item' style={{
+            // width : 
+          }}>
+            Vous : {p.state.game[p.hero].score}
+          </div>
+          <div>
+            Fumier : {p.state.game[game.op[p.hero]].score}
+          </div>
+        </div>
       </div>
     </div>
     {p.state.gameResult && <>
@@ -406,7 +415,12 @@ function Board(p: { state: ReturnType<typeof engine>["state"], hero: Player }) {
 }
 
 // const gun = Gun(['https://gun-manhattan.herokuapp.com/gun']);
-const gun = Gun(['http://51.15.246.203:8765/gun']);
+// const gun = Gun(['http://51.15.246.203:8765/gun']);
+// const gun = Gun(['https://board.modez.pro/gun']);
+const gun = Gun({
+  localStorage: false,
+  peers: ['https://board.modez.pro/gun'],
+});
 
 
 const queryString = window.location.search;
@@ -416,10 +430,10 @@ function App() {
   const [state, setState] = useState<ReturnType<typeof engine>["state"]>(game.state)
   const [player, setPlayer] = useState<Player>("PLAYER1");
 
-  const updateNet = () => {
+  const updateNet = async () => {
     console.log("UPDATE NET");
     const net = gun.get('gin-board').get(game.state.game.id);
-    net.put(JSON.stringify(game.state));
+    await new Promise(r => net.put(JSON.stringify(game.state), r));
   }
 
   const listenNet = (id: string) => {
@@ -429,51 +443,54 @@ function App() {
       Object.keys(game.state).forEach((key) => {
         (game.state as any)[key] = (data as any)[key];
       })
-      console.log(game);
+      console.log("listen net :", game);
       setState({ ...game.state })
     })
 
   }
 
-  const newGame = () => {
+  const newGame = async () => {
     const gameId = makeId();
+    console.log("GAME ID", gameId);
     const net = gun.get('gin-board').get(gameId);
     localStorage.setItem(gameId, "PLAYER1")
     setPlayer("PLAYER1")
     game.state.game.id = gameId;
     game.state.game.PLAYER1.seated = true;
-    window.history.replaceState(null, "", `${window.location.origin}?game=${game.state.game.id}`);
-    updateNet()
-    listenNet(gameId);
+    // window.history.replaceState(null, "", `${window.location.origin}?game=${game.state.game.id}`);
+    await updateNet()
+    window.location.href = `${window.location.origin}?game=${game.state.game.id}`
+    // console.log("LISTEN NOW");
+    // listenNet(gameId);
   }
 
   const openGame = (gameId: string) => {
     const net = gun.get('gin-board').get(gameId);
-    net.once((value) => {
-      if (!value) {
-        // localStorage.setItem(gameId, "PLAYER1")
-        // setPlayer("PLAYER1")
-        // game.state.game.id = gameId;
-        // game.state.game.PLAYER1.seated = true;
-      } else {
-        // game.state = JSON.parse(value);
+    let viewed = false;
+    console.log("GAME ID", gameId);
+
+    net.on((value) => {
+      if (!viewed) {
+        viewed = true;
         const data = JSON.parse(value) as ReturnType<typeof engine>["state"];
         Object.keys(game.state).forEach((key) => {
           (game.state as any)[key] = (data as any)[key];
         })
-        game.state.game.PLAYER2.seated = true;
-        const localPlayer = localStorage.getItem(gameId);
+        const localPlayer = localStorage.getItem(gameId) as Player;
+
         if (!localPlayer) {
           localStorage.setItem(gameId, "PLAYER2")
+          game.state.game.PLAYER2.seated = true;
           setPlayer("PLAYER2")
         } else {
           setPlayer(localPlayer as Player)
+          game.state.game[localPlayer].seated = true;
         }
+        window.history.replaceState(null, "", `${window.location.origin}?game=${game.state.game.id}`);
+        updateNet()
+        listenNet(gameId);
       }
-      window.history.replaceState(null, "", `${window.location.origin}?game=${game.state.game.id}`);
-      updateNet()
-      listenNet(gameId);
-    }, { wait: 10000 })
+    })
   }
 
   useEffect(() => {
@@ -494,16 +511,21 @@ function App() {
     {!state.game.id && <div>
       <button onClick={() => {
         newGame()
-        
+
       }}>New online game</button>
     </div>}
     {state.game.id && <>
-      game id : {state.game.id}<br />
-      you are {player}<br />
       {state.game.ready && <>
         <Board state={state} hero={player}></Board>
         {/* <Board state={state} hero={player === "PLAYER1" ? "PLAYER2" : "PLAYER1"}></Board> */}
       </>}
+      {!state.game.PLAYER1.seated || !state.game.PLAYER2.seated && <div>
+        Waiting for player 2... <br />
+        invitation link : {window.location.href}
+      </div>}
+      {state.game.PLAYER1.seated && state.game.PLAYER2.seated && (!state.game[game.op[player]].ready) && <div>
+        Waiting for all player to be ready
+      </div>}
       {!state.started && state.game.PLAYER1.seated && state.game.PLAYER2.seated && !state.game[player].ready && <>
         <div className='button ready' onClick={() => {
           game.setReady(player);
@@ -511,17 +533,6 @@ function App() {
           I am ready
         </div>
       </>}
-      <div className='score'>
-        <div className='score-item' style={{
-          // width : 
-        }}>
-          Vous : {state.game[player].score}
-        </div>
-        <div>
-          Fumier : {state.game[game.op[player]].score}
-        </div>
-      </div>
-
     </>}
   </>
 }
