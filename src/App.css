@@ -172,6 +172,9 @@ body {
 
 .score {
   width: var(--board-size);
+  height : 30px;
+  line-height : 30px;
+  border-radius: 5px;
   display: flex;
   justify-content: space-between;
   outline: 1px solid black;

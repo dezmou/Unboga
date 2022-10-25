@@ -316,13 +316,17 @@ function Board(p: { state: ReturnType<typeof engine>["state"], hero: Player }) {
 
   useEffect(() => {
     const getInfos = () => {
+      if (p.state.gameResult) {
+        const winner = p.state.gameResult.winner === p.hero ? "You" : "Scumbag"
+        return `${winner} won ${p.state.gameResult.score} points`
+      }
       if (p.state.playerTurn !== p.hero) {
         return "It is the scumbag turn to play"
       }
-      if (p.state.nextAction === "TAKE"){
+      if (p.state.nextAction === "TAKE") {
         return "Take the green card or a random card"
       }
-      if (p.state.nextAction === "GIVE"){
+      if (p.state.nextAction === "GIVE") {
         return "Throw a card or knock"
       }
       return ""
@@ -386,15 +390,6 @@ function Board(p: { state: ReturnType<typeof engine>["state"], hero: Player }) {
         </div>
       </div>
     </div>
-    {p.state.gameResult && <>
-      game ended !<br />
-      <span style={{
-        color: p.state.gameResult.winner === p.hero ? "green" : "red",
-      }}>
-        {p.state.gameResult.winner === p.hero ? "You" : "he"} won {p.state.gameResult.score} points
-      </span>
-
-    </>}
     {p.state.started && <>
       <div className='bottom'>
         {p.state.playerTurn === p.hero && <>
@@ -571,9 +566,9 @@ function App() {
         Waiting for player 2... <br />
         invitation link : {window.location.href}
       </div>}
-      {state.game.PLAYER1.seated && state.game.PLAYER2.seated && (!state.game[game.op[player]].ready) && <div>
+      {/* {state.game.PLAYER1.seated && state.game.PLAYER2.seated && (!state.game[game.op[player]].ready) && <div>
         Waiting for all player to be ready
-      </div>}
+      </div>} */}
       {!state.started && state.game.PLAYER1.seated && state.game.PLAYER2.seated && !state.game[player].ready && <>
         <div className='button ready' onClick={() => {
           game.setReady(player);
