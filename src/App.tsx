@@ -9,7 +9,7 @@ type Player = "PLAYER1" | "PLAYER2"
 const START_NBR_CARDS = 12
 const FIELD_WIDTH = 8
 const FIELD_HEIGHT = 8
-const POINT_MIN_TO_KNOCK = 500
+const POINT_MIN_TO_KNOCK = 50
 const FULL_WIN_BONUS = 50;
 const SANCTION_KNOCK_SUPERIOR = 50;
 const START_SCORE = 200
@@ -41,7 +41,7 @@ const engine = () => {
       id: "campion",
       name: "Marcel Campion",
       image: "/heros/campion.png",
-      text: "Can knok with 75 points maximum",
+      text: `Can knock with ${POINT_MIN_TO_KNOCK + 25} points instead of ${POINT_MIN_TO_KNOCK}`,
     },
     tank: {
       id: "tank",
@@ -53,7 +53,7 @@ const engine = () => {
       id: "cloporte",
       name: "Weak joe",
       image: "/heros/cloporte.png",
-      text: "When he loses the round, loses only 70% of the points",
+      text: "When he loses the round, loses 30% less points",
     },
 
     // chien2: {
@@ -308,10 +308,15 @@ const engine = () => {
     stateEvent.next(state)
   }
 
+  const canIKnock = (player: Player) => {
+    const points = getPointsForKnock(player);
+    return (points <= (state[player].hero === "campion" ? (POINT_MIN_TO_KNOCK + 25) : POINT_MIN_TO_KNOCK))
+  }
+
   const knock = (player: Player) => {
     const points = getPointsForKnock(player);
     const pointsOp = getPointsForKnock(op[player]);
-    if (points > POINT_MIN_TO_KNOCK) return;
+    if (!canIKnock(player)) return;
 
     let score = 0;
     let winner = player;
@@ -324,6 +329,13 @@ const engine = () => {
       score += SANCTION_KNOCK_SUPERIOR;
     }
     score += Math.abs(diff);
+    const baseScore = score;
+    if (state[winner].hero === "tank") {
+      score += Math.ceil(baseScore * 0.3);
+    }
+    if (state[op[winner]].hero === "cloporte") {
+      score += -Math.floor(baseScore * 0.3);
+    }
     state.gameResult = {
       score,
       winner,
@@ -363,8 +375,10 @@ const engine = () => {
     getPointsForKnock,
     knock,
     setReady,
+    canIKnock,
     op,
     heros,
+
   }
 }
 
@@ -529,8 +543,8 @@ function Board(p: { state: ReturnType<typeof engine>["state"], player: Player })
                       game.knock(p.player)
                     }}
                     style={{
-                      opacity: game.getPointsForKnock(p.player) > POINT_MIN_TO_KNOCK ? "0.3" : "1",
-                      pointerEvents: game.getPointsForKnock(p.player) > POINT_MIN_TO_KNOCK ? "none" : "initial",
+                      opacity: !game.canIKnock(p.player) ? "0.3" : "1",
+                      pointerEvents: !game.canIKnock(p.player) ? "none" : "initial",
                     }}>
                     Knock {game.getPointsForKnock(p.player)}
                   </div>
