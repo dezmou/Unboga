@@ -457,11 +457,8 @@ function App() {
     setPlayer("PLAYER1")
     game.state.game.id = gameId;
     game.state.game.PLAYER1.seated = true;
-    // window.history.replaceState(null, "", `${window.location.origin}?game=${game.state.game.id}`);
     await updateNet()
     window.location.href = `${window.location.origin}?game=${game.state.game.id}`
-    // console.log("LISTEN NOW");
-    // listenNet(gameId);
   }
 
   const openGame = (gameId: string) => {
@@ -477,7 +474,10 @@ function App() {
           (game.state as any)[key] = (data as any)[key];
         })
         const localPlayer = localStorage.getItem(gameId) as Player;
-
+        if (!localPlayer && game.state.game.PLAYER1.seated && game.state.game.PLAYER2.seated) {
+          alert("Table pleine, degage");
+          window.location.href = `${window.location.origin}`
+        }
         if (!localPlayer) {
           localStorage.setItem(gameId, "PLAYER2")
           game.state.game.PLAYER2.seated = true;
