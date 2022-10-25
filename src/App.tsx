@@ -9,7 +9,7 @@ type Player = "PLAYER1" | "PLAYER2"
 const START_NBR_CARDS = 12
 const FIELD_WIDTH = 8
 const FIELD_HEIGHT = 8
-const POINT_MIN_TO_KNOCK = 35
+const POINT_MIN_TO_KNOCK = 50
 const FULL_WIN_BONUS = 50;
 const SANCTION_KNOCK_SUPERIOR = 50;
 
@@ -27,8 +27,8 @@ const engine = () => {
   const state = {
     game: {
       id: "",
-      PLAYER1: { seated: false, ready: false, score: 0 },
-      PLAYER2: { seated: false, ready: false, score: 0 },
+      PLAYER1: { seated: false, ready: false, score: 500 },
+      PLAYER2: { seated: false, ready: false, score: 500 },
       ready: false,
     },
     board: getNewBoard(),
@@ -254,6 +254,8 @@ const engine = () => {
       score,
       winner,
     }
+    state.game[winner].score += score;
+    state.game[op[winner]].score += -score;
     state.game.PLAYER1.ready = false;
     state.game.PLAYER2.ready = false;
     state.started = false;
@@ -286,6 +288,7 @@ const engine = () => {
     getPointsForKnock,
     knock,
     setReady,
+    op,
   }
 }
 
@@ -316,6 +319,7 @@ function Board(p: { state: ReturnType<typeof engine>["state"], hero: Player }) {
             ${card[p.hero].opTook ? "card-op-took" : ""}
             ${game.isCardPick(card) && p.state.playerTurn === p.hero ? "card-top-pick" : ""}
             ${game.isCardClickable(card, p.hero) ? "card-clickable" : ""}
+            ${p.state.gameResult && card.status === game.op[p.hero] ? "card-op-took" : ""}
         `}
                 style={{
                   cursor: game.isCardClickable(card, p.hero) ? "pointer" : "inherit"
@@ -331,8 +335,9 @@ function Board(p: { state: ReturnType<typeof engine>["state"], hero: Player }) {
                   </div>
                 </div>}
                 <div className='value'>{card.value}</div>
-                {card[p.hero].verti && <div className='streak-verti'></div>}
-                {card[p.hero].hori && <div className='streak-hori'></div>}
+
+                {(card[p.hero].verti || (p.state.gameResult && card[game.op[p.hero]].verti)) && <div className='streak-verti'></div>}
+                {(card[p.hero].hori || (p.state.gameResult && card[game.op[p.hero]].hori)) && <div className='streak-hori'></div>}
               </div>
             </div>
           </div>
@@ -408,6 +413,7 @@ function App() {
   const [player, setPlayer] = useState<Player>("PLAYER1");
 
   const updateNet = () => {
+    console.log("UPDATE NET");
     const net = gun.get('gin-board').get(game.state.game.id);
     net.put(JSON.stringify(game.state));
   }
@@ -419,6 +425,7 @@ function App() {
       Object.keys(game.state).forEach((key) => {
         (game.state as any)[key] = (data as any)[key];
       })
+      console.log(game);
       setState({ ...game.state })
     })
 
@@ -500,6 +507,16 @@ function App() {
           I am ready
         </div>
       </>}
+      <div className='score'>
+        <div className='score-item' style={{
+          // width : 
+        }}>
+          Vous : {state.game[player].score}
+        </div>
+        <div>
+          Fumier : {state.game[game.op[player]].score}
+        </div>
+      </div>
 
     </>}
   </>
