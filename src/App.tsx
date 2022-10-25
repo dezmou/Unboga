@@ -9,7 +9,7 @@ type Player = "PLAYER1" | "PLAYER2"
 const START_NBR_CARDS = 12
 const FIELD_WIDTH = 8
 const FIELD_HEIGHT = 8
-const POINT_MIN_TO_KNOCK = 50
+const POINT_MIN_TO_KNOCK = 500
 const FULL_WIN_BONUS = 50;
 const SANCTION_KNOCK_SUPERIOR = 50;
 
@@ -299,6 +299,7 @@ const engine = () => {
 
 const game = engine();
 
+// root.style.setProperty('--mainframe-margin-left', `${marginLeft}px`);
 
 function Board(p: { state: ReturnType<typeof engine>["state"], hero: Player }) {
   useEffect(() => {
@@ -351,11 +352,12 @@ function Board(p: { state: ReturnType<typeof engine>["state"], hero: Player }) {
         </div>)}
         <div className='score'>
           <div className='score-item' style={{
-            // width : 
+            width: `${(p.state.game[p.hero].score / 1000) * 100}%`,
+            background: "green",
           }}>
             Vous : {p.state.game[p.hero].score}
           </div>
-          <div>
+          <div >
             Fumier : {p.state.game[game.op[p.hero]].score}
           </div>
         </div>
@@ -501,6 +503,35 @@ function App() {
     if (urlRoomId) {
       openGame(urlRoomId);
     }
+
+    ; (async () => {
+      let currentWidth = 0;
+      let currentHeight = 0;
+      const root = document.documentElement
+
+      root.style.setProperty('amount-card-width', `${FIELD_WIDTH}`);
+      root.style.setProperty('amount-card-height', `${FIELD_HEIGHT}`);
+
+      while (true) {
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+        let changed = false;
+        if (currentWidth !== width) {
+          currentWidth = width;
+          changed = true;
+        }
+        if (currentHeight !== height) {
+          currentHeight = height;
+          changed = true;
+        }
+        if (changed) {
+          root.style.setProperty('--width', `${width}px`);
+          root.style.setProperty('--width', `${width}px`);
+
+        }
+        await new Promise(r => requestAnimationFrame(r))
+      }
+    })()
 
     return () => {
       listener.unsubscribe();
