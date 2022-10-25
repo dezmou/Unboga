@@ -394,6 +394,10 @@ function Board(p: { state: ReturnType<typeof engine>["state"], player: Player })
 
   return <>
     <div className="board-flex">
+      <div className='selected-hero-cont'>
+        chien
+      </div>
+
       <div className='board'>
         <div className='score'>
           <div className='score-item' style={{
@@ -444,6 +448,10 @@ function Board(p: { state: ReturnType<typeof engine>["state"], player: Player })
         </div>)}
         <div className='infos' dangerouslySetInnerHTML={{ __html: infos }}>
         </div>
+      </div>
+
+      <div className='selected-hero-cont'>
+        chien
       </div>
     </div>
     {p.state.started && <>

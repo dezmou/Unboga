@@ -6,11 +6,17 @@
   --amount-card-width: 8;
   --amount-card-height: 8;
   --card-size: calc(var(--board-size) / var(--amount-card-width));
-  --hero-width: calc(var(--size) * 0.2)
+  --hero-width: calc(var(--size) * 0.2);
+  --selected-hero-cont-width: calc(var(--width) * 0.25);
 }
 
 body {
   font-family: verdana;
+}
+
+.selected-hero-cont {
+  width: var(--selected-hero-cont-width);
+  background: red;
 }
 
 .board-flex {
@@ -214,12 +220,12 @@ body {
   margin-top: 10px;
   transform-origin: center;
   transition: transform 0.2s;
-  cursor : pointer;
-  background : white;
+  cursor: pointer;
+  background: white;
 }
 
 .hero:hover {
-  transform : scale(1.07);
+  transform: scale(1.07);
   z-index: 1;
 }
 
@@ -244,10 +250,10 @@ body {
   background-repeat: no-repeat;
   background-position: center;
   background-size: contain;
-  outline : 1px solid grey;
+  outline: 1px solid grey;
 }
 
 .hero-text {
-  padding : 7%;
-  padding-top : 0px;
+  padding: 7%;
+  padding-top: 0px;
 }
