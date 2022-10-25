@@ -9,7 +9,7 @@ type Player = "PLAYER1" | "PLAYER2"
 const START_NBR_CARDS = 12
 const FIELD_WIDTH = 8
 const FIELD_HEIGHT = 8
-const POINT_MIN_TO_KNOCK = 50
+const POINT_MIN_TO_KNOCK = 500
 const FULL_WIN_BONUS = 50;
 const SANCTION_KNOCK_SUPERIOR = 50;
 const START_SCORE = 200
@@ -209,10 +209,11 @@ const engine = () => {
   const evaluate = (player: Player) => {
     const horiStreak = []
     const vertiStreak = []
+    const board = getBoardOfPlayer(player)
     for (let y = 0; y < FIELD_HEIGHT; y++) {
       let streak = [];
       for (let x = 0; x < FIELD_WIDTH; x++) {
-        const card = state.board[y][x]
+        const card = board[y][x]
         if (card.status === player) {
           streak.push(card);
         }
@@ -228,7 +229,7 @@ const engine = () => {
     for (let x = 0; x < FIELD_WIDTH; x++) {
       let streak = [];
       for (let y = 0; y < FIELD_HEIGHT; y++) {
-        const card = state.board[y][x]
+        const card = board[y][x]
         if (card.status === player) {
           streak.push(card);
         }
@@ -241,7 +242,7 @@ const engine = () => {
       }
     }
 
-    for (let line of state.board) {
+    for (let line of board) {
       for (let card of line) {
         card[player].inStreak = false;
         card[player].hori = false;
@@ -263,7 +264,7 @@ const engine = () => {
     }
 
     const pointsRemaining = [];
-    for (let line of state.board) {
+    for (let line of board) {
       for (let card of line) {
         if (card.status === player && !card[player].inStreak) {
           pointsRemaining.push(card.value);
@@ -286,6 +287,8 @@ const engine = () => {
 
   const chooseHero = (player: Player, hero: keyof typeof heros) => {
     game.state[player].hero = hero;
+    evaluate("PLAYER1")
+    evaluate("PLAYER2")
     if (game.state[op[player]].hero) {
       game.state.choosingHero = false;
     }
@@ -364,6 +367,22 @@ const engine = () => {
     return card.x === state.pick.x && card.y === state.pick.y
   }
 
+  const getBoardOfPlayer = (player: Player) => {
+    if (state[player].hero !== "mirror") return state.board;
+    const final: typeof state.board = [];
+    for (let line of state.board) {
+      const finalLine: typeof line = [];
+      for (let point of line) {
+        finalLine.push({
+          ...point,
+          value: 18 - point.value
+        })
+      }
+      final.push(finalLine);
+    }
+    return final;
+  }
+
   return {
     stateEvent,
     state,
@@ -378,6 +397,7 @@ const engine = () => {
     knock,
     setReady,
     canIKnock,
+    getBoardOfPlayer,
     op,
     heros,
 
@@ -463,7 +483,7 @@ function Board(p: { state: ReturnType<typeof engine>["state"], player: Player })
           </div>
         </div>
 
-        {p.state.board.map((line, y) => <div className='board-line' key={y}>
+        {game.getBoardOfPlayer(p.player).map((line, y) => <div className='board-line' key={y}>
           {line.map((card, x) => <div key={x} className="card-flex-col">
             <div className='card-flex-row'>
               <div className={`
