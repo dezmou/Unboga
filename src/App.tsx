@@ -372,7 +372,7 @@ function Board(p: { state: ReturnType<typeof engine>["state"], player: Player })
         return `${winner} won ${p.state.gameResult.score} points`
       }
       if (p.state.choosingHero) {
-        if (!p.state[game.op[p.player]].hero) {
+        if (p.state[p.player].hero && !p.state[game.op[p.player]].hero) {
           return "Waiting for scumbag to choose hero"
         }
         return "Choose a Hero";
@@ -415,7 +415,7 @@ function Board(p: { state: ReturnType<typeof engine>["state"], player: Player })
             ${card[p.player].status === p.player ? "card-player-1" : ""}
             ${card[p.player].status === p.player && card[p.player].justTook ? "card-just-took" : ""}
             ${card[p.player].opTook ? "card-op-took" : ""}
-            ${game.isCardPick(card) && p.state.playerTurn === p.player ? "card-top-pick" : ""}
+            ${game.isCardPick(card) ? "card-top-pick" : ""}
             ${game.isCardClickable(card, p.player) ? "card-clickable" : ""}
             ${p.state.gameResult && card.status === game.op[p.player] ? "card-op-took" : ""}
         `}
@@ -448,7 +448,7 @@ function Board(p: { state: ReturnType<typeof engine>["state"], player: Player })
     </div>
     {p.state.started && <>
       <div className='bottom'>
-        {p.state.choosingHero && p.state[game.op[p.player]].hero && <>
+        {p.state.choosingHero && !p.state[p.player].hero && <>
           <div className='hero-cont'>
             {Object.values(game.heros).map((hero, i) => <div key={i} className="hero"
               onClick={() => {
