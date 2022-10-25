@@ -13,6 +13,11 @@ const POINT_MIN_TO_KNOCK = 50
 const FULL_WIN_BONUS = 50;
 const SANCTION_KNOCK_SUPERIOR = 50;
 
+export const makeId = () => {
+  return Math.floor((1 + Math.random()) * 0x100000000000)
+    .toString(32)
+}
+
 const engine = () => {
   type Card = ReturnType<typeof getNewBoard>[number][number];
 
@@ -409,7 +414,6 @@ const urlRoomId = new URLSearchParams(queryString).get("game");
 
 function App() {
   const [state, setState] = useState<ReturnType<typeof engine>["state"]>(game.state)
-  const [tgameId, setTgameId] = useState("")
   const [player, setPlayer] = useState<Player>("PLAYER1");
 
   const updateNet = () => {
@@ -431,21 +435,32 @@ function App() {
 
   }
 
+  const newGame = () => {
+    const gameId = makeId();
+    const net = gun.get('gin-board').get(gameId);
+    localStorage.setItem(gameId, "PLAYER1")
+    setPlayer("PLAYER1")
+    game.state.game.id = gameId;
+    game.state.game.PLAYER1.seated = true;
+    window.history.replaceState(null, "", `${window.location.origin}?game=${game.state.game.id}`);
+    updateNet()
+    listenNet(gameId);
+  }
+
   const openGame = (gameId: string) => {
     const net = gun.get('gin-board').get(gameId);
     net.once((value) => {
       if (!value) {
-        localStorage.setItem(gameId, "PLAYER1")
-        setPlayer("PLAYER1")
-        game.state.game.id = gameId;
-        game.state.game.PLAYER1.seated = true;
+        // localStorage.setItem(gameId, "PLAYER1")
+        // setPlayer("PLAYER1")
+        // game.state.game.id = gameId;
+        // game.state.game.PLAYER1.seated = true;
       } else {
         // game.state = JSON.parse(value);
         const data = JSON.parse(value) as ReturnType<typeof engine>["state"];
         Object.keys(game.state).forEach((key) => {
           (game.state as any)[key] = (data as any)[key];
         })
-
         game.state.game.PLAYER2.seated = true;
         const localPlayer = localStorage.getItem(gameId);
         if (!localPlayer) {
@@ -456,21 +471,14 @@ function App() {
         }
       }
       window.history.replaceState(null, "", `${window.location.origin}?game=${game.state.game.id}`);
-      if (game.state.game.PLAYER1.seated && game.state.game.PLAYER2.seated && !game.state.game.ready) {
-        // game.state.game.ready = true;
-        // game.startGame()
-      }
       updateNet()
       listenNet(gameId);
-    }, { wait: 2000 })
+    }, { wait: 10000 })
   }
 
   useEffect(() => {
-
     const listener = game.stateEvent.subscribe((state) => {
-      // if (game.state.game.ready) {
       updateNet()
-      // }
     })
 
     if (urlRoomId) {
@@ -478,20 +486,16 @@ function App() {
     }
 
     return () => {
-      // listener.unsubscribe();
+      listener.unsubscribe();
     }
   }, [])
 
   return <>
     {!state.game.id && <div>
-      Create or join room <br />
-      <input type="text" value={tgameId} onChange={(e) => {
-        setTgameId(e.target.value)
-      }} placeholder='game id'></input>
-      <button disabled={!tgameId} onClick={() => {
-        openGame(tgameId);
-
-      }}>GO !</button>
+      <button onClick={() => {
+        newGame()
+        
+      }}>New online game</button>
     </div>}
     {state.game.id && <>
       game id : {state.game.id}<br />
