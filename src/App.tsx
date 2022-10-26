@@ -3,7 +3,7 @@ import Gun from "gun"
 import { Subject } from "rxjs"
 import "./App.css"
 
-type CardStatus = "DECK" | "PLAYER1" | "PLAYER2" | "PICK"
+type CardStatus = "DECK" | "PLAYER1" | "PLAYER2" | "PICK" | "LOST"
 type Player = "PLAYER1" | "PLAYER2"
 
 const START_NBR_CARDS = 12
@@ -65,7 +65,7 @@ const engine = () => {
       id: "leave",
       name: "Deserter jack",
       image: "/heros/leave.jpg",
-      text: "Begin with on random card back to the deck",
+      text: "Begin with one random card back to the deck",
       cost: 8,
     },
     tank: {
@@ -82,37 +82,6 @@ const engine = () => {
       text: "When he loses the round, loses 30% less points",
       cost: 8,
     },
-
-    // chien2: {
-    //   id: "chien",
-    //   name: "Chien rouge",
-    //   image: "/heros/chien.jpg",
-    //   text: "Can throw away garbage at the store<br/> if the store is full then die and stuff you know",
-    // },
-    // chien3: {
-    //   id: "chien",
-    //   name: "Chien rouge",
-    //   image: "/heros/chien.jpg",
-    //   text: "Can throw away garbage at the store, if the store is full then die and stuff you know",
-    // },
-    // chien4: {
-    //   id: "chien",
-    //   name: "Chien rouge",
-    //   image: "/heros/chien.jpg",
-    //   text: "Can throw away garbage at the store, if the store is full then die and stuff you know",
-    // },
-    // chien5: {
-    //   id: "chien",
-    //   name: "Chien rouge",
-    //   image: "/heros/chien.jpg",
-    //   text: "Can throw away garbage at the store, if the store is full then die and stuff you know",
-    // },
-    // chien6: {
-    //   id: "chien",
-    //   name: "Chien rouge",
-    //   image: "/heros/chien.jpg",
-    //   text: "Can throw away garbage at the store, if the store is full then die and stuff you know",
-    // },
   }
 
   const state = {
@@ -193,7 +162,6 @@ const engine = () => {
   const give = (card: Card) => {
     if (!state.started) return;
     if (state.nextAction !== "GIVE") return;
-
     card.status = "PICK"
     card[op[state.playerTurn]].opDiscarded = true;
     state.pick = { x: card.x, y: card.y };
@@ -210,6 +178,7 @@ const engine = () => {
     state.board[state.pick.y][state.pick.x][state.playerTurn].status = state.playerTurn;
     state.board[state.pick.y][state.pick.x][state.playerTurn].justTook = true;
     state.board[state.pick.y][state.pick.x][op[state.playerTurn]].opTook = true;
+    state.board[state.pick!.y][state.pick!.x][op[state.playerTurn]].opDiscarded = false;
     state.pick = null;
     endAction();
   }
@@ -219,6 +188,7 @@ const engine = () => {
     if (state.nextAction !== "TAKE") return;
     const card = pickRandomFromDeck();
     state.board[state.pick!.y][state.pick!.x][op[state.playerTurn]].opDiscarded = true;
+    state.board[state.pick!.y][state.pick!.x].status = "LOST";
     card.status = state.playerTurn;
     card[state.playerTurn].status = state.playerTurn;
     card[state.playerTurn].justTook = true;
@@ -542,6 +512,8 @@ function Board(p: { state: ReturnType<typeof engine>["state"], player: Player })
             <div className='card-flex-row'>
               <div className={`
             card-paper
+            ${(card[p.player].status === "DECK" || card[p.player].status === "PICK") && (!card[p.player].opTook) ? "card-empty" : ""}
+            ${card.status === "LOST" ? "card-empty-lost" : ""}
             ${card[p.player].status === p.player ? "card-player-1" : ""}
             ${card[p.player].status === p.player && card[p.player].justTook ? "card-just-took" : ""}
             ${card[p.player].opTook ? "card-op-took" : ""}
