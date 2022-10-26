@@ -66,10 +66,14 @@ body {
   position: relative;
   transition: transform 0.1s;
   font-size: 10px;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
 }
 
 .card-player-1 {
-  background: #71baffbb;
+  /* background: #71baffbb; */
+  background-image: url("./hero-alone.png");
 }
 
 .card-player-2 {
@@ -81,29 +85,47 @@ body {
 }
 
 .card-just-took {
-  background: #009423bb;
+  outline: 4px solid rgb(0, 148, 76);
 }
 
 .card-op-took {
-  background: #ff0000bb;
+  background-image: url("./scum-alone.png");
 }
 
 .streak-verti {
   position: absolute;
-  width: 15%;
+  width: 40%;
   height: 100%;
-  background: purple;
-}
-
-.value {
-  position: absolute;
+  background-image: url(./golden-verti.png);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
 }
 
 .streak-hori {
   position: absolute;
   width: 100%;
-  height: 15%;
-  background: purple;
+  height: 40%;
+  background-image: url(./golden-hori.png);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+
+.value {
+  --value-size : calc(var(--card-size) * 0.27);
+  width: var(--value-size);
+  height: var(--value-size);
+  line-height: calc(var(--card-size) * 0.27);
+  border-radius: calc(var(--card-size) * 0.27 * 0.5);
+  margin-top: calc(var(--card-size) * 0.27 * -0.2);
+  margin-left: calc(var(--card-size) - var(--value-size) * 1.4);
+  outline: 1.5px solid black;
+  background: white;
+  position: absolute;
+  text-align: center;
+  font-size: calc(var(--card-size) * 0.17);
+  z-index: 1;
 }
 
 .card-clickable {
@@ -138,8 +160,12 @@ body {
 .op-discarded {
   width: 50%;
   height: 100%;
-  background: #ffc8c8;
+  background-image: url(./forbid.png);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
   border-radius: 5px;
+  margin-top: calc(var(--card-size) * 0.17);
 }
 
 .buttons {
@@ -194,24 +220,24 @@ body {
   outline: 1px solid black;
   margin-top: 10px;
   font-weight: bold;
-  font-size: calc(var(--size) * 0.015)
+  font-size: calc(var(--board-size) * 0.025)
 }
 
 .score-text {
-  position : absolute;
+  position: absolute;
 }
 
 .score-text-op {
-  position : absolute;
+  position: absolute;
   text-align: right;
-  width : 100%;
+  width: 100%;
 }
 
 .score-item {
   width: 200px;
   transition: width 1s;
   white-space: nowrap;
-  position : relative;
+  position: relative;
 }
 
 .score-item-op {

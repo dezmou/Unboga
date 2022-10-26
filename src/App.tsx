@@ -36,7 +36,7 @@ const engine = () => {
     alone: {
       id: "alone",
       name: "Lame Gus",
-      image: "/heros/alone.png",
+      image: "/heros/alone.jpg",
       text: "This hero has no power",
       cost: 0,
     },
@@ -50,7 +50,7 @@ const engine = () => {
     clone: {
       id: "clone",
       name: "Clones of the dead",
-      image: "/heros/clone.png",
+      image: "/heros/clone.jpg",
       text: "Every card are worth 9 points <br/> Only for you",
       cost: 8,
     },
@@ -64,7 +64,7 @@ const engine = () => {
     leave: {
       id: "leave",
       name: "Deserter jack",
-      image: "/heros/leave.png",
+      image: "/heros/leave.jpg",
       text: "Begin with on random card back to the deck",
       cost: 8,
     },
