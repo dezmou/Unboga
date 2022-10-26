@@ -33,29 +33,40 @@ const engine = () => {
   }
 
   const heros = {
+    alone: {
+      id: "alone",
+      name: "Lame Gus",
+      image: "/heros/alone.png",
+      text: "This hero has no power",
+      cost: 0,
+    },
     mirror: {
       id: "mirror",
       name: "Mirror of darkness",
       image: "/heros/mirror.jpg",
       text: "The points on the battlefield are on reverse order.<br/>Only for him",
+      cost: 8,
     },
     watch: {
       id: "watch",
       name: "Early fang",
       image: "/heros/watch.jpg",
       text: `Can knock with ${POINT_MIN_TO_KNOCK + HERO_EARLY_KNOCK_ADD} points instead of ${POINT_MIN_TO_KNOCK}`,
+      cost: 8,
     },
     tank: {
       id: "tank",
       name: "Strong David",
       image: "/heros/tank.jpg",
       text: "When he win the round, win 30% more points",
+      cost: 8,
     },
     cloporte: {
       id: "cloporte",
       name: "Weak joe",
       image: "/heros/cloporte.jpg",
       text: "When he loses the round, loses 30% less points",
+      cost: 8,
     },
 
     // chien2: {
