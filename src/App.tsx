@@ -47,6 +47,13 @@ const engine = () => {
       text: "The points on the battlefield are on reverse order.<br/>Only for him",
       cost: 8,
     },
+    randomPick: {
+      id: "randomPick",
+      name: "Peter",
+      image: "/heros/random-pick.png",
+      text: "The pick card of the opponent is random instead of the one you throw",
+      cost: 8,
+    },
     watch: {
       id: "watch",
       name: "Early fang",
@@ -458,7 +465,7 @@ function Board(p: { state: ReturnType<typeof engine>["state"], player: Player })
     const getInfos = () => {
       if (p.state.gameResult) {
         const winner = p.state.gameResult.winner === p.player ? "You" : "Scumbag"
-        return `${winner} won ${p.state.gameResult.score} points`
+        return `${winner} won ${p.state.gameResult.score} gold`
       }
       if (p.state.choosingHero) {
         if (p.state[p.player].hero && !p.state[game.op[p.player]].hero) {
@@ -495,13 +502,18 @@ function Board(p: { state: ReturnType<typeof engine>["state"], player: Player })
             width: `${(p.state.game[p.player].score / (START_SCORE * 2)) * 100}%`,
             background: "#16ff29",
           }}>
-            You : {p.state.game[p.player].score}
+            <div className="score-text">
+              You : {p.state.game[p.player].score}
+            </div>
+
           </div>
           <div className='score-item score-item-op' style={{
             width: `${(p.state.game[game.op[p.player]].score / (START_SCORE * 2)) * 100}%`,
             background: "red",
           }}>
-            Scumbag : {p.state.game[game.op[p.player]].score}
+            <div className="score-text-op">
+              Scumbag : {p.state.game[game.op[p.player]].score}
+            </div>
           </div>
         </div>
 
