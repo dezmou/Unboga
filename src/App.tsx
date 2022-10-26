@@ -9,7 +9,7 @@ type Player = "PLAYER1" | "PLAYER2"
 const START_NBR_CARDS = 12
 const FIELD_WIDTH = 8
 const FIELD_HEIGHT = 8
-const POINT_MIN_TO_KNOCK = 500
+const POINT_MIN_TO_KNOCK = 50
 const FULL_WIN_BONUS = 50;
 const SANCTION_KNOCK_SUPERIOR = 50;
 const START_SCORE = 200
@@ -44,14 +44,14 @@ const engine = () => {
       id: "mirror",
       name: "Mirror of darkness",
       image: "/heros/mirror.jpg",
-      text: "The points on the battlefield are on reverse order.<br/>Only for him",
+      text: "The points on the battlefield are on reverse order.<br/>Only for you",
       cost: 8,
     },
-    randomPick: {
-      id: "randomPick",
-      name: "Peter",
-      image: "/heros/random-pick.png",
-      text: "The pick card of the opponent is random instead of the one you throw",
+    clone: {
+      id: "clone",
+      name: "Clones of the dead",
+      image: "/heros/clone.png",
+      text: "Every card are worth 9 points <br/> Only for you",
       cost: 8,
     },
     watch: {
@@ -59,6 +59,13 @@ const engine = () => {
       name: "Early fang",
       image: "/heros/watch.jpg",
       text: `Can knock with ${POINT_MIN_TO_KNOCK + HERO_EARLY_KNOCK_ADD} points instead of ${POINT_MIN_TO_KNOCK}`,
+      cost: 8,
+    },
+    leave: {
+      id: "leave",
+      name: "Deserter jack",
+      image: "/heros/leave.png",
+      text: "Begin with on random card back to the deck",
       cost: 8,
     },
     tank: {
@@ -192,7 +199,6 @@ const engine = () => {
     state.pick = { x: card.x, y: card.y };
     card[state.playerTurn].status = "PICK";
     state.board[state.pick.y][state.pick.x][op[state.playerTurn]].opTook = false;
-    console.log(card);
     endAction();
   }
 
@@ -231,6 +237,9 @@ const engine = () => {
   const getCardValue = (card: Card, player: Player) => {
     if (state[player].hero === "mirror") {
       return 18 - card.value;
+    }
+    if (state[player].hero === "clone") {
+      return 9;
     }
 
     return card.value
@@ -317,6 +326,17 @@ const engine = () => {
   const chooseHero = (player: Player, hero: keyof typeof heros) => {
     game.state[player].hero = hero;
     game.state.game[player].score += -game.heros[hero].cost;
+    if (hero === "leave") {
+      while (true) {
+        const x = Math.floor(Math.random() * FIELD_WIDTH);
+        const y = Math.floor(Math.random() * FIELD_HEIGHT);
+        if (state.board[y][x].status === player) {
+          state.board[y][x].status = "DECK";
+          state.board[y][x][player].status = "DECK";
+          break;
+        }
+      }
+    }
     evaluate("PLAYER1")
     evaluate("PLAYER2")
     if (game.state[op[player]].hero) {
