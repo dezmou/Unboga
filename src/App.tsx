@@ -9,10 +9,10 @@ type Player = "PLAYER1" | "PLAYER2"
 const START_NBR_CARDS = 12
 const FIELD_WIDTH = 8
 const FIELD_HEIGHT = 8
-const POINT_MIN_TO_KNOCK = 50
+const POINT_MIN_TO_KNOCK = 500
 const FULL_WIN_BONUS = 50;
 const SANCTION_KNOCK_SUPERIOR = 50;
-const START_SCORE = 200
+const START_SCORE = 5
 
 const HERO_EARLY_KNOCK_ADD = 15;
 
@@ -170,6 +170,10 @@ const engine = () => {
     evaluate("PLAYER1")
     evaluate("PLAYER2")
     stateEvent.next({ ...state });
+  }
+
+  const canIPickThisHero = (heroId: keyof typeof heros, player: Player) => {
+    return state.game[player].score > heros[heroId].cost;
   }
 
   const give = (card: Card) => {
@@ -401,6 +405,7 @@ const engine = () => {
     setReady,
     canIKnock,
     getCardValue,
+    canIPickThisHero,
     // getBoardOfPlayer,
     op,
     heros,
@@ -492,7 +497,10 @@ function Board(p: { state: ReturnType<typeof engine>["state"], player: Player })
           }}>
             You : {p.state.game[p.player].score}
           </div>
-          <div >
+          <div className='score-item' style={{
+            width: `${(p.state.game[game.op[p.player]].score / (START_SCORE * 2)) * 100}%`,
+            background: "red",
+          }}>
             Scumbag : {p.state.game[game.op[p.player]].score}
           </div>
         </div>
@@ -552,6 +560,10 @@ function Board(p: { state: ReturnType<typeof engine>["state"], player: Player })
             {Object.values(game.heros).map((hero, i) => <div key={i} className="hero"
               onClick={() => {
                 game.chooseHero(p.player, hero.id as keyof typeof game.heros)
+              }}
+              style={{
+                pointerEvents: game.canIPickThisHero(hero.id as keyof typeof game.heros, p.player) ? "initial" : "none",
+                opacity: game.canIPickThisHero(hero.id as keyof typeof game.heros, p.player) ? "1" : "0.3",
               }}
             >
               <Hero hero={hero}></Hero>
