@@ -305,6 +305,7 @@ const engine = () => {
 
   const chooseHero = (player: Player, hero: keyof typeof heros) => {
     game.state[player].hero = hero;
+    game.state.game[player].score += -game.heros[hero].cost;
     evaluate("PLAYER1")
     evaluate("PLAYER2")
     if (game.state[op[player]].hero) {
@@ -415,6 +416,16 @@ function Hero(p: { hero: typeof game.heros[(keyof (typeof game.heros))] }) {
   return <><div className='hero-header'>
     {p.hero.name}
   </div>
+    <div className='hero-gold-flex'>
+      <div className='hero-gold-image' style={{
+        backgroundImage: `url(/gold.png)`,
+      }}>
+
+      </div>
+      <div className='hero-gold-value'>
+        {p.hero.cost}
+      </div>
+    </div>
     <div className='hero-image-grid'>
       <div className='hero-image' style={{
         backgroundImage: `url(${p.hero.image})`

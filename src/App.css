@@ -17,9 +17,9 @@ body {
 .selected-hero-cont {
   padding: calc(var(--size) * 0.01);
   text-align: center;
-  display : flex;
+  display: flex;
   justify-content: center;
-  width : var(--selected-hero-cont-width);
+  width: var(--selected-hero-cont-width);
 }
 
 .selected-hero-cont-cont {
@@ -228,7 +228,28 @@ body {
   transition: transform 0.2s;
   cursor: pointer;
   background: white;
-  margin : 5px;
+  margin: 5px;
+}
+
+.hero-gold-flex {
+  display: flex;
+  height: calc(var(--hero-width) * 0.1);
+  line-height: calc(var(--hero-width) * 0.1);
+  justify-content: center;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.hero-gold-image {
+  height: calc(var(--hero-width) * 0.1);
+  width: calc(var(--hero-width) * 0.1);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+
+.hero-gold-value {
+  margin-left: calc(var(--hero-width) * 0.03);
 }
 
 .hero:hover {
