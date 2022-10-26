@@ -72,7 +72,7 @@ const engine = () => {
       id: "leave",
       name: "Deserter jack",
       image: "/heros/leave.jpg",
-      text: "Begin with one random card back to the deck",
+      text: "Begin with one random card of his hand back to the deck",
       cost: 8,
     },
     tank: {
@@ -368,10 +368,12 @@ const engine = () => {
       score += FULL_WIN_BONUS
     }
     const diff = pointsOp - points;
-    if (diff <= 0 && pointsOp !== 0) {
+
+    if (points !== 0 && points >= pointsOp) {
       winner = op[player];
       score += SANCTION_KNOCK_SUPERIOR;
     }
+
     score += Math.abs(diff);
     const baseScore = score;
     if (state[winner].hero === "tank") {
