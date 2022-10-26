@@ -9,7 +9,7 @@ type Player = "PLAYER1" | "PLAYER2"
 const START_NBR_CARDS = 12
 const FIELD_WIDTH = 8
 const FIELD_HEIGHT = 8
-const POINT_MIN_TO_KNOCK = 500
+const POINT_MIN_TO_KNOCK = 50
 const FULL_WIN_BONUS = 50;
 const SANCTION_KNOCK_SUPERIOR = 50;
 const START_SCORE = 200
@@ -61,6 +61,13 @@ const engine = () => {
       text: `Can knock with ${POINT_MIN_TO_KNOCK + HERO_EARLY_KNOCK_ADD} points instead of ${POINT_MIN_TO_KNOCK}`,
       cost: 8,
     },
+    karen: {
+      id: "karen",
+      name: "Karen",
+      image: "/heros/karen.png",
+      text: "You get a new random hand",
+      cost: 12,
+    },
     leave: {
       id: "leave",
       name: "Deserter jack",
@@ -73,14 +80,14 @@ const engine = () => {
       name: "Strong David",
       image: "/heros/tank.jpg",
       text: "When he win the round, win 30% more points",
-      cost: 8,
+      cost: 7,
     },
     cloporte: {
       id: "cloporte",
       name: "Weak joe",
       image: "/heros/cloporte.jpg",
       text: "When he loses the round, loses 30% less points",
-      cost: 8,
+      cost: 7,
     },
   }
 
@@ -126,6 +133,7 @@ const engine = () => {
       const x = Math.floor(Math.random() * FIELD_WIDTH);
       const y = Math.floor(Math.random() * FIELD_HEIGHT);
       if (state.board[y][x].status === "DECK") {
+        if (state.pick && x === state.pick.x && y === state.pick.y) continue;
         return state.board[y][x];
       }
     }
@@ -307,6 +315,17 @@ const engine = () => {
         }
       }
     }
+    if (hero === "karen") {
+      for (let line of state.board) {
+        for (let card of line) {
+          if (card.status === player) {
+            card.status = "DECK";
+            card[player].status = "DECK";
+          }
+        }
+      }
+      distribute(player);
+    }
     evaluate("PLAYER1")
     evaluate("PLAYER2")
     if (game.state[op[player]].hero) {
@@ -390,6 +409,8 @@ const engine = () => {
   return {
     stateEvent,
     state,
+    op,
+    heros,
     chooseHero,
     takePick,
     startGame,
@@ -403,10 +424,6 @@ const engine = () => {
     canIKnock,
     getCardValue,
     canIPickThisHero,
-    // getBoardOfPlayer,
-    op,
-    heros,
-
   }
 }
 
@@ -563,7 +580,7 @@ function Board(p: { state: ReturnType<typeof engine>["state"], player: Player })
       <div className='bottom'>
         {p.state.choosingHero && !p.state[p.player].hero && <>
           <div className='hero-cont'>
-            {Object.values(game.heros).map((hero, i) => <div key={i} className="hero"
+            {Object.values(game.heros).sort(e => e.cost - e.cost).map((hero, i) => <div key={i} className="hero"
               onClick={() => {
                 game.chooseHero(p.player, hero.id as keyof typeof game.heros)
               }}
