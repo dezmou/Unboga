@@ -9,7 +9,7 @@ type Player = "PLAYER1" | "PLAYER2"
 const START_NBR_CARDS = 12
 const FIELD_WIDTH = 8
 const FIELD_HEIGHT = 8
-const POINT_MIN_TO_KNOCK = 50
+const POINT_MIN_TO_KNOCK = 500
 const FULL_WIN_BONUS = 50;
 const SANCTION_KNOCK_SUPERIOR = 50;
 const START_SCORE = 200
@@ -512,7 +512,9 @@ function Board(p: { state: ReturnType<typeof engine>["state"], player: Player })
             <div className='card-flex-row'>
               <div className={`
             card-paper
-            ${(card[p.player].status === "DECK" || card[p.player].status === "PICK") && (!card[p.player].opTook) ? "card-empty" : ""}
+            ${(card[p.player].status === "DECK" || card[p.player].status === "PICK")
+                  && (!card[p.player].opTook
+                    && !(p.state.gameResult && card.status === game.op[p.player])) ? "card-empty" : ""}
             ${card.status === "LOST" ? "card-empty-lost" : ""}
             ${card[p.player].status === p.player ? "card-player-1" : ""}
             ${card[p.player].status === p.player && card[p.player].justTook ? "card-just-took" : ""}
