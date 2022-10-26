@@ -73,7 +73,7 @@ body {
 
 .card-player-1 {
   /* background: #71baffbb; */
-  background-image: url("./hero-alone.png");
+  background-image: url("./hero-alone.jpg");
 }
 
 /* .card-player-2 {
@@ -86,21 +86,21 @@ body {
 }
 
 .card-just-took {
-  outline : 5px solid rgb(39, 25, 161);
+  outline : 3px solid rgb(255, 0, 221);
   transform : rotate(20deg) scale(1.4);
   z-index: 2;
 }
 
 .card-op-took {
-  background-image: url("./scum-alone.png");
+  background-image: url("./scum-alone.jpg");
 }
 
 .card-empty {
-  background-image: url("./empty.png");
+  background-image: url("./empty.jpg");
 }
 
 .card-empty-lost {
-  background-image: url("./empty-brow.png");
+  background-image: url("./empty-brow.jpg");
 }
 
 
