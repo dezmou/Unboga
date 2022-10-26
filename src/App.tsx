@@ -163,7 +163,6 @@ const engine = () => {
 
   const give = (card: Card) => {
     if (!state.started) return;
-    if (!state.started) return;
     if (state.nextAction !== "GIVE") return;
 
     card.status = "PICK"
@@ -171,6 +170,7 @@ const engine = () => {
     state.pick = { x: card.x, y: card.y };
     card[state.playerTurn].status = "PICK";
     state.board[state.pick.y][state.pick.x][op[state.playerTurn]].opTook = false;
+    console.log(card);
     endAction();
   }
 
@@ -336,7 +336,7 @@ const engine = () => {
     score += Math.abs(diff);
     const baseScore = score;
     if (state[winner].hero === "tank") {
-      score += Math.ceil(baseScore * 0.3);
+      score += Math.floor(baseScore * 0.3);
     }
     if (state[op[winner]].hero === "cloporte") {
       score += -Math.floor(baseScore * 0.3);
@@ -445,7 +445,7 @@ function Board(p: { state: ReturnType<typeof engine>["state"], player: Player })
         if (p.state[p.player].hero && !p.state[game.op[p.player]].hero) {
           return "Waiting for scumbag to choose hero"
         }
-        return "Choose a Hero";
+        return `Choose a Hero, you will play ${p.state.playerTurn === p.player ? "first" : "second"}`;
       }
       if (p.state.playerTurn !== p.player) {
         return "It is the scumbag turn to play"

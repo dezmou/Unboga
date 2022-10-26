@@ -215,9 +215,8 @@ body {
 .hero-cont {
   margin-top: 30px;
   width: 100vw;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, calc(var(--size) * 0.22));
-  justify-content: space-around;
+  display: flex;
+  justify-content: center;
 }
 
 .hero {
@@ -229,6 +228,7 @@ body {
   transition: transform 0.2s;
   cursor: pointer;
   background: white;
+  margin : 5px;
 }
 
 .hero:hover {
