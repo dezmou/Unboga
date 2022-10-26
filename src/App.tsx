@@ -12,7 +12,7 @@ const FIELD_HEIGHT = 8
 const POINT_MIN_TO_KNOCK = 500
 const FULL_WIN_BONUS = 50;
 const SANCTION_KNOCK_SUPERIOR = 50;
-const START_SCORE = 5
+const START_SCORE = 200
 
 const HERO_EARLY_KNOCK_ADD = 15;
 
@@ -497,7 +497,7 @@ function Board(p: { state: ReturnType<typeof engine>["state"], player: Player })
           }}>
             You : {p.state.game[p.player].score}
           </div>
-          <div className='score-item' style={{
+          <div className='score-item score-item-op' style={{
             width: `${(p.state.game[game.op[p.player]].score / (START_SCORE * 2)) * 100}%`,
             background: "red",
           }}>

@@ -194,11 +194,17 @@ body {
   outline: 1px solid black;
   margin-top: 10px;
   font-weight: bold;
+  font-size: calc(var(--size) * 0.015)
 }
 
 .score-item {
   width: 200px;
   transition: width 1s;
+  white-space: nowrap;
+}
+
+.score-item-op {
+  text-align: right;
 }
 
 .infos {
@@ -215,6 +221,8 @@ body {
   width: 100vw;
   display: flex;
   justify-content: center;
+  flex-wrap: wrap;
+  font-size: calc(var(--size) * 0.015)
 }
 
 .hero {
