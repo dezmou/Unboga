@@ -79,9 +79,18 @@ function Board(p: { state: ReturnType<typeof engine>["state"], player: Player })
   return <>
     <div className="board-flex">
       <div className='selected-hero-cont'>
-        {!p.state.choosingHero && p.state[p.player].hero && <div className='selected-hero-cont-cont'>
-          <Hero hero={game.heros[p.state[p.player].hero!]}></Hero>
-        </div>}
+        <div className='selected-hero-cont-cont'>
+          <div className='user-avatar-flex'>
+            <div className='user-avatar you-avatar'>
+              <div className='user-avatar-score'>
+                {p.state.game[p.player].tableScore}
+              </div>
+            </div>
+          </div>
+          {!p.state.choosingHero && p.state[p.player].hero && <>
+            <Hero hero={game.heros[p.state[p.player].hero!]}></Hero>
+          </>}
+        </div>
       </div>
 
       <div className='board'>
@@ -152,11 +161,21 @@ function Board(p: { state: ReturnType<typeof engine>["state"], player: Player })
       </div>
 
       <div className='selected-hero-cont'>
-        {!p.state.choosingHero && p.state[game.op[p.player]].hero && <div className='selected-hero-cont-cont'>
-          <Hero hero={game.heros[p.state[game.op[p.player]].hero!]}></Hero>
-        </div>}
+        <div className='selected-hero-cont-cont'>
+          <div className='user-avatar-flex'>
+            <div className='user-avatar scum-avatar'>
+              <div className='user-avatar-score'>
+                {p.state.game[game.op[p.player]].tableScore}
+              </div>
+            </div>
+          </div>
+          {!p.state.choosingHero && p.state[game.op[p.player]].hero && <>
+            <Hero hero={game.heros[p.state[game.op[p.player]].hero!]}></Hero>
+          </>}
+        </div>
       </div>
     </div>
+
     {p.state.started && <>
       <div className='bottom'>
         {p.state.choosingHero && !p.state[p.player].hero && <>

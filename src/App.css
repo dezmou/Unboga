@@ -9,10 +9,49 @@
   --hero-width: calc(var(--size) * 0.2);
   --selected-hero-cont-width: calc(var(--width) * 0.25);
   --power-avatar-size: calc(var(--size) * 0.03);
+  --user-avatar-size: calc(var(--size) * 0.05);
 }
 
 body {
   font-family: verdana;
+}
+
+.user-avatar-flex {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.user-avatar {
+  width: var(--user-avatar-size);
+  height: var(--user-avatar-size);
+  border-radius: calc(var(--user-avatar-size) * 0.5);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  display: grid;
+  align-items: center;
+  justify-content: center;
+}
+
+.user-avatar-score {
+  width: calc(var(--user-avatar-size) * 0.4);
+  height: calc(var(--user-avatar-size) * 0.4);
+  line-height: calc(var(--user-avatar-size) * 0.4);
+  border-radius: calc(var(--user-avatar-size) * 0.4 * 0.5);
+  background: white;
+  font-weight: bold;
+  text-align: center;
+}
+
+.you-avatar {
+  background-image: url(./hero-alone.jpg);
+  color : rgb(26, 112, 26);
+}
+
+.scum-avatar {
+  background-image: url(./scum-alone.jpg);
+  color : rgb(112, 26, 26);
 }
 
 .selected-hero-cont {
@@ -355,11 +394,11 @@ body {
   margin-top: calc(var(--size) * 0.01);
   margin-bottom: calc(var(--size) * 0.007);
   display: flex;
-  background : rgb(233, 233, 233);
+  background: rgb(233, 233, 233);
 }
 
 .hero-power-avatar {
-  
+
   width: var(--power-avatar-size);
   height: var(--power-avatar-size);
   border-radius: calc(var(--power-avatar-size) * 0.5);
