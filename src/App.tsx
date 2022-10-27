@@ -82,6 +82,13 @@ const engine = () => {
       text: "Cards are worth 1 points less.<br/>And never more that 12 points<br/><br/>Only for you",
       cost: 12,
     },
+    mind: {
+      id: "mind",
+      name: "Mind Alchemist",
+      image: "/heros/mind.jpg",
+      text: "Know if opponent has less than 30 points",
+      cost: 14,
+    },
     tank: {
       id: "tank",
       name: "Strong David",
@@ -217,6 +224,16 @@ const engine = () => {
       && state.nextAction === "GIVE"
       && card.status === player
     )
+  }
+
+  const hasHeroInfoDisplayed = (player: Player) => {
+    if (
+      state[player].hero === "mind"
+      && state.playerTurn === player
+    ) {
+      return true;
+    }
+    return false;
   }
 
   const getCardValue = (card: Card, player: Player) => {
@@ -439,6 +456,7 @@ const engine = () => {
     canIKnock,
     getCardValue,
     canIPickThisHero,
+    hasHeroInfoDisplayed,
   }
 }
 
@@ -608,6 +626,22 @@ function Board(p: { state: ReturnType<typeof engine>["state"], player: Player })
             </div>
 
             )}
+          </div>
+        </>}
+        {game.hasHeroInfoDisplayed(p.player) && <>
+          <div className='hero-power-flex'>
+            <div className='hero-power'>
+              <div className='hero-power-avatar' style={{
+                backgroundImage: `url(${game.heros[p.state[p.player].hero as keyof typeof game.heros].image})`,
+              }}>
+              </div>
+              <div className='hero-power-content'>
+                {p.state[p.player].hero === "mind" && <>
+                  {p.state[game.op[p.player]].total >= 30 && `Scumbag has 30 points or more`}
+                  {p.state[game.op[p.player]].total < 30 && `Scumbag has less than 30 points !`}
+                </>}
+              </div>
+            </div>
           </div>
         </>}
         {!p.state.choosingHero && <>

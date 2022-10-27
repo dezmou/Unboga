@@ -2,12 +2,13 @@
   --size: min(1300px, calc(((100vw + 100vh) / 2)));
   --width: 0px;
   --height: 0px;
-  --board-size: min(max(calc(var(--size) * 0.4), 500px), 100vw)  ;
+  --board-size: min(max(calc(var(--size) * 0.4), 500px), 100vw);
   --amount-card-width: 8;
   --amount-card-height: 8;
   --card-size: calc(var(--board-size) / var(--amount-card-width));
   --hero-width: calc(var(--size) * 0.2);
   --selected-hero-cont-width: calc(var(--width) * 0.25);
+  --power-avatar-size: calc(var(--size) * 0.03);
 }
 
 body {
@@ -81,13 +82,13 @@ body {
 } */
 
 .card-top-pick {
-  transform : rotate(20deg) scale(1.3);
+  transform: rotate(20deg) scale(1.3);
   z-index: 2;
 }
 
 .card-just-took {
-  outline : 3px solid rgb(255, 0, 221);
-  transform : rotate(20deg) scale(1.4);
+  outline: 3px solid rgb(255, 0, 221);
+  transform: rotate(20deg) scale(1.4);
   z-index: 2;
 }
 
@@ -126,7 +127,7 @@ body {
 }
 
 .value {
-  --value-size : calc(var(--card-size) * 0.27);
+  --value-size: calc(var(--card-size) * 0.27);
   width: var(--value-size);
   height: var(--value-size);
   line-height: calc(var(--card-size) * 0.27);
@@ -341,4 +342,35 @@ body {
 .hero-text {
   padding: 7%;
   padding-top: 0px;
+}
+
+.hero-power-flex {
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+}
+
+.hero-power {
+  width: var(--board-size);
+  margin-top: calc(var(--size) * 0.01);
+  margin-bottom: calc(var(--size) * 0.007);
+  display: flex;
+  background : rgb(233, 233, 233);
+}
+
+.hero-power-avatar {
+  
+  width: var(--power-avatar-size);
+  height: var(--power-avatar-size);
+  border-radius: calc(var(--power-avatar-size) * 0.5);
+  margin-left: calc(var(--power-avatar-size) * -0.5);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+
+.hero-power-content {
+  margin-left: 10px;
+  line-height: var(--power-avatar-size);
+  font-size: calc(var(--size) * 0.012)
 }
