@@ -613,7 +613,9 @@ function Board(p: { state: ReturnType<typeof engine>["state"], player: Player })
       <div className='bottom'>
         {p.state.choosingHero && !p.state[p.player].hero && <>
           <div className='hero-cont'>
-            {Object.values(game.heros).sort(e => e.cost - e.cost).map((hero, i) => <div key={i} className="hero"
+            {Object.values(game.heros)
+            .sort((a,b) => a.cost - b.cost)
+            .map((hero, i) => <div key={i} className="hero"
               onClick={() => {
                 game.chooseHero(p.player, hero.id as keyof typeof game.heros)
               }}
@@ -637,8 +639,8 @@ function Board(p: { state: ReturnType<typeof engine>["state"], player: Player })
               </div>
               <div className='hero-power-content'>
                 {p.state[p.player].hero === "mind" && <>
-                  {p.state[game.op[p.player]].total >= 30 && `Scumbag has 30 points or more`}
-                  {p.state[game.op[p.player]].total < 30 && `Scumbag has less than 30 points !`}
+                  {p.state[game.op[p.player]].total >= 30 && <span style={{color : `#1f7c11`}}>Scumbag has 30 points or more</span> }
+                  {p.state[game.op[p.player]].total < 30 && <span style={{color : `#7c1111`}}>Scumbag has less than 30 points !</span>}
                 </>}
               </div>
             </div>
@@ -699,7 +701,6 @@ function App() {
   const [player, setPlayer] = useState<Player>("PLAYER1");
 
   const updateNet = async () => {
-    console.log("UPDATE NET");
     const net = gun.get('gin-board').get(game.state.game.id);
     await new Promise(r => net.put(JSON.stringify(game.state), r));
   }

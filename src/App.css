@@ -372,5 +372,6 @@ body {
 .hero-power-content {
   margin-left: 10px;
   line-height: var(--power-avatar-size);
-  font-size: calc(var(--size) * 0.012)
+  font-size: calc(var(--size) * 0.012);
+  font-weight: bold;
 }
