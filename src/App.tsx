@@ -44,15 +44,15 @@ const engine = () => {
       id: "mirror",
       name: "Mirror of darkness",
       image: "/heros/mirror.jpg",
-      text: "The points on the battlefield are on reverse order.<br/>Only for you",
+      text: "The points on the battlefield are on reverse order.<br/><br/>Only for you",
       cost: 8,
     },
     clone: {
       id: "clone",
       name: "Clones of the dead",
       image: "/heros/clone.jpg",
-      text: "Every card are worth 9 points <br/> Only for you",
-      cost: 8,
+      text: "Every cards are worth 9 points.<br/><br/>Only for you",
+      cost: 7,
     },
     watch: {
       id: "watch",
@@ -73,20 +73,27 @@ const engine = () => {
       name: "Deserter jack",
       image: "/heros/leave.jpg",
       text: "Begin with one random card of his hand back to the deck",
-      cost: 8,
+      cost: 9,
+    },
+    count: {
+      id: "count",
+      name: "Accountant Troll",
+      image: "/heros/count.png",
+      text: "Cards are worth 1 points less.<br/>And never more that 12 points<br/><br/>Only for you",
+      cost: 12,
     },
     tank: {
       id: "tank",
       name: "Strong David",
       image: "/heros/tank.jpg",
-      text: "When he win the round, win 30% more points",
+      text: "When he win the round, win 25% more points",
       cost: 7,
     },
     cloporte: {
       id: "cloporte",
       name: "Weak joe",
       image: "/heros/cloporte.jpg",
-      text: "When he loses the round, loses 30% less points",
+      text: "When he loses the round, loses 25% less points",
       cost: 7,
     },
   }
@@ -219,6 +226,11 @@ const engine = () => {
     if (state[player].hero === "clone") {
       return 9;
     }
+    if (state[player].hero === "count") {
+      const value = card.value - 1;
+      if (value > 12) return 12;
+      return value;
+    }
 
     return card.value
   }
@@ -303,7 +315,6 @@ const engine = () => {
 
   const chooseHero = (player: Player, hero: keyof typeof heros) => {
     game.state[player].hero = hero;
-    game.state.game[player].score += -game.heros[hero].cost;
     if (hero === "leave") {
       while (true) {
         const x = Math.floor(Math.random() * FIELD_WIDTH);
@@ -326,11 +337,13 @@ const engine = () => {
       }
       distribute(player);
     }
-    evaluate("PLAYER1")
-    evaluate("PLAYER2")
     if (game.state[op[player]].hero) {
+      game.state.game[player].score += -game.heros[hero].cost;
+      game.state.game[op[player]].score += - heros[game.state[op[player]].hero as keyof typeof heros].cost
       game.state.choosingHero = false;
     }
+    evaluate("PLAYER1")
+    evaluate("PLAYER2")
     stateEvent.next(state)
   }
 
@@ -377,10 +390,10 @@ const engine = () => {
     score += Math.abs(diff);
     const baseScore = score;
     if (state[winner].hero === "tank") {
-      score += Math.floor(baseScore * 0.3);
+      score += Math.floor(baseScore * 0.25);
     }
     if (state[op[winner]].hero === "cloporte") {
-      score += -Math.floor(baseScore * 0.3);
+      score += -Math.floor(baseScore * 0.25);
     }
     state.gameResult = {
       score,

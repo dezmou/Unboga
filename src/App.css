@@ -1,8 +1,8 @@
 :root {
-  --size: min(1500px, calc(((100vw + 100vh) / 2)));
+  --size: min(1300px, calc(((100vw + 100vh) / 2)));
   --width: 0px;
   --height: 0px;
-  --board-size: calc(var(--size) * 0.4);
+  --board-size: min(max(calc(var(--size) * 0.4), 500px), 100vw)  ;
   --amount-card-width: 8;
   --amount-card-height: 8;
   --card-size: calc(var(--board-size) / var(--amount-card-width));
@@ -262,7 +262,7 @@ body {
   margin-top: 5px;
   outline: 1px solid black;
   text-align: center;
-  font-size: 1.2rem;
+  font-size: calc(var(--size) * 0.02);
   height: 30px;
   line-height: 30px;
 }
