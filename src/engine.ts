@@ -99,6 +99,13 @@ export const engine = () => {
             text: "When he loses the round, loses 25% less points",
             cost: 5,
         },
+        roulette: {
+            id: "roulette",
+            name: "Gambler Fox",
+            image: "/heros/roulette.png",
+            text: "Get a random Hero",
+            cost: 9,
+        },
         tornado: {
             id: "tornado",
             name: "Dream Catcher",
@@ -370,6 +377,14 @@ export const engine = () => {
         }
 
         for (let player of ["PLAYER1", "PLAYER2"] as Player[]) {
+            if (state[player].hero === "roulette") {
+                const choices = Object.keys(heros).filter(e => e !== "roulette") as (keyof typeof heros)[]
+                state[player].hero = choices[Math.floor(Math.random() * choices.length)]
+                state.game[player].gold += (heros[state[player].hero!].cost - heros["roulette"].cost)
+            }
+        }
+
+        for (let player of ["PLAYER1", "PLAYER2"] as Player[]) {
             if (state[player].hero === "leave") {
                 while (true) {
                     const x = Math.floor(Math.random() * FIELD_WIDTH);
@@ -394,7 +409,7 @@ export const engine = () => {
             }
 
             state.game[player].gold += -heros[state[player].hero!].cost;
-            state.game[op[player]].gold += - heros[state[op[player]].hero as keyof typeof heros].cost
+            // state.game[op[player]].gold += - heros[state[op[player]].hero as keyof typeof heros].cost
         }
         state.choosingHero = false;
     }
