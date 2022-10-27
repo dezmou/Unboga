@@ -60,9 +60,16 @@ export const engine = () => {
         karen: {
             id: "karen",
             name: "Karen",
-            image: "/heros/karen.png",
+            image: "/heros/karen.jpg",
             text: "You get a new random hand",
             cost: 12,
+        },
+        banker: {
+            id: "banker",
+            name: "Banker Tom",
+            image: "/heros/banker.png",
+            text: "You gain the gold spent by your opponent to buy his hero",
+            cost: 4,
         },
         leave: {
             id: "leave",
@@ -73,8 +80,8 @@ export const engine = () => {
         },
         count: {
             id: "count",
-            name: "Glurmo",
-            image: "/heros/count.png",
+            name: "Marcel Campion",
+            image: "/heros/campion.png",
             text: "Cards are worth 1 points less.<br/>And never more that 12 points<br/><br/>Only for you",
             cost: 10,
         },
@@ -89,43 +96,50 @@ export const engine = () => {
             id: "tank",
             name: "Strong David",
             image: "/heros/tank.jpg",
-            text: "When you win the round, win 25% more points",
+            text: "When you win the round, win 25% more gold",
             cost: 7,
         },
         cloporte: {
             id: "cloporte",
             name: "Weak joe",
             image: "/heros/cloporte.jpg",
-            text: "When he loses the round, loses 25% less points",
+            text: "When he loses the round, loses 25% less gold",
             cost: 5,
         },
         roulette: {
             id: "roulette",
             name: "Gambler Fox",
-            image: "/heros/roulette.png",
+            image: "/heros/roulette.jpg",
             text: "Get a random Hero",
             cost: 9,
         },
         tornado: {
             id: "tornado",
             name: "Dream Catcher",
-            image: "/heros/tornado.png",
+            image: "/heros/tornado.jpg",
             text: "Your opponent is forced to play <br/><b>Lame Gus</b>",
             cost: 18,
         },
         final: {
             id: "final",
             name: "let's do it",
-            image: "/heros/final.png",
+            image: "/heros/final.jpg",
             text: "Has no minimal points required to knock",
             cost: 40,
         },
         goat: {
             id: "goat",
             name: "Insider Goat",
-            image: "/heros/goat.png",
+            image: "/heros/goat.jpg",
             text: "Know how many points opponent had at the begining of the round<br/> ( Before any Hero effect )",
             cost: 19,
+        },
+        monk: {
+            id: "monk",
+            name: "Patient Monk",
+            image: "/heros/monk.jpg",
+            text: "Always know how many points opponent has <br/> <br/> Can't knock with more than 7 points",
+            cost: 13,
         },
     }
 
@@ -260,6 +274,13 @@ export const engine = () => {
             return true;
         }
         if (
+            state[player].hero === "monk"
+            && state.playerTurn === player
+            && !state.choosingHero
+        ) {
+            return true;
+        }
+        if (
             state[player].hero === "goat"
             && !state.choosingHero
         ) {
@@ -367,20 +388,30 @@ export const engine = () => {
     }
 
     const applyHeros = () => {
-        for (let player of ["PLAYER1", "PLAYER2"] as Player[]) {
-            if (state[player].hero === "tornado") {
-                if (state[op[player]].hero === "tornado") {
-                    state[player].hero = "alone"
+        const checkTornado = () => {
+            for (let player of ["PLAYER1", "PLAYER2"] as Player[]) {
+                if (state[player].hero === "tornado") {
+                    if (state[op[player]].hero === "tornado") {
+                        state[player].hero = "alone"
+                    }
+                    state[op[player]].hero = "alone"
                 }
-                state[op[player]].hero = "alone"
             }
         }
+        checkTornado()
 
         for (let player of ["PLAYER1", "PLAYER2"] as Player[]) {
             if (state[player].hero === "roulette") {
                 const choices = Object.keys(heros).filter(e => e !== "roulette") as (keyof typeof heros)[]
                 state[player].hero = choices[Math.floor(Math.random() * choices.length)]
                 state.game[player].gold += (heros[state[player].hero!].cost - heros["roulette"].cost)
+            }
+        }
+        checkTornado()
+
+        for (let player of ["PLAYER1", "PLAYER2"] as Player[]) {
+            if (state[player].hero === "banker") {
+                state.game[player].gold += (heros[state[op[player]].hero!].cost)
             }
         }
 
@@ -407,7 +438,6 @@ export const engine = () => {
                 }
                 distribute(player);
             }
-
             state.game[player].gold += -heros[state[player].hero!].cost;
             // state.game[op[player]].gold += - heros[state[op[player]].hero as keyof typeof heros].cost
         }
@@ -448,6 +478,9 @@ export const engine = () => {
 
     const canIKnock = (player: Player) => {
         const points = getPointsForKnock(player);
+        if (state[player].hero === "monk") {
+            return (points <= 7)
+        }
         if (state[player].hero === "watch") {
             return (points <= (POINT_MIN_TO_KNOCK + HERO_EARLY_KNOCK_ADD))
         }

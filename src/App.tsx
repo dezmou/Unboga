@@ -212,6 +212,10 @@ function Board(p: { state: ReturnType<typeof engine>["state"], player: Player })
                 {p.state[p.player].hero === "goat" && <>
                   Scumbag started with {p.state[game.op[p.player]].startedWith} points
                 </>}
+                {p.state[p.player].hero === "monk" && <>
+                  Scumbag has {p.state[game.op[p.player]].total} points
+                </>}
+
               </div>
             </div>
           </div>
