@@ -129,6 +129,7 @@ function Board(p: { state: ReturnType<typeof engine>["state"], player: Player })
             ${game.isCardPick(card) ? "card-top-pick" : ""}
             ${game.isCardClickable(card, p.player) ? "card-clickable" : ""}
             ${p.state.gameResult && card.status === game.op[p.player] ? "card-op-took" : ""}
+            ${p.state.started && p.state[p.player].hero === "eye" && card.status === game.op[p.player] ? "card-op-took" : ""}
         `}
                 style={{
                   cursor: game.isCardClickable(card, p.player) ? "pointer" : "inherit"
@@ -145,8 +146,10 @@ function Board(p: { state: ReturnType<typeof engine>["state"], player: Player })
                 </div>}
                 <div className='value'>{game.getCardValue(card, p.player)}</div>
 
-                {(card[p.player].verti || (p.state.gameResult && card[game.op[p.player]].verti)) && <div className='streak-verti'></div>}
-                {(card[p.player].hori || (p.state.gameResult && card[game.op[p.player]].hori)) && <div className='streak-hori'></div>}
+                {(card[p.player].verti || (
+                  ((p.state.gameResult || (p.state.started && p.state[p.player].hero === "eye")) && card[game.op[p.player]].verti)
+                )) && <div className='streak-verti'></div>}
+                {(card[p.player].hori || ((p.state.gameResult || (p.state.started && p.state[p.player].hero === "eye")) && card[game.op[p.player]].hori)) && <div className='streak-hori'></div>}
               </div>
             </div>
           </div>
@@ -213,6 +216,9 @@ function Board(p: { state: ReturnType<typeof engine>["state"], player: Player })
                   Scumbag started with {p.state[game.op[p.player]].startedWith} points
                 </>}
                 {p.state[p.player].hero === "monk" && <>
+                  Scumbag has {p.state[game.op[p.player]].total} points
+                </>}
+                {p.state[p.player].hero === "eye" && <>
                   Scumbag has {p.state[game.op[p.player]].total} points
                 </>}
 

@@ -141,6 +141,13 @@ export const engine = () => {
             text: "Always know how many points opponent has <br/> <br/> Can't knock with more than 7 points",
             cost: 13,
         },
+        eye: {
+            id: "eye",
+            name: "Eye of the god",
+            image: "/heros/eye.png",
+            text: "You can see all opponent cards<br/><br/>Your cards value are doubled",
+            cost: 16,
+        },
     }
 
     const state = {
@@ -220,7 +227,8 @@ export const engine = () => {
         return state.game[player].gold > heros[heroId].cost;
     }
 
-    const give = (card: Card) => {
+    const give = (cardPos: {x : number, y : number}) => {
+        const card = state.board[cardPos.y][cardPos.x]
         if (!state.started) return;
         if (state.nextAction !== "GIVE") return;
         card.status = "PICK"
@@ -274,6 +282,12 @@ export const engine = () => {
             return true;
         }
         if (
+            state[player].hero === "eye"
+            && !state.choosingHero
+        ) {
+            return true;
+        }
+        if (
             state[player].hero === "monk"
             && state.playerTurn === player
             && !state.choosingHero
@@ -293,6 +307,9 @@ export const engine = () => {
     const getCardValue = (card: Card, player: Player) => {
         if (state[player].hero === "mirror") {
             return 18 - card.value;
+        }
+        if (state[player].hero === "eye") {
+            return card.value * 2;
         }
         if (state[player].hero === "clone") {
             return 9;

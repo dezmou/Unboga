@@ -111,6 +111,10 @@ body {
   background-size: contain;
 }
 
+.card-empty {
+  background-image: url("./empty.jpg");
+}
+
 .card-player-1 {
   /* background: #71baffbb; */
   background-image: url("./hero-alone.jpg");
@@ -133,10 +137,6 @@ body {
 
 .card-op-took {
   background-image: url("./scum-alone.jpg");
-}
-
-.card-empty {
-  background-image: url("./empty.jpg");
 }
 
 .card-empty-lost {
