@@ -115,10 +115,17 @@ export const engine = () => {
         },
         tornado: {
             id: "tornado",
-            name: "Dream Catcher",
+            name: "Tornado",
             image: "/heros/tornado.jpg",
             text: "Your opponent is forced to play <br/><b>Lame Gus</b>",
             cost: 18,
+        },
+        first: {
+            id: "first",
+            name: "Hurry steve",
+            image: "/heros/first.png",
+            text: "You play first",
+            cost: 8,
         },
         final: {
             id: "final",
@@ -227,7 +234,7 @@ export const engine = () => {
         return state.game[player].gold > heros[heroId].cost;
     }
 
-    const give = (cardPos: {x : number, y : number}) => {
+    const give = (cardPos: { x: number, y: number }) => {
         const card = state.board[cardPos.y][cardPos.x]
         if (!state.started) return;
         if (state.nextAction !== "GIVE") return;
@@ -456,8 +463,18 @@ export const engine = () => {
                 distribute(player);
             }
             state.game[player].gold += -heros[state[player].hero!].cost;
-            // state.game[op[player]].gold += - heros[state[op[player]].hero as keyof typeof heros].cost
         }
+
+        const initialPlayerStart = state.playerTurn;
+        for (let player of ["PLAYER1", "PLAYER2"] as Player[]) {
+            if (state[player].hero === "first") {
+                state.playerTurn = player;
+            }
+        }
+        if (state.PLAYER1.hero === "first" && state.PLAYER2.hero === "first") {
+            state.playerTurn = initialPlayerStart;
+        }
+
         state.choosingHero = false;
     }
 
