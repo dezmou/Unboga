@@ -5,10 +5,10 @@ export type Player = "PLAYER1" | "PLAYER2"
 export const START_NBR_CARDS = 12
 export const FIELD_WIDTH = 8
 export const FIELD_HEIGHT = 8
-export const POINT_MIN_TO_KNOCK = 500
+export const POINT_MIN_TO_KNOCK = 50
 export const FULL_WIN_BONUS = 50;
 export const SANCTION_KNOCK_SUPERIOR = 50;
-export const START_GOLD = 20
+export const START_GOLD = 200
 
 export const HERO_EARLY_KNOCK_ADD = 15;
 
@@ -73,23 +73,23 @@ export const engine = () => {
         },
         count: {
             id: "count",
-            name: "Accountant Troll",
+            name: "Glurmo",
             image: "/heros/count.png",
             text: "Cards are worth 1 points less.<br/>And never more that 12 points<br/><br/>Only for you",
-            cost: 12,
+            cost: 10,
         },
         mind: {
             id: "mind",
             name: "Mind Alchemist",
             image: "/heros/mind.jpg",
-            text: "Know if opponent has less than 30 points",
+            text: "Know when opponent has less than 30 points",
             cost: 14,
         },
         tank: {
             id: "tank",
             name: "Strong David",
             image: "/heros/tank.jpg",
-            text: "When he win the round, win 25% more points",
+            text: "When you win the round, win 25% more points",
             cost: 7,
         },
         cloporte: {
@@ -98,6 +98,20 @@ export const engine = () => {
             image: "/heros/cloporte.jpg",
             text: "When he loses the round, loses 25% less points",
             cost: 7,
+        },
+        final: {
+            id: "final",
+            name: "let's do it",
+            image: "/heros/final.png",
+            text: "Has no minimal points required to knock",
+            cost: 40,
+        },
+        goat: {
+            id: "goat",
+            name: "Insider Goat",
+            image: "/heros/goat.png",
+            text: "Know how many points opponent had at the begining of the round<br/> ( Before any Hero effect )",
+            cost: 19,
         },
     }
 
@@ -114,8 +128,8 @@ export const engine = () => {
         pick: null as null | { x: number, y: number },
         nextAction: "TAKE" as "TAKE" | "GIVE",
         choosingHero: false,
-        PLAYER1: { pointsRemaining: [0], total: 0, hero: null as null | keyof typeof heros },
-        PLAYER2: { pointsRemaining: [0], total: 0, hero: null as null | keyof typeof heros },
+        PLAYER1: { pointsRemaining: [0], total: 0, startedWith: 0, hero: null as null | keyof typeof heros },
+        PLAYER2: { pointsRemaining: [0], total: 0, startedWith: 0, hero: null as null | keyof typeof heros },
         gameResult: null as null | {
             winner: Player
             score: number
@@ -231,6 +245,13 @@ export const engine = () => {
         ) {
             return true;
         }
+        if (
+            state[player].hero === "goat"
+            && !state.choosingHero
+        ) {
+            return true;
+        }
+
         return false;
     }
 
@@ -322,6 +343,9 @@ export const engine = () => {
         }
         state[player].pointsRemaining = pointsRemaining
         state[player].total = amount
+        if (!state.started) {
+            state[player].startedWith = amount
+        }
     }
 
     const getPointsForKnock = (player: Player) => {
@@ -372,13 +396,13 @@ export const engine = () => {
         (["PLAYER1", "PLAYER2"] as Player[]).forEach(player => {
             distribute(player);
         })
-        state.started = true;
         state.choosingHero = true;
         state.pick = pickRandomFromDeck();
-        state.PLAYER1 = { pointsRemaining: [0], total: 0, hero: null };
-        state.PLAYER2 = { pointsRemaining: [0], total: 0, hero: null };
+        state.PLAYER1 = { pointsRemaining: [0], total: 0, startedWith: 0, hero: null };
+        state.PLAYER2 = { pointsRemaining: [0], total: 0, startedWith: 0, hero: null };
         evaluate("PLAYER1")
         evaluate("PLAYER2")
+        state.started = true;
         state.nextAction = "TAKE";
         state.gameResult = null;
         stateEvent.next(state)
@@ -386,7 +410,13 @@ export const engine = () => {
 
     const canIKnock = (player: Player) => {
         const points = getPointsForKnock(player);
-        return (points <= (state[player].hero === "watch" ? (POINT_MIN_TO_KNOCK + HERO_EARLY_KNOCK_ADD) : POINT_MIN_TO_KNOCK))
+        if (state[player].hero === "watch") {
+            return (points <= (POINT_MIN_TO_KNOCK + HERO_EARLY_KNOCK_ADD))
+        }
+        if (state[player].hero === "final") {
+            return true;
+        }
+        return (points <= POINT_MIN_TO_KNOCK)
     }
 
     const knock = (player: Player) => {

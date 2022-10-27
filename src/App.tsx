@@ -100,7 +100,7 @@ function Board(p: { state: ReturnType<typeof engine>["state"], player: Player })
             background: "#16ff29",
           }}>
             <div className="score-text">
-              You : {p.state.game[p.player].gold}
+              {p.state.game[p.player].gold}
             </div>
 
           </div>
@@ -109,7 +109,7 @@ function Board(p: { state: ReturnType<typeof engine>["state"], player: Player })
             background: "red",
           }}>
             <div className="score-text-op">
-              Scumbag : {p.state.game[game.op[p.player]].gold}
+              {p.state.game[game.op[p.player]].gold}
             </div>
           </div>
         </div>
@@ -208,6 +208,9 @@ function Board(p: { state: ReturnType<typeof engine>["state"], player: Player })
                 {p.state[p.player].hero === "mind" && <>
                   {p.state[game.op[p.player]].total >= 30 && <span style={{ color: `#1f7c11` }}>Scumbag has 30 points or more</span>}
                   {p.state[game.op[p.player]].total < 30 && <span style={{ color: `#7c1111` }}>Scumbag has less than 30 points !</span>}
+                </>}
+                {p.state[p.player].hero === "goat" && <>
+                  Scumbag started with {p.state[game.op[p.player]].startedWith} points
                 </>}
               </div>
             </div>
