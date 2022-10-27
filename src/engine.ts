@@ -97,7 +97,14 @@ export const engine = () => {
             name: "Weak joe",
             image: "/heros/cloporte.jpg",
             text: "When he loses the round, loses 25% less points",
-            cost: 7,
+            cost: 5,
+        },
+        tornado: {
+            id: "tornado",
+            name: "Dream Catcher",
+            image: "/heros/tornado.png",
+            text: "Your opponent is forced to play <br/><b>Lame Gus</b>",
+            cost: 18,
         },
         final: {
             id: "final",
@@ -352,34 +359,50 @@ export const engine = () => {
         return state[player].total
     }
 
-    const chooseHero = (player: Player, hero: keyof typeof heros) => {
-        state[player].hero = hero;
-        if (hero === "leave") {
-            while (true) {
-                const x = Math.floor(Math.random() * FIELD_WIDTH);
-                const y = Math.floor(Math.random() * FIELD_HEIGHT);
-                if (state.board[y][x].status === player) {
-                    state.board[y][x].status = "DECK";
-                    state.board[y][x][player].status = "DECK";
-                    break;
+    const applyHeros = () => {
+        for (let player of ["PLAYER1", "PLAYER2"] as Player[]) {
+            if (state[player].hero === "tornado") {
+                if (state[op[player]].hero === "tornado") {
+                    state[player].hero = "alone"
                 }
+                state[op[player]].hero = "alone"
             }
         }
-        if (hero === "karen") {
-            for (let line of state.board) {
-                for (let card of line) {
-                    if (card.status === player) {
-                        card.status = "DECK";
-                        card[player].status = "DECK";
+
+        for (let player of ["PLAYER1", "PLAYER2"] as Player[]) {
+            if (state[player].hero === "leave") {
+                while (true) {
+                    const x = Math.floor(Math.random() * FIELD_WIDTH);
+                    const y = Math.floor(Math.random() * FIELD_HEIGHT);
+                    if (state.board[y][x].status === player) {
+                        state.board[y][x].status = "DECK";
+                        state.board[y][x][player].status = "DECK";
+                        break;
                     }
                 }
             }
-            distribute(player);
-        }
-        if (state[op[player]].hero) {
-            state.game[player].gold += -heros[hero].cost;
+            if (state[player].hero === "karen") {
+                for (let line of state.board) {
+                    for (let card of line) {
+                        if (card.status === player) {
+                            card.status = "DECK";
+                            card[player].status = "DECK";
+                        }
+                    }
+                }
+                distribute(player);
+            }
+
+            state.game[player].gold += -heros[state[player].hero!].cost;
             state.game[op[player]].gold += - heros[state[op[player]].hero as keyof typeof heros].cost
-            state.choosingHero = false;
+        }
+        state.choosingHero = false;
+    }
+
+    const chooseHero = (player: Player, hero: keyof typeof heros) => {
+        state[player].hero = hero;
+        if (state[op[player]].hero) {
+            applyHeros();
         }
         evaluate("PLAYER1")
         evaluate("PLAYER2")

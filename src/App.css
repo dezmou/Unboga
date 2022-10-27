@@ -6,7 +6,7 @@
   --amount-card-width: 8;
   --amount-card-height: 8;
   --card-size: calc(var(--board-size) / var(--amount-card-width));
-  --hero-width: calc(var(--size) * 0.2);
+  --hero-width: calc(var(--size) * 0.17);
   --selected-hero-cont-width: calc(var(--width) * 0.25);
   --power-avatar-size: calc(var(--size) * 0.03);
   --user-avatar-size: calc(var(--size) * 0.05);
