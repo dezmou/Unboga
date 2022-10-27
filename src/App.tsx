@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Gun from "gun"
 import "./App.css"
-import {engine, FIELD_HEIGHT, FIELD_WIDTH, makeId, Player, START_SCORE} from "./engine"
+import { engine, FIELD_HEIGHT, FIELD_WIDTH, makeId, Player, START_GOLD } from "./engine"
 
 
 const game = engine();
@@ -48,6 +48,10 @@ function Board(p: { state: ReturnType<typeof engine>["state"], player: Player })
   useEffect(() => {
     const getInfos = () => {
       if (p.state.gameResult) {
+        if (p.state.gameResult.finalWinner) {
+          if (p.state.gameResult.finalWinner === p.player) return `<span style="color : green;font-weight:bold;">You won the game !`
+          if (p.state.gameResult.finalWinner !== p.player) return `<span style="color : red;font-weight:bold;">Scumbag won the game !`
+        }
         const winner = p.state.gameResult.winner === p.player ? "You" : "Scumbag"
         return `${winner} won ${p.state.gameResult.score} gold`
       }
@@ -83,20 +87,20 @@ function Board(p: { state: ReturnType<typeof engine>["state"], player: Player })
       <div className='board'>
         <div className='score'>
           <div className='score-item' style={{
-            width: `${(p.state.game[p.player].score / (START_SCORE * 2)) * 100}%`,
+            width: `${(p.state.game[p.player].gold / (START_GOLD * 2)) * 100}%`,
             background: "#16ff29",
           }}>
             <div className="score-text">
-              You : {p.state.game[p.player].score}
+              You : {p.state.game[p.player].gold}
             </div>
 
           </div>
           <div className='score-item score-item-op' style={{
-            width: `${(p.state.game[game.op[p.player]].score / (START_SCORE * 2)) * 100}%`,
+            width: `${(p.state.game[game.op[p.player]].gold / (START_GOLD * 2)) * 100}%`,
             background: "red",
           }}>
             <div className="score-text-op">
-              Scumbag : {p.state.game[game.op[p.player]].score}
+              Scumbag : {p.state.game[game.op[p.player]].gold}
             </div>
           </div>
         </div>
@@ -158,20 +162,20 @@ function Board(p: { state: ReturnType<typeof engine>["state"], player: Player })
         {p.state.choosingHero && !p.state[p.player].hero && <>
           <div className='hero-cont'>
             {Object.values(game.heros)
-            .sort((a,b) => a.cost - b.cost)
-            .map((hero, i) => <div key={i} className="hero"
-              onClick={() => {
-                game.chooseHero(p.player, hero.id as keyof typeof game.heros)
-              }}
-              style={{
-                pointerEvents: game.canIPickThisHero(hero.id as keyof typeof game.heros, p.player) ? "initial" : "none",
-                opacity: game.canIPickThisHero(hero.id as keyof typeof game.heros, p.player) ? "1" : "0.3",
-              }}
-            >
-              <Hero hero={hero}></Hero>
-            </div>
+              .sort((a, b) => a.cost - b.cost)
+              .map((hero, i) => <div key={i} className="hero"
+                onClick={() => {
+                  game.chooseHero(p.player, hero.id as keyof typeof game.heros)
+                }}
+                style={{
+                  pointerEvents: game.canIPickThisHero(hero.id as keyof typeof game.heros, p.player) ? "initial" : "none",
+                  opacity: game.canIPickThisHero(hero.id as keyof typeof game.heros, p.player) ? "1" : "0.3",
+                }}
+              >
+                <Hero hero={hero}></Hero>
+              </div>
 
-            )}
+              )}
           </div>
         </>}
         {game.hasHeroInfoDisplayed(p.player) && <>
@@ -183,8 +187,8 @@ function Board(p: { state: ReturnType<typeof engine>["state"], player: Player })
               </div>
               <div className='hero-power-content'>
                 {p.state[p.player].hero === "mind" && <>
-                  {p.state[game.op[p.player]].total >= 30 && <span style={{color : `#1f7c11`}}>Scumbag has 30 points or more</span> }
-                  {p.state[game.op[p.player]].total < 30 && <span style={{color : `#7c1111`}}>Scumbag has less than 30 points !</span>}
+                  {p.state[game.op[p.player]].total >= 30 && <span style={{ color: `#1f7c11` }}>Scumbag has 30 points or more</span>}
+                  {p.state[game.op[p.player]].total < 30 && <span style={{ color: `#7c1111` }}>Scumbag has less than 30 points !</span>}
                 </>}
               </div>
             </div>
