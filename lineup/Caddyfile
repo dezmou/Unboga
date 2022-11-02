@@ -1,0 +1,11 @@
+http://localhost:8080 {
+	reverse_proxy 127.0.0.1:3000
+}
+
+http://localhost:8080/api/* {
+    #uri strip_prefix /api
+    reverse_proxy 127.0.0.1:3001 {
+        header_up Host {host}
+        header_up X-Real-IP {remote}
+    }
+}
