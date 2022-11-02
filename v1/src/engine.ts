@@ -152,8 +152,8 @@ export const engine = () => {
             id: "eye",
             name: "Eye of the god",
             image: "/heros/eye.png",
-            text: "You can see all opponent cards<br/><br/>Your cards value are doubled",
-            cost: 16,
+            text: "You can see all opponent cards<br/><br/>Your cards have 70% more points",
+            cost: 22,
         },
     }
 
@@ -316,7 +316,7 @@ export const engine = () => {
             return 18 - card.value;
         }
         if (state[player].hero === "eye") {
-            return card.value * 2;
+            return card.value + Math.ceil((card.value * 0.7));
         }
         if (state[player].hero === "clone") {
             return 9;

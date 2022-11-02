@@ -129,7 +129,7 @@ function Board(p: { state: ReturnType<typeof engine>["state"], player: Player })
             ${game.isCardPick(card) ? "card-top-pick" : ""}
             ${game.isCardClickable(card, p.player) ? "card-clickable" : ""}
             ${p.state.gameResult && card.status === game.op[p.player] ? "card-op-took" : ""}
-            ${p.state.started && p.state[p.player].hero === "eye" && card.status === game.op[p.player] ? "card-op-took" : ""}
+            ${p.state.started && !p.state.choosingHero && p.state[p.player].hero === "eye" && card.status === game.op[p.player] ? "card-op-took" : ""}
         `}
                 style={{
                   cursor: game.isCardClickable(card, p.player) ? "pointer" : "inherit"
@@ -144,12 +144,23 @@ function Board(p: { state: ReturnType<typeof engine>["state"], player: Player })
                     <div className='op-discarded'></div>
                   </div>
                 </div>}
-                <div className='value'>{game.getCardValue(card, p.player)}</div>
+                <div className='value'>
+                  <div className='value-text'>
+                    {game.getCardValue(card, p.player)}
+                  </div>
+                  {/* <div className='value-bar'>
+                    <div className='value-bar-top' style={{
+                      height: `${100 - Math.floor(card.value / 16 * 100)}%`
+                    }}>
+                    </div>
+                  </div> */}
+
+                </div>
 
                 {(card[p.player].verti || (
-                  ((p.state.gameResult || (p.state.started && p.state[p.player].hero === "eye")) && card[game.op[p.player]].verti)
+                  ((p.state.gameResult || (p.state.started && !p.state.choosingHero && p.state[p.player].hero === "eye")) && card[game.op[p.player]].verti)
                 )) && <div className='streak-verti'></div>}
-                {(card[p.player].hori || ((p.state.gameResult || (p.state.started && p.state[p.player].hero === "eye")) && card[game.op[p.player]].hori)) && <div className='streak-hori'></div>}
+                {(card[p.player].hori || ((p.state.gameResult || (p.state.started && !p.state.choosingHero && p.state[p.player].hero === "eye")) && card[game.op[p.player]].hori)) && <div className='streak-hori'></div>}
               </div>
             </div>
           </div>
@@ -282,7 +293,7 @@ function App() {
 
   const updateNet = async () => {
     const net = gun.get('gin-board').get(game.state.game.id);
-    await new Promise(r => net.put(JSON.stringify(game.state), r));
+    net.put(JSON.stringify(game.state))
   }
 
   const listenNet = (id: string) => {
@@ -300,14 +311,23 @@ function App() {
 
   const newGame = async () => {
     const gameId = makeId();
+    console.log(1);
     console.log("GAME ID", gameId);
     const net = gun.get('gin-board').get(gameId);
+    console.log(2);
     localStorage.setItem(gameId, "PLAYER1")
+    console.log(3);
     setPlayer("PLAYER1")
+    console.log(4);
     game.state.game.id = gameId;
+    console.log(5);
     game.state.game.PLAYER1.seated = true;
+    console.log(6);
     await updateNet()
+    console.log(7);
+    console.log(`window.location.href = ${window.location.origin}?game=${game.state.game.id}`);
     window.location.href = `${window.location.origin}?game=${game.state.game.id}`
+    console.log(8);
   }
 
   const openGame = (gameId: string) => {
