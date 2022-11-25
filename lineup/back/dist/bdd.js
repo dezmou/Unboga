@@ -17,11 +17,16 @@ const getItem = (id) => {
         return cache[id];
     return new Promise((r, j) => {
         (0, fs_1.readFile)(`./bdd/${id}`, "utf-8", (err, data) => {
-            if (err) {
-                j(err);
+            try {
+                if (err) {
+                    j(err);
+                }
+                else {
+                    r(JSON.parse(data));
+                }
             }
-            else {
-                r(data);
+            catch (e) {
+                j(e);
             }
         });
     });
@@ -44,14 +49,19 @@ exports.deleteItem = deleteItem;
 const setItem = (id, data) => __awaiter(void 0, void 0, void 0, function* () {
     cache[id] = data;
     yield new Promise((r, j) => {
-        (0, fs_1.writeFile)(`./bdd/${id}`, data, "utf-8", (err) => {
-            if (err) {
-                j(err);
-            }
-            else {
-                r();
-            }
-        });
+        try {
+            (0, fs_1.writeFile)(`./bdd/${id}`, JSON.stringify(data, null, 2), "utf-8", (err) => {
+                if (err) {
+                    j(err);
+                }
+                else {
+                    r();
+                }
+            });
+        }
+        catch (e) {
+            j(e);
+        }
     });
 });
 exports.setItem = setItem;
