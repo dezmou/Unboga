@@ -1,31 +1,27 @@
 import React, { useEffect } from 'react';
 import logo from './logo.svg';
-import { io, connect } from "socket.io-client"
 import './App.css';
+import { useRender } from './render';
+import state from "./state"
+import { isLoggued } from "./logic"
 
-function App() {
-
-  useEffect(() => {
-    const sockett = io(`${window.location.origin}`, { path: "/api" });
-
-    sockett.on("welcome", (id) => {
-      console.log(id);
-    })
-    // socket.on('chien', function(msg) {
-    //   console.log(msg);
-    // });
-
-    // fetch("http://localhost:3001").then(res => {
-    //   res.text().then(r => {
-    //     console.log(r);
-    //   })
-    // })
-  }, [])
-
-
+function Login() {
+  const rd = useRender()
 
   return <>
     chien
+  </>
+}
+
+function App() {
+  const rd = useRender("global")
+
+  useEffect(() => {
+    isLoggued();
+  }, [])
+
+  return <>
+    {state.welcomed ? "welcomed" : "not welcomed"}
   </>
     ;
 }

@@ -1,0 +1,34 @@
+version: "3.9"
+services:
+  
+  back:
+    build: .
+    ports:
+      - "3001:3001"
+  
+  mongo:
+    image: mongo:latest
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: chien
+    ports:
+      - 27017:27017
+    volumes:
+      - mongodb_data_container:/docker_data/db
+
+  mongo-express:
+    image: mongo-express
+    depends_on:
+      - mongo
+    ports: 
+      - 8081:8081
+    environment:
+      ME_CONFIG_MONGODB_SERVER: mongo
+      ME_CONFIG_BASICAUTH_USERNAME: root
+      ME_CONFIG_BASICAUTH_PASSWORD: chien
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: chien
+      
+
+volumes:
+  mongodb_data_container:

@@ -9,25 +9,17 @@ const io = new Server(server, {
     // cors : {
     //     origin : "*",
     // }
-    path: '/api'
+    path: '/api',
 });
-
-// app.use(cors({
-//     origin: (origin: any, callback: any) => {
-//         callback(null, true)
-//     },
-//     credentials: true,
-// }))
 
 io.on('connection', (socket) => {
     console.log("USER CON");
     socket.emit("welcome", socket.id)
 });
 
-// app.get('/', (req, res) => {
-//     res.send('<h1>Hello world</h1>');
-// });
-
-server.listen(3001, () => {
+server.listen({
+    port: 3001,
+    host: "0.0.0.0",
+}, () => {
     console.log("SERVER STARTED");
 });
