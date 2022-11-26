@@ -16,6 +16,9 @@ const io = new Server(server, {
 io.on('connection', (socket) => {
     console.log("USER CON");
     socket.emit("welcome", socket.id)
+    socket.on("dog", (data) => {
+        console.log("il y a la data", data);
+    })
 });
 
 server.listen({
@@ -25,11 +28,11 @@ server.listen({
     console.log("SERVER STARTED");
 });
 
-; (async () => {
-    const client = new MongoClient(`mongodb://root:chien@mongo:27017`);
-    await client.connect();
-    const db = client.db("unbogame");
-    await db.createCollection("users", {}).catch(e => { });
-    await client.close();
-    console.log("SUCESS");
-})()
+// ; (async () => {
+//     const client = new MongoClient(`mongodb://root:chien@mongo:27017`);
+//     await client.connect();
+//     const db = client.db("unbogame");
+//     await db.createCollection("users", {}).catch(e => { });
+//     await client.close();
+//     console.log("SUCESS");
+// })()
