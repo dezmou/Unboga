@@ -1,7 +1,9 @@
 import express from "express"
 import http from "http"
-import { Server } from "socket.io"
+import { Server, Socket } from "socket.io"
 import { MongoClient } from "mongodb"
+import { ApiCAll, AskState, State } from "./common/api.interface"
+import { DefaultEventsMap } from "socket.io/dist/typed-events"
 
 const cors = require("cors")
 const app = express();
@@ -13,11 +15,19 @@ const io = new Server(server, {
     path: '/api',
 });
 
+const sendState = (socket: Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>, state: State) => {
+    socket.emit("newState", JSON.stringify(state))
+}
+
 io.on('connection', (socket) => {
     console.log("USER CON");
     socket.emit("welcome", socket.id)
-    socket.on("dog", (data) => {
-        console.log("il y a la data", data);
+
+    socket.on("askState", (param: AskState) => {
+        console.log("User ask for state", param.user);
+        if (!param.user) {
+            return sendState(socket, { connected: false })
+        }
     })
 });
 

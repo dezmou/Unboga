@@ -10,12 +10,11 @@ export type CreateUser = {
 
 export type AskState = {
     action: "askState"
+    user?: { name: String, token: string }
 }
 
 export type ApiCAll = CreateUser | AskState
 
-
 export interface State {
-    welcomed: false,
-    ready: false,
+    connected : boolean
 }

@@ -1,7 +1,7 @@
 import { io, connect } from "socket.io-client"
 import { render } from "./render";
 import { localState, state } from "./state"
-import { ApiCAll, Call } from "../common/api.interface"
+import { ApiCAll, Call, State } from "../back/src/common/api.interface"
 
 const socket = io(`${window.location.origin}`, {
     path: "/api",
@@ -12,7 +12,7 @@ const socket = io(`${window.location.origin}`, {
 export const isLoggued = () => { }
 
 const apiCAll = (params: ApiCAll) => {
-    socket.emit(JSON.stringify(params));
+    socket.emit(params.action, JSON.stringify(params));
 }
 
 const askState = () => {
@@ -27,6 +27,10 @@ const main = async () => {
 
         localState.welcomed = true;
         render("global");
+    })
+
+    socket.on("newState", (state: State) => {
+        console.log(state);
     })
 }
 

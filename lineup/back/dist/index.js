@@ -15,11 +15,17 @@ const io = new socket_io_1.Server(server, {
     // }
     path: '/api',
 });
+const sendState = (socket, state) => {
+    socket.emit("newState", JSON.stringify(state));
+};
 io.on('connection', (socket) => {
     console.log("USER CON");
     socket.emit("welcome", socket.id);
-    socket.on("dog", (data) => {
-        console.log("il y a la data", data);
+    socket.on("askState", (param) => {
+        console.log("User ask for state", param.user);
+        if (!param.user) {
+            return sendState(socket, { connected: false });
+        }
     });
 });
 server.listen({
