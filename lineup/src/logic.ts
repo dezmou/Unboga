@@ -1,6 +1,6 @@
 import { io, connect } from "socket.io-client"
 import { render } from "./render";
-import { localState, state } from "./state"
+import { global } from "./state"
 import { ApiCAll, Call, State } from "../back/src/common/api.interface"
 
 const socket = io(`${window.location.origin}`, {
@@ -22,15 +22,16 @@ const askState = () => {
 const main = async () => {
     socket.on("welcome", (id) => {
         const user = localStorage.getItem("user");
-        localState.user = user ? JSON.parse(user) : undefined
+        global.localState.user = user ? JSON.parse(user) : undefined
         askState();
-
-        localState.welcomed = true;
+        global.localState.welcomed = true;
         render("global");
     })
 
     socket.on("newState", (state: State) => {
-        console.log(state);
+        global.localState.ready = true;
+        global.state = state;
+        render("global");
     })
 }
 
