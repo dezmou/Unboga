@@ -26,10 +26,17 @@ io.on('connection', (socket) => {
     socket.on("askState", (param: AskState) => {
         console.log("User ask for state", param.user);
         if (!param.user) {
-            return sendState(socket, { connected: false })
+            return sendState(socket, {
+                connected: false,
+                render: ["global"]
+            })
         }
     })
 });
+
+setInterval(() => {
+    io.emit("tick", Date.now())
+}, 1000)
 
 server.listen({
     port: 3001,

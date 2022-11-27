@@ -12,11 +12,20 @@ const socket = io(`${window.location.origin}`, {
 export const isLoggued = () => { }
 
 const apiCAll = (params: ApiCAll) => {
-    socket.emit(params.action, JSON.stringify(params));
+    socket.emit(params.action, JSON.stringify({
+        ...params,
+        user: global.localState.user
+    }));
 }
 
 const askState = () => {
     apiCAll({ action: "askState" })
+}
+
+const renderAll = (targets: string[]) => {
+    for (let target of targets) {
+        render(target);
+    }
 }
 
 const main = async () => {
@@ -28,10 +37,14 @@ const main = async () => {
         render("global");
     })
 
+    socket.on("tick", (time) => {
+        console.log(time - Date.now());
+    })
+
     socket.on("newState", (state: State) => {
         global.localState.ready = true;
         global.state = state;
-        render("global");
+        renderAll(global.state.render)
     })
 }
 

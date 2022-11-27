@@ -10,6 +10,7 @@ export const global = {
         welcomed: false,
     },
     state: {
-        connected: false
+        connected: false,
+        render: ["global"]
     } as State
 }

@@ -2,19 +2,26 @@ console.log("CHIENrouge");
 
 export type Call = "login" | "askState"
 
-export type CreateUser = {
+type ApiCallBase = {
+    user? : {
+        id : string 
+        token : string
+    }
+}
+
+export interface CreateUser extends ApiCallBase {
     action: "creatUser"
     name: String;
     password: string
 }
 
-export type AskState = {
+export interface AskState extends ApiCallBase {
     action: "askState"
-    user?: { name: String, token: string }
 }
 
 export type ApiCAll = CreateUser | AskState
 
-export interface State {
+export type State = {
     connected : boolean
+    render : string[]
 }
