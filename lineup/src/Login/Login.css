@@ -1,0 +1,21 @@
+:root {
+    --login-field-width : calc(var(--width) * 0.7);
+    --login-field-height : calc(var(--width) * 0.5);
+}
+
+.login-main-cont {
+    width: var(--width);
+    height: var(--height);
+    display: grid;
+    justify-content: center;
+    align-content: center;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.login-field-cont {
+    width : var(--login-field-width);
+    height : var(--login-field-height);
+    background : red;
+}

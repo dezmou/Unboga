@@ -4,14 +4,7 @@ import './App.css';
 import { useRender } from './render';
 import { global } from "./state"
 import { isLoggued } from "./logic"
-
-function Login() {
-  const rd = useRender()
-
-  return <>
-    chien
-  </>
-}
+import Login from './Login/Login';
 
 function App() {
   const rd = useRender("global")
