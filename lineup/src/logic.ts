@@ -40,20 +40,8 @@ const watchLayout = async () => {
 
             let width = allWidth;
             let height = allHeight;
-
-            if (allWidth > allHeight) {
-                const ratio = allHeight / allWidth
-                width = allWidth * ratio * 0.7;
-            } else {
-                const ratio = allHeight / allWidth
-                width = allWidth * ratio * 0.7;
-            }
-
-            // const min = Math.min(allWidth, allHeight)
-
-            // if (width > 700) width = 700;
-
-
+            const ratio = allHeight / allWidth
+            width = Math.min(allWidth, allWidth * ratio * 0.7) ;
             root.style.setProperty('--width', `${width}px`);
             root.style.setProperty('--height', `${height}px`);
         }
