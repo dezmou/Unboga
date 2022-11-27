@@ -8,6 +8,10 @@ export const global = {
         } | undefined,
         ready: false,
         welcomed: false,
+        size: {
+            width: 0,
+            height: 0
+        }
     },
     state: {
         connected: false,

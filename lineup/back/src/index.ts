@@ -34,9 +34,9 @@ io.on('connection', (socket) => {
     })
 });
 
-setInterval(() => {
-    io.emit("tick", Date.now())
-}, 1000)
+// setInterval(() => {
+//     io.emit("tick", Date.now())
+// }, 1000)
 
 server.listen({
     port: 3001,

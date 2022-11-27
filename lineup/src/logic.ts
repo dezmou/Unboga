@@ -28,6 +28,40 @@ const renderAll = (targets: string[]) => {
     }
 }
 
+const watchLayout = async () => {
+    const root = document.documentElement
+
+    while (true) {
+        const allWidth = window.innerWidth;
+        const allHeight = window.innerHeight;
+        if (global.localState.size.width !== allWidth || global.localState.size.height !== allHeight) {
+            global.localState.size.width = allWidth;
+            global.localState.size.height = allHeight;
+
+            let width = allWidth;
+            let height = allHeight;
+
+            if (allWidth > allHeight) {
+                const ratio = allHeight / allWidth
+                width = allWidth * ratio * 0.7;
+            } else {
+                const ratio = allHeight / allWidth
+                width = allWidth * ratio * 0.7;
+            }
+
+            // const min = Math.min(allWidth, allHeight)
+
+            // if (width > 700) width = 700;
+
+
+            root.style.setProperty('--width', `${width}px`);
+            root.style.setProperty('--height', `${height}px`);
+        }
+
+        await new Promise(r => setTimeout(r, 100));
+    }
+}
+
 const main = async () => {
     socket.on("welcome", (id) => {
         const user = localStorage.getItem("user");
@@ -37,15 +71,12 @@ const main = async () => {
         render("global");
     })
 
-    socket.on("tick", (time) => {
-        console.log(time - Date.now());
-    })
-
-    socket.on("newState", (state: State) => {
+    socket.on("newState", (msg: string) => {
+        global.state = JSON.parse(msg);
         global.localState.ready = true;
-        global.state = state;
         renderAll(global.state.render)
     })
+    watchLayout();
 }
 
 main();

@@ -22,9 +22,11 @@ function App() {
 
   return <>
     {global.localState.ready && <>
-      {!global.state.connected && <>
-        login
-      </>}
+      <div className='all'>
+        <div className='view'>
+          <Login></Login>
+        </div>
+      </div>
     </>}
   </>
     ;
