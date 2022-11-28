@@ -42,11 +42,18 @@ export const addUser = async (name: string, password: string) => {
 }
 
 export const getUser = async (id: string) => {
-    console.log("FIND", id);
     const res = (await db.collection("users").findOne({ _id: new ObjectId(id) }));
-    console.log("cringe", res);
     if (!res) {
         return;
     }
     return res.state as State;
+}
+
+export const getUserByName = async (name: string) => {
+    const res = (await db.collection("users").findOne({ name })) as any;
+    if (!res) {
+        return;
+    }
+    console.log(res);
+    return res ;
 }

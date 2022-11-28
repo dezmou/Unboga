@@ -17,6 +17,10 @@ const apiCAll = (params: ApiCAll) => {
     }));
 }
 
+export const login = (name: string, pass: string) => {
+    apiCAll({ action: "login", name, password: pass })
+}
+
 export const createUser = (name: string, pass: string) => {
     apiCAll({ action: "createUser", name, password: pass })
 }

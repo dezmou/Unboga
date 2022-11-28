@@ -15,11 +15,17 @@ export interface CreateUser extends ApiCallBase {
     password: string
 }
 
+export interface Login extends ApiCallBase {
+    action: "login";
+    name: string;
+    password: string
+}
+
 export interface AskState extends ApiCallBase {
     action: "askState"
 }
 
-export type ApiCAll = CreateUser | AskState
+export type ApiCAll = CreateUser | AskState | Login
 
 export type State = {
     page: "blank" | "login" | "lobby" | "game"

@@ -1,7 +1,7 @@
 import express from "express"
 import http from "http"
 import { Server, Socket } from "socket.io"
-import { ApiCAll, AskState, CreateUser, State } from "./common/api.interface"
+import { ApiCAll, AskState, CreateUser, Login, State } from "./common/api.interface"
 import { DefaultEventsMap } from "socket.io/dist/typed-events"
 import { addUser, getUser, onReady } from "./bdd"
 
@@ -27,6 +27,13 @@ onReady.subscribe(() => {
     io.on('connection', (socket) => {
         console.log("USER CON");
         socket.emit("welcome", socket.id)
+
+        socket.on("login", async (p) => {
+            const param = JSON.parse(p) as Login
+            const res = await getUser(param.name)
+            // if (!res || res. !== param.)
+            
+        })
 
         socket.on("createUser", async (p) => {
             const param = JSON.parse(p) as CreateUser

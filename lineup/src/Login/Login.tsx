@@ -62,6 +62,12 @@ export default () => {
         return true;
     }
 
+    const login = () => {
+        if (preValidate()) {
+            createUser(field.name, field.pass)
+        }
+    }
+
     const creatUser = () => {
         if (preValidate()) {
             createUser(field.name, field.pass)
@@ -122,7 +128,7 @@ export default () => {
                         <Button style={{
                             backgroundColor: "#8a1414",
                         }} className='login-button' variant='contained'
-                            onClick={() => { }}
+                            onClick={() => { login() }}
                         >Login</Button>
                     </div>
                     <div>
