@@ -1,6 +1,6 @@
 :root {
-    --login-field-width : calc(var(--width) * 0.7);
-    --login-field-height : calc(var(--width) * 0.5);
+    --login-field-width: min(370px, calc(var(--width) * 0.7)) ;
+    /* --login-field-height: calc(var(--login-field-width) * 0.5); */
 }
 
 .login-main-cont {
@@ -15,7 +15,34 @@
 }
 
 .login-field-cont {
-    width : var(--login-field-width);
-    height : var(--login-field-height);
-    background : red;
+    width: var(--login-field-width);
+    height: var(--login-field-height);
+    /* background : red; */
+    display: grid;
+    justify-content: center;
+    align-content: center;
+}
+
+.login-input {
+    /* background: #ffffff11; */
+    width:  var(--login-field-width);
+}
+
+.login-input > div {
+    background: #ffffffcc;
+    /* width: calc(var(--login-field-width) * 0.7); */
+}
+
+.login-field-div {
+    margin-top : calc(var(--width) * 0.02);
+}
+
+.login-button-cont {
+    margin-top : calc(var(--width) * 0.02);
+    display : flex;
+    justify-content: space-between;
+}
+
+.login-button {
+    width : calc(var(--login-field-width) * 0.48);
 }
