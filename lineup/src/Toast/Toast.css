@@ -1,4 +1,30 @@
-.toast{
-    position : absolute; 
+:root {
+    --toast-width: calc(var(--width) * 0.5);
+    --toast-height: calc(var(--toast-width) * 0.3);
+}
+
+.toast {
+    position: absolute;
     z-index: 1;
+    transition: top 0.2s;
+    width: var(--width);
+    height: var(--toast-height);
+    display: grid;
+    justify-content: center;
+    align-items: center;
+}
+
+
+.toast-content {
+    width: var(--toast-width);
+    height: calc(var(--toast-height) * 0.9) ;
+    text-align: center;
+    color : white;
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    border-radius: calc(var(--toast-width) * 0.02);
+}
+
+.toast-text {
 }

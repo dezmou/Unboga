@@ -5,11 +5,13 @@ import { useRender } from './render';
 import { global } from "./state"
 import Login from './Login/Login';
 import Toast from './Toast/Toast';
+import { main } from './logic';
 
 function App() {
   const rd = useRender("global")
 
   useEffect(() => {
+    main()
   }, [])
 
   return <>

@@ -5,6 +5,7 @@ import { Button, TextField } from "@mui/material"
 import { global } from '../state';
 import { State } from '../../back/src/common/api.interface';
 import anime from "animejs"
+import { toast } from '../logic';
 
 
 export default () => {
@@ -15,7 +16,7 @@ export default () => {
     const [field, setField] = useState({ name: "", pass: "" })
 
     const preValidate = () => {
-        const animeTarget = (target : HTMLDivElement) => {
+        const animeTarget = (target: HTMLDivElement) => {
             anime({
                 targets: target,
                 keyframes: [
@@ -26,21 +27,45 @@ export default () => {
                         scale: 1,
                     }
                 ],
-                elasticity : 0,
+                elasticity: 0,
                 duration: 1000
             })
         }
-
+        let error = ""
         if (field.name === "") {
             const login = (document.querySelector("#login-login")! as HTMLDivElement);
             animeTarget(login);
+            error += "Username field is empty<br/>"
+        } else {
+            if (!field.name.match(/^[0-9a-z]+$/)) {
+                const login = (document.querySelector("#login-login")! as HTMLDivElement);
+                animeTarget(login);
+                error += "Username must only contain alphanum<br/>"
+            }
+            if (field.name.length > 15){
+                const login = (document.querySelector("#login-login")! as HTMLDivElement);
+                animeTarget(login);
+                error += "Username too long<br/>"
+            }
         }
+
         if (field.pass === "") {
             const pass = (document.querySelector("#login-pass")! as HTMLDivElement);
+            error += "Password field is empty<br/>"
             animeTarget(pass);
         }
-        console.log(field);
+
+        if (error !== "") {
+            toast({ color: "#980000", msg: error, opened: true, time: 3000 })
+            return false;
+        }
         return true;
+    }
+
+    const validate = () => {
+        if (preValidate()) {
+
+        }
     }
 
     useEffect(() => {
@@ -98,22 +123,14 @@ export default () => {
                         <Button style={{
                             backgroundColor: "#8a1414",
                         }} className='login-button' variant='contained'
-                            onClick={() => {
-                                if (preValidate()) {
-
-                                }
-                            }}
+                            onClick={() => { validate() }}
                         >Login</Button>
                     </div>
                     <div>
                         <Button style={{
                             backgroundColor: "#8a1414",
                         }} className='login-button' variant='contained'
-                            onClick={() => {
-                                if (preValidate()) {
-
-                                }
-                            }}
+                            onClick={() => { validate() }}
                         >New Account</Button>
                     </div>
                 </div>

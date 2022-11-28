@@ -16,6 +16,7 @@ export const global = {
             msg: "",
             opened: false,
             color: "",
+            time: 0,
         }
     },
     state: {

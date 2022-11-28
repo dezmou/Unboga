@@ -48,7 +48,7 @@ const watchLayout = async () => {
     }
 }
 
-const main = async () => {
+export const main = async () => {
     socket.on("welcome", (id) => {
         const user = localStorage.getItem("user");
         global.localState.user = user ? JSON.parse(user) : undefined
@@ -64,8 +64,6 @@ const main = async () => {
     })
     watchLayout();
 }
-
-main();
 
 export const toast = (param: typeof global.localState.toast) => {
     global.localState.toast = param;

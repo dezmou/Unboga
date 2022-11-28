@@ -6,12 +6,30 @@ import { State } from '../../back/src/common/api.interface';
 import anime from "animejs"
 
 export default () => {
-    useRender("toast")
+    const rd = useRender("toast")
+
+    useEffect(() => {
+        const current = global.localState.toast;
+        setTimeout(() => {
+            if (global.localState.toast === current) {
+                global.localState.toast.opened = false;
+                rd();
+            }
+        }, current.time)
+    }, [global.localState.toast])
+
     return <>
         <div className='toast' style={{
-            top: global.localState.toast.opened ? "-100px" : "0px",
+            top: global.localState.toast.opened ? "0px" : "-100px",
         }}>
-            chien
+            <div className='toast-content' style={{
+                background: global.localState.toast.color
+            }}>
+                <div className='toast-text'>
+                    <div dangerouslySetInnerHTML={{ __html: global.localState.toast.msg }}>
+                    </div>
+                </div>
+            </div>
         </div>
     </>
 }
