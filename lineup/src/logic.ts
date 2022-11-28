@@ -45,7 +45,6 @@ const watchLayout = async () => {
             root.style.setProperty('--width', `${width}px`);
             root.style.setProperty('--height', `${height}px`);
         }
-
         await new Promise(r => setTimeout(r, 100));
     }
 }

@@ -14,13 +14,11 @@ function App() {
   }, [])
 
   return <>
-    {global.localState.ready && <>
-      <div className='all'>
-        <div className='view'>
-          <Login></Login>
-        </div>
+    <div className='all'>
+      <div className='view'>
+        <Login></Login>
       </div>
-    </>}
+    </div>
   </>
     ;
 }

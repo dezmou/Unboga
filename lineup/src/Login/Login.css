@@ -1,5 +1,5 @@
 :root {
-    --login-field-width: min(370px, calc(var(--width) * 0.7)) ;
+    --login-field-width: min(370px, calc(var(--width) * 0.7));
     /* --login-field-height: calc(var(--login-field-width) * 0.5); */
 }
 
@@ -12,6 +12,9 @@
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
+    opacity : 0;
+    animation-fill-mode:forwards;
+    animation-iteration-count: 1;
 }
 
 .login-field-cont {
@@ -21,28 +24,52 @@
     display: grid;
     justify-content: center;
     align-content: center;
+    transform-origin: center;
+    /* transform: scale(1); */
 }
 
 .login-input {
     /* background: #ffffff11; */
-    width:  var(--login-field-width);
+    width: var(--login-field-width);
 }
 
-.login-input > div {
-    background: #ffffffcc;
+.login-input>div {
+    background: #ffffffee;
     /* width: calc(var(--login-field-width) * 0.7); */
 }
 
 .login-field-div {
-    margin-top : calc(var(--width) * 0.02);
+    margin-top: calc(var(--width) * 0.02);
 }
 
 .login-button-cont {
-    margin-top : calc(var(--width) * 0.02);
-    display : flex;
+    margin-top: calc(var(--width) * 0.02);
+    display: flex;
     justify-content: space-between;
 }
 
 .login-button {
-    width : calc(var(--login-field-width) * 0.48);
+    width: calc(var(--login-field-width) * 0.48);
+}
+
+@keyframes login-appear {
+    from {
+        transform: scale(1.5);
+        opacity : 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity : 1;
+    }
+}
+
+@keyframes login-background-appear {
+    from {
+        opacity : 0;
+    }
+
+    to {
+        opacity : 1;
+    }
 }

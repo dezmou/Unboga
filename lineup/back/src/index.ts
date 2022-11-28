@@ -27,8 +27,9 @@ io.on('connection', (socket) => {
         console.log("User ask for state", param.user);
         if (!param.user) {
             return sendState(socket, {
+                page: "login",
                 connected: false,
-                render: ["global"]
+                render: ["login"]
             })
         }
     })

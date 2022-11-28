@@ -3,9 +3,9 @@ console.log("CHIENrouge");
 export type Call = "login" | "askState"
 
 type ApiCallBase = {
-    user? : {
-        id : string 
-        token : string
+    user?: {
+        id: string
+        token: string
     }
 }
 
@@ -22,6 +22,7 @@ export interface AskState extends ApiCallBase {
 export type ApiCAll = CreateUser | AskState
 
 export type State = {
-    connected : boolean
-    render : string[]
+    page: "blank" | "login" | "lobby" | "game"
+    connected: boolean
+    render: string[]
 }

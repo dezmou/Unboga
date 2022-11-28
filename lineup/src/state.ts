@@ -14,6 +14,7 @@ export const global = {
         }
     },
     state: {
+        page: "blank",
         connected: false,
         render: ["global"]
     } as State
