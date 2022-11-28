@@ -12,7 +12,6 @@
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
-    opacity : 0;
     animation-fill-mode:forwards;
     animation-iteration-count: 1;
 }
@@ -24,8 +23,6 @@
     display: grid;
     justify-content: center;
     align-content: center;
-    transform-origin: center;
-    /* transform: scale(1); */
 }
 
 .login-input {
@@ -50,26 +47,4 @@
 
 .login-button {
     width: calc(var(--login-field-width) * 0.48);
-}
-
-@keyframes login-appear {
-    from {
-        transform: scale(1.5);
-        opacity : 0;
-    }
-
-    to {
-        transform: scale(1);
-        opacity : 1;
-    }
-}
-
-@keyframes login-background-appear {
-    from {
-        opacity : 0;
-    }
-
-    to {
-        opacity : 1;
-    }
 }
