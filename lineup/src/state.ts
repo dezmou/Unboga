@@ -11,6 +11,11 @@ export const global = {
         size: {
             width: 0,
             height: 0
+        },
+        toast: {
+            msg: "",
+            opened: false,
+            color: "",
         }
     },
     state: {

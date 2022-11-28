@@ -9,7 +9,6 @@ const socket = io(`${window.location.origin}`, {
     transports: ['websocket'],
 });
 
-export const isLoggued = () => { }
 
 const apiCAll = (params: ApiCAll) => {
     socket.emit(params.action, JSON.stringify({
@@ -41,7 +40,7 @@ const watchLayout = async () => {
             let width = allWidth;
             let height = allHeight;
             const ratio = allHeight / allWidth
-            width = Math.min(allWidth, allWidth * ratio * 0.7) ;
+            width = Math.min(allWidth, allWidth * ratio * 0.7);
             root.style.setProperty('--width', `${width}px`);
             root.style.setProperty('--height', `${height}px`);
         }
@@ -67,3 +66,8 @@ const main = async () => {
 }
 
 main();
+
+export const toast = (param: typeof global.localState.toast) => {
+    global.localState.toast = param;
+    render("toast");
+}
