@@ -1,9 +1,9 @@
 import express from "express"
 import http from "http"
 import { Server, Socket } from "socket.io"
-import { MongoClient } from "mongodb"
-import { ApiCAll, AskState, State } from "./common/api.interface"
+import { ApiCAll, AskState, CreateUser, State } from "./common/api.interface"
 import { DefaultEventsMap } from "socket.io/dist/typed-events"
+import { addUser, getUser, onReady } from "./bdd"
 
 const cors = require("cors")
 const app = express();
@@ -19,38 +19,46 @@ const sendState = (socket: Socket<DefaultEventsMap, DefaultEventsMap, DefaultEve
     socket.emit("newState", JSON.stringify(state))
 }
 
-io.on('connection', (socket) => {
-    console.log("USER CON");
-    socket.emit("welcome", socket.id)
+const tokenSocket = {
 
-    socket.on("askState", (param: AskState) => {
-        console.log("User ask for state", param.user);
-        if (!param.user) {
-            return sendState(socket, {
-                page: "login",
-                connected: false,
-                render: ["login"]
-            })
-        }
-    })
-});
+}
 
-// setInterval(() => {
-//     io.emit("tick", Date.now())
-// }, 1000)
+onReady.subscribe(() => {
+    io.on('connection', (socket) => {
+        console.log("USER CON");
+        socket.emit("welcome", socket.id)
 
-server.listen({
-    port: 3001,
-    host: "0.0.0.0",
-}, () => {
-    console.log("SERVER STARTED");
-});
+        socket.on("createUser", async (p) => {
+            const param = JSON.parse(p) as CreateUser
+            const user = await addUser(param.name, param.password);
+            socket.emit("connected", JSON.stringify({ id: user.id, token: user.token }))
+        })
 
-// ; (async () => {
-//     const client = new MongoClient(`mongodb://root:chien@mongo:27017`);
-//     await client.connect();
-//     const db = client.db("unbogame");
-//     await db.createCollection("users", {}).catch(e => { });
-//     await client.close();
-//     console.log("SUCESS");
-// })()
+        socket.on("askState", async (p: string) => {
+            const param = JSON.parse(p) as AskState
+            if (!param.user) {
+                return sendState(socket, {
+                    page: "login",
+                    render: ["login"]
+                })
+            } else {
+                const res = await getUser(param.user.id)
+                if (!res || res!.user?.token !== param.user.token) {
+                    return sendState(socket, {
+                        page: "login",
+                        render: ["login"]
+                    })
+                } else {
+                    return sendState(socket, res);
+                }
+            }
+        })
+    });
+
+    server.listen({
+        port: 3001,
+        host: "0.0.0.0",
+    }, () => {
+        console.log("SERVER STARTED");
+    });
+})

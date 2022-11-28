@@ -5,7 +5,7 @@ import { Button, TextField } from "@mui/material"
 import { global } from '../state';
 import { State } from '../../back/src/common/api.interface';
 import anime from "animejs"
-import { toast } from '../logic';
+import { createUser, toast } from '../logic';
 
 
 export default () => {
@@ -64,7 +64,7 @@ export default () => {
 
     const creatUser = () => {
         if (preValidate()) {
-
+            createUser(field.name, field.pass)
         }
     }
 

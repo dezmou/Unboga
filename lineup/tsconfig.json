@@ -20,11 +20,14 @@
     "noEmit": true,
     "jsx": "react-jsx",
     "paths": {
-      "@common/*" : ["./common/*"]
+      "@common/*": [
+        "./common/*"
+      ]
     }
   },
   "include": [
     "src",
-    "common"
+    "common",
+    "./back/src/common"
   ]
 }

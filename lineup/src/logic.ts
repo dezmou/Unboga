@@ -17,8 +17,13 @@ const apiCAll = (params: ApiCAll) => {
     }));
 }
 
+export const createUser = (name: string, pass: string) => {
+    apiCAll({ action: "createUser", name, password: pass })
+}
+
 const askState = () => {
-    apiCAll({ action: "askState" })
+    console.log("ASKSTATE", global.localState.user);
+    apiCAll({ action: "askState", user: global.localState.user })
 }
 
 const renderAll = (targets: string[]) => {
@@ -57,8 +62,19 @@ export const main = async () => {
         render("global");
     })
 
+    socket.on("connected", (msg: string) => {
+        const params = JSON.parse(msg) as { id: string, token: string };
+        global.localState.user = params;
+        localStorage.setItem("user", JSON.stringify(params));
+        askState();
+    })
+
     socket.on("newState", (msg: string) => {
         global.state = JSON.parse(msg);
+        console.log("STATE", global.state);
+        if (global.state.page === "login") {
+            localStorage.removeItem("user");
+        }
         global.localState.ready = true;
         renderAll(global.state.render)
     })

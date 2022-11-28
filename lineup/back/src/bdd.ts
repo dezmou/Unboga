@@ -1,50 +1,52 @@
-import { readFile, writeFile, unlink } from "fs"
+import { MongoClient, ObjectId } from "mongodb"
+import { State } from "./common/api.interface";
+import { Subject } from "rxjs"
 
-const cache: { [key: string]: Object } = {};
+const client = new MongoClient(`mongodb://root:chien@mongo:27017`);
+let db: ReturnType<MongoClient["db"]>;
 
-export const getItem = (id: string) => {
-    if (cache[id]) return cache[id];
-    return new Promise<string>((r, j) => {
-        readFile(`./bdd/${id}`, "utf-8", (err, data) => {
-            try {
-                if (err) {
-                    j(err)
-                } else {
-                    r(JSON.parse(data));
-                }
-            } catch (e) {
-                j(e)
-            }
-        })
-    })
+export const onReady = new Subject<boolean>()
+
+client.connect().then(async r => {
+    db = client.db("unbogame");
+    await db.createCollection("users", {}).catch(e => { });
+    onReady.next(true);
+});
+
+const makeId = () => {
+    return Math.floor((1 + Math.random()) * 0x1000000000000000)
+        .toString(32)
 }
 
-export const deleteItem = async (id: string) => {
-    await new Promise<void>((r, j) => {
-        unlink(`./bdd/${id}`, (err) => {
-            if (err) {
-                j(err)
-            } else {
-                r();
-            }
-        })
-    })
-    delete cache[id]
-}
-
-export const setItem = async (id: string, data: Object) => {
-    cache[id] = data;
-    await new Promise<void>((r, j) => {
-        try {
-            writeFile(`./bdd/${id}`, JSON.stringify(data, null, 2), "utf-8", (err) => {
-                if (err) {
-                    j(err)
-                } else {
-                    r();
-                }
-            })
-        } catch (e) {
-            j(e)
+export const addUser = async (name: string, password: string) => {
+    console.log("add user", name, password);
+    const token = makeId()
+    const newState: State = {
+        page: "lobby",
+        render: ["global"],
+        user: {
+            elo: 1000,
+            name: name,
+            token: token,
         }
+    }
+    const res = await db.collection("users").insertOne({
+        name,
+        password,
+        token,
+        state: newState,
     })
+    res.insertedId
+    console.log(res);
+    return { id: res.insertedId, token }
+}
+
+export const getUser = async (id: string) => {
+    console.log("FIND", id);
+    const res = (await db.collection("users").findOne({ _id: new ObjectId(id) }));
+    console.log("cringe", res);
+    if (!res) {
+        return;
+    }
+    return res.state as State;
 }

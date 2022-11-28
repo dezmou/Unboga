@@ -9,59 +9,51 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.setItem = exports.deleteItem = exports.getItem = void 0;
-const fs_1 = require("fs");
-const cache = {};
-const getItem = (id) => {
-    if (cache[id])
-        return cache[id];
-    return new Promise((r, j) => {
-        (0, fs_1.readFile)(`./bdd/${id}`, "utf-8", (err, data) => {
-            try {
-                if (err) {
-                    j(err);
-                }
-                else {
-                    r(JSON.parse(data));
-                }
-            }
-            catch (e) {
-                j(e);
-            }
-        });
-    });
+exports.getUser = exports.addUser = exports.onReady = void 0;
+const mongodb_1 = require("mongodb");
+const rxjs_1 = require("rxjs");
+const client = new mongodb_1.MongoClient(`mongodb://root:chien@mongo:27017`);
+let db;
+exports.onReady = new rxjs_1.Subject();
+client.connect().then((r) => __awaiter(void 0, void 0, void 0, function* () {
+    db = client.db("unbogame");
+    yield db.createCollection("users", {}).catch(e => { });
+    exports.onReady.next(true);
+}));
+const makeId = () => {
+    return Math.floor((1 + Math.random()) * 0x1000000000000000)
+        .toString(32);
 };
-exports.getItem = getItem;
-const deleteItem = (id) => __awaiter(void 0, void 0, void 0, function* () {
-    yield new Promise((r, j) => {
-        (0, fs_1.unlink)(`./bdd/${id}`, (err) => {
-            if (err) {
-                j(err);
-            }
-            else {
-                r();
-            }
-        });
-    });
-    delete cache[id];
-});
-exports.deleteItem = deleteItem;
-const setItem = (id, data) => __awaiter(void 0, void 0, void 0, function* () {
-    cache[id] = data;
-    yield new Promise((r, j) => {
-        try {
-            (0, fs_1.writeFile)(`./bdd/${id}`, JSON.stringify(data, null, 2), "utf-8", (err) => {
-                if (err) {
-                    j(err);
-                }
-                else {
-                    r();
-                }
-            });
+const addUser = (name, password) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log("add user", name, password);
+    const token = makeId();
+    const newState = {
+        page: "lobby",
+        render: ["global"],
+        user: {
+            elo: 1000,
+            name: name,
+            token: token,
         }
-        catch (e) {
-            j(e);
-        }
+    };
+    const res = yield db.collection("users").insertOne({
+        name,
+        password,
+        token,
+        state: newState,
     });
+    res.insertedId;
+    console.log(res);
+    return { id: res.insertedId, token };
 });
-exports.setItem = setItem;
+exports.addUser = addUser;
+const getUser = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log("FIND", id);
+    const res = (yield db.collection("users").findOne({ _id: new mongodb_1.ObjectId(id) }));
+    console.log("cringe", res);
+    if (!res) {
+        return;
+    }
+    return res.state;
+});
+exports.getUser = getUser;

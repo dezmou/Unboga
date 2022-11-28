@@ -10,8 +10,8 @@ type ApiCallBase = {
 }
 
 export interface CreateUser extends ApiCallBase {
-    action: "creatUser"
-    name: String;
+    action: "createUser"
+    name: string;
     password: string
 }
 
@@ -23,6 +23,10 @@ export type ApiCAll = CreateUser | AskState
 
 export type State = {
     page: "blank" | "login" | "lobby" | "game"
-    connected: boolean
     render: string[]
+    user?: {
+        name: string
+        token: string
+        elo: number
+    }
 }
