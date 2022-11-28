@@ -42,7 +42,7 @@ export default () => {
                 animeTarget(login);
                 error += "Username must only contain alphanum<br/>"
             }
-            if (field.name.length > 15){
+            if (field.name.length > 15) {
                 const login = (document.querySelector("#login-login")! as HTMLDivElement);
                 animeTarget(login);
                 error += "Username too long<br/>"
@@ -62,7 +62,7 @@ export default () => {
         return true;
     }
 
-    const validate = () => {
+    const creatUser = () => {
         if (preValidate()) {
 
         }
@@ -71,7 +71,6 @@ export default () => {
     useEffect(() => {
         if (global.state.page === "login") {
             if (global.state.page !== lastPage.current) {
-                console.log("ANIME");
                 anime({
                     targets: loginContRef.current!,
                     scale: 1,
@@ -81,7 +80,7 @@ export default () => {
                 anime({
                     targets: loginBackgroundRef.current!,
                     opacity: 1,
-                    duration: 4000
+                    duration: 4000,
                 })
                 lastPage.current = global.state.page;
             }
@@ -123,14 +122,14 @@ export default () => {
                         <Button style={{
                             backgroundColor: "#8a1414",
                         }} className='login-button' variant='contained'
-                            onClick={() => { validate() }}
+                            onClick={() => { }}
                         >Login</Button>
                     </div>
                     <div>
                         <Button style={{
                             backgroundColor: "#8a1414",
                         }} className='login-button' variant='contained'
-                            onClick={() => { validate() }}
+                            onClick={() => { creatUser() }}
                         >New Account</Button>
                     </div>
                 </div>

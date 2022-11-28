@@ -11,6 +11,7 @@ function App() {
   const rd = useRender("global")
 
   useEffect(() => {
+    rd();
     main()
   }, [])
 
