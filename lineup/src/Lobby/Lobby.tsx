@@ -5,7 +5,7 @@ import { Button, TextField } from "@mui/material"
 import { global } from '../state';
 import { State } from '../../back/src/common/api.interface';
 import anime from "animejs"
-import { createUser, toast, login } from '../logic';
+import { createUser, toast, login, challenge } from '../logic';
 
 
 export default () => {
@@ -18,8 +18,8 @@ export default () => {
         }
     }, [global.state.page])
 
-    const challenge = (userId: string) => {
-        console.log("CHALLENGE", userId);
+    const clickChallenge = (userId: string) => {
+        challenge(userId);
     }
 
     return <>
@@ -29,7 +29,7 @@ export default () => {
             {Object.values(global.lobby).map((user, i) => <div key={i}>
                 <strong>{user.name}</strong>  (elo : {user.elo}) <span style={{ color: "green" }}>{user.status}</span>
                 <button onClick={() => {
-                    challenge(user.id);
+                    clickChallenge(user.id);
                 }}>challenge !</button>
             </div>)}
         </div>

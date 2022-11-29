@@ -54,6 +54,11 @@ bdd_1.onReady.subscribe(() => {
     io.on('connection', (socket) => {
         console.log("USER CON");
         socket.emit("welcome", socket.id);
+        socket.on("challenge", (p) => __awaiter(void 0, void 0, void 0, function* () {
+            const param = JSON.parse(p);
+            const user = yield (0, bdd_1.getUser)(param.id);
+            console.log(`${param.user.id} challenge ${user.user.name}`);
+        }));
         socket.on("login", (p) => __awaiter(void 0, void 0, void 0, function* () {
             const param = JSON.parse(p);
             const res = yield (0, bdd_1.getUserByName)(param.name);
