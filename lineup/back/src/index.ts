@@ -29,7 +29,7 @@ const userIdToSocket: { [key: string]: SSocket } = {}
 const socketIdToUserId: { [key: string]: string } = {}
 
 const updateLobby = async (userId: string) => {
-    if (!userIdToSocket) {
+    if (!userIdToSocket[userId]) {
         if (lobby[userId]) {
             delete lobby[userId];
         }
@@ -88,6 +88,7 @@ onReady.subscribe(() => {
             if (userId) {
                 delete socketIdToUserId[socket.id];
                 delete userIdToSocket[userId];
+                console.log("ROEIGJOIRJGOIPRJGOP", userId);
                 updateLobby(userId);
             }
         })

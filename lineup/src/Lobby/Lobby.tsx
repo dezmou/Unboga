@@ -23,7 +23,7 @@ export default () => {
             opacity: global.state.page === "lobby" ? "1" : 0,
         }}>
             {Object.values(global.lobby).map((user, i) => <div key={i}>
-                {user.name}
+                <strong>{user.name}</strong>  (elo : {user.elo}) <span style={{ color: "green" }}>{user.status}</span>
             </div>)}
         </div>
     </>

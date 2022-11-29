@@ -32,7 +32,7 @@ const lobby = {};
 const userIdToSocket = {};
 const socketIdToUserId = {};
 const updateLobby = (userId) => __awaiter(void 0, void 0, void 0, function* () {
-    if (!userIdToSocket) {
+    if (!userIdToSocket[userId]) {
         if (lobby[userId]) {
             delete lobby[userId];
         }
@@ -89,6 +89,7 @@ bdd_1.onReady.subscribe(() => {
             if (userId) {
                 delete socketIdToUserId[socket.id];
                 delete userIdToSocket[userId];
+                console.log("ROEIGJOIRJGOIPRJGOP", userId);
                 updateLobby(userId);
             }
         });
