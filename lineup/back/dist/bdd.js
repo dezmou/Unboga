@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getUser = exports.addUser = exports.onReady = void 0;
+exports.getUserByName = exports.getUser = exports.addUser = exports.onReady = void 0;
 const mongodb_1 = require("mongodb");
 const rxjs_1 = require("rxjs");
 const client = new mongodb_1.MongoClient(`mongodb://root:chien@mongo:27017`);
@@ -25,7 +25,10 @@ const makeId = () => {
         .toString(32);
 };
 const addUser = (name, password) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log("add user", name, password);
+    const existing = (yield db.collection("users").findOne({ name }));
+    if (existing) {
+        throw "USER_EXIST";
+    }
     const token = makeId();
     const newState = {
         page: "lobby",
@@ -48,12 +51,18 @@ const addUser = (name, password) => __awaiter(void 0, void 0, void 0, function* 
 });
 exports.addUser = addUser;
 const getUser = (id) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log("FIND", id);
     const res = (yield db.collection("users").findOne({ _id: new mongodb_1.ObjectId(id) }));
-    console.log("cringe", res);
     if (!res) {
         return;
     }
     return res.state;
 });
 exports.getUser = getUser;
+const getUserByName = (name) => __awaiter(void 0, void 0, void 0, function* () {
+    const res = (yield db.collection("users").findOne({ name }));
+    if (!res) {
+        return;
+    }
+    return res;
+});
+exports.getUserByName = getUserByName;

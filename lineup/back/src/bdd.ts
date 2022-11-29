@@ -19,7 +19,11 @@ const makeId = () => {
 }
 
 export const addUser = async (name: string, password: string) => {
-    console.log("add user", name, password);
+    const existing = (await db.collection("users").findOne({ name })) as any;
+    if (existing) {
+        throw "USER_EXIST"
+    }
+
     const token = makeId()
     const newState: State = {
         page: "lobby",
@@ -54,6 +58,5 @@ export const getUserByName = async (name: string) => {
     if (!res) {
         return;
     }
-    console.log(res);
-    return res ;
+    return res as { state: State, name: string, password: string, token: string, _id: string };
 }

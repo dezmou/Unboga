@@ -33,10 +33,35 @@ bdd_1.onReady.subscribe(() => {
     io.on('connection', (socket) => {
         console.log("USER CON");
         socket.emit("welcome", socket.id);
+        socket.on("login", (p) => __awaiter(void 0, void 0, void 0, function* () {
+            const param = JSON.parse(p);
+            const res = yield (0, bdd_1.getUserByName)(param.name);
+            if (!res || param.password !== res.password) {
+                socket.emit("toast", JSON.stringify({
+                    color: "red",
+                    msg: "Wrong username or password",
+                    time: 4000,
+                }));
+                return;
+            }
+            socket.emit("connected", JSON.stringify({ id: res._id, token: res.token }));
+        }));
         socket.on("createUser", (p) => __awaiter(void 0, void 0, void 0, function* () {
             const param = JSON.parse(p);
-            const user = yield (0, bdd_1.addUser)(param.name, param.password);
-            socket.emit("connected", JSON.stringify({ id: user.id, token: user.token }));
+            try {
+                const user = yield (0, bdd_1.addUser)(param.name, param.password);
+                socket.emit("connected", JSON.stringify({ id: user.id, token: user.token }));
+            }
+            catch (e) {
+                if (e === "USER_EXIST") {
+                    socket.emit("toast", JSON.stringify({
+                        color: "red",
+                        msg: "User name Exist Already",
+                        time: 4000,
+                    }));
+                    return;
+                }
+            }
         }));
         socket.on("askState", (p) => __awaiter(void 0, void 0, void 0, function* () {
             var _a;

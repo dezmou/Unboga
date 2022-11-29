@@ -25,6 +25,12 @@ export interface AskState extends ApiCallBase {
     action: "askState"
 }
 
+export interface ToastEvent {
+    msg: string,
+    color: string,
+    time: number,
+}
+
 export type ApiCAll = CreateUser | AskState | Login
 
 export type State = {

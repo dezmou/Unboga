@@ -1,7 +1,7 @@
 import { io, connect } from "socket.io-client"
 import { render } from "./render";
 import { global } from "./state"
-import { ApiCAll, Call, State } from "../back/src/common/api.interface"
+import { ApiCAll, Call, State, ToastEvent } from "../back/src/common/api.interface"
 
 const socket = io(`${window.location.origin}`, {
     path: "/api",
@@ -64,6 +64,14 @@ export const main = async () => {
         askState();
         global.localState.welcomed = true;
         render("global");
+    })
+
+    socket.on("toast", (msg: string) => {
+        const param = JSON.parse(msg) as ToastEvent
+        toast({
+            ...param,
+            opened: true,
+        })
     })
 
     socket.on("connected", (msg: string) => {

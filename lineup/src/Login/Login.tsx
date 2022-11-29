@@ -5,7 +5,7 @@ import { Button, TextField } from "@mui/material"
 import { global } from '../state';
 import { State } from '../../back/src/common/api.interface';
 import anime from "animejs"
-import { createUser, toast } from '../logic';
+import { createUser, toast, login } from '../logic';
 
 
 export default () => {
@@ -62,9 +62,9 @@ export default () => {
         return true;
     }
 
-    const login = () => {
+    const applyLogin = () => {
         if (preValidate()) {
-            createUser(field.name, field.pass)
+            login(field.name, field.pass)
         }
     }
 
@@ -76,7 +76,7 @@ export default () => {
 
     useEffect(() => {
         if (global.state.page === "login") {
-            if (global.state.page !== lastPage.current) {
+            if (lastPage.current !== "login") {
                 anime({
                     targets: loginContRef.current!,
                     scale: 1,
@@ -88,21 +88,35 @@ export default () => {
                     opacity: 1,
                     duration: 4000,
                 })
-                lastPage.current = global.state.page;
             }
         } else {
-            anime({
-                targets: loginContRef.current!,
-                scale: 0.5,
-                opacity: 0,
-                duration: 0
-            })
-            anime({
-                targets: loginBackgroundRef.current!,
-                opacity: 0,
-                duration: 0
-            })
+            if (lastPage.current === "login") {
+                anime({
+                    targets: loginContRef.current!,
+                    scale: 0.5,
+                    opacity: 0,
+                    duration: 5000
+                })
+                anime({
+                    targets: loginBackgroundRef.current!,
+                    opacity: 0,
+                    duration: 3000
+                })
+            } else {
+                anime({
+                    targets: loginContRef.current!,
+                    scale: 0.5,
+                    opacity: 0,
+                    duration: 0
+                })
+                anime({
+                    targets: loginBackgroundRef.current!,
+                    opacity: 0,
+                    duration: 0
+                })
+            }
         }
+        lastPage.current = global.state.page;
     }, [global.state.page])
 
     return <>
@@ -128,7 +142,7 @@ export default () => {
                         <Button style={{
                             backgroundColor: "#8a1414",
                         }} className='login-button' variant='contained'
-                            onClick={() => { login() }}
+                            onClick={() => { applyLogin() }}
                         >Login</Button>
                     </div>
                     <div>

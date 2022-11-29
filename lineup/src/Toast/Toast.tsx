@@ -20,7 +20,7 @@ export default () => {
 
     return <>
         <div className='toast' style={{
-            top: global.localState.toast.opened ? "0px" : "-100px",
+            top: global.localState.toast.opened ? "0px" : "-110px",
         }}>
             <div className='toast-content' style={{
                 background: global.localState.toast.color

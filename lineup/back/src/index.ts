@@ -1,9 +1,9 @@
 import express from "express"
 import http from "http"
 import { Server, Socket } from "socket.io"
-import { ApiCAll, AskState, CreateUser, Login, State } from "./common/api.interface"
+import { ApiCAll, AskState, CreateUser, Login, State, ToastEvent } from "./common/api.interface"
 import { DefaultEventsMap } from "socket.io/dist/typed-events"
-import { addUser, getUser, onReady } from "./bdd"
+import { addUser, getUser, getUserByName, onReady } from "./bdd"
 
 const cors = require("cors")
 const app = express();
@@ -30,15 +30,33 @@ onReady.subscribe(() => {
 
         socket.on("login", async (p) => {
             const param = JSON.parse(p) as Login
-            const res = await getUser(param.name)
-            // if (!res || res. !== param.)
-            
+            const res = await getUserByName(param.name)
+            if (!res || param.password !== res.password) {
+                socket.emit("toast", JSON.stringify({
+                    color: "red",
+                    msg: "Wrong username or password",
+                    time: 4000,
+                } as ToastEvent))
+                return;
+            }
+            socket.emit("connected", JSON.stringify({ id: res._id, token: res.token }))
         })
 
         socket.on("createUser", async (p) => {
             const param = JSON.parse(p) as CreateUser
-            const user = await addUser(param.name, param.password);
-            socket.emit("connected", JSON.stringify({ id: user.id, token: user.token }))
+            try {
+                const user = await addUser(param.name, param.password);
+                socket.emit("connected", JSON.stringify({ id: user.id, token: user.token }))
+            } catch (e) {
+                if (e === "USER_EXIST") {
+                    socket.emit("toast", JSON.stringify({
+                        color: "red",
+                        msg: "User name exist Already",
+                        time: 4000,
+                    } as ToastEvent))
+                    return;
+                }
+            }
         })
 
         socket.on("askState", async (p: string) => {
