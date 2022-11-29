@@ -21,6 +21,11 @@ export interface Login extends ApiCallBase {
     password: string
 }
 
+export interface Challenge extends ApiCallBase {
+    action: "challenge";
+    id: string;
+}
+
 export interface AskState extends ApiCallBase {
     action: "askState"
 }
@@ -31,7 +36,7 @@ export interface ToastEvent {
     time: number,
 }
 
-export type ApiCAll = CreateUser | AskState | Login
+export type ApiCAll = CreateUser | AskState | Login | Challenge
 
 export interface LobbyEntry {
     elo: number,

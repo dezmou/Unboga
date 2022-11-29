@@ -17,6 +17,10 @@ const apiCAll = (params: ApiCAll) => {
     }));
 }
 
+export const challenge = async (id: string) => {
+    apiCAll({ action: "challenge", id })
+}
+
 export const login = (name: string, pass: string) => {
     apiCAll({ action: "login", name, password: pass })
 }

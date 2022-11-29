@@ -1,7 +1,7 @@
 import express from "express"
 import http from "http"
 import { Server, Socket } from "socket.io"
-import { ApiCAll, AskState, CreateUser, LobbyEntry, Login, State, ToastEvent } from "./common/api.interface"
+import { ApiCAll, AskState, Challenge, CreateUser, LobbyEntry, Login, State, ToastEvent } from "./common/api.interface"
 import { DefaultEventsMap } from "socket.io/dist/typed-events"
 import { addUser, getUser, getUserByName, onReady } from "./bdd"
 
@@ -51,6 +51,12 @@ onReady.subscribe(() => {
     io.on('connection', (socket) => {
         console.log("USER CON");
         socket.emit("welcome", socket.id)
+
+        socket.on("challenge", async (p) => {
+            const param = JSON.parse(p) as Challenge
+            const user = await getUser(param.id);
+            console.log(`${param.user!.id} challenge ${user!.user!.name}`);
+        })
 
         socket.on("login", async (p) => {
             const param = JSON.parse(p) as Login
