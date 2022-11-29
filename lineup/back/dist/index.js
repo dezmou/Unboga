@@ -28,7 +28,28 @@ const io = new socket_io_1.Server(server, {
 const sendState = (socket, state) => {
     socket.emit("newState", JSON.stringify(state));
 };
-const tokenSocket = {};
+const lobby = {};
+const userIdToSocket = {};
+const socketIdToUserId = {};
+const updateLobby = (userId) => __awaiter(void 0, void 0, void 0, function* () {
+    if (!userIdToSocket) {
+        if (lobby[userId]) {
+            delete lobby[userId];
+        }
+    }
+    else {
+        if (!lobby[userId]) {
+            const user = (yield (0, bdd_1.getUser)(userId));
+            lobby[userId] = {
+                elo: user.user.elo,
+                id: userId,
+                name: user.user.name,
+                status: user.page === "lobby" ? "online" : "inGame"
+            };
+        }
+    }
+    io.emit("lobby", JSON.stringify(lobby));
+});
 bdd_1.onReady.subscribe(() => {
     io.on('connection', (socket) => {
         console.log("USER CON");
@@ -56,15 +77,22 @@ bdd_1.onReady.subscribe(() => {
                 if (e === "USER_EXIST") {
                     socket.emit("toast", JSON.stringify({
                         color: "red",
-                        msg: "User name Exist Already",
+                        msg: "User name exist Already",
                         time: 4000,
                     }));
                     return;
                 }
             }
         }));
+        socket.on("disconnect", () => {
+            const userId = socketIdToUserId[socket.id];
+            if (userId) {
+                delete socketIdToUserId[socket.id];
+                delete userIdToSocket[userId];
+                updateLobby(userId);
+            }
+        });
         socket.on("askState", (p) => __awaiter(void 0, void 0, void 0, function* () {
-            var _a;
             const param = JSON.parse(p);
             if (!param.user) {
                 return sendState(socket, {
@@ -74,13 +102,18 @@ bdd_1.onReady.subscribe(() => {
             }
             else {
                 const res = yield (0, bdd_1.getUser)(param.user.id);
-                if (!res || ((_a = res.user) === null || _a === void 0 ? void 0 : _a.token) !== param.user.token) {
+                if (!res || res.user.token !== param.user.token) {
                     return sendState(socket, {
                         page: "login",
                         render: ["login"]
                     });
                 }
                 else {
+                    if (!userIdToSocket[param.user.id]) {
+                        userIdToSocket[param.user.id] = socket;
+                        socketIdToUserId[socket.id] = param.user.id;
+                        updateLobby(param.user.id);
+                    }
                     return sendState(socket, res);
                 }
             }

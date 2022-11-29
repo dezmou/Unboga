@@ -122,6 +122,7 @@ export default () => {
     return <>
         <div className='login-main-cont' ref={loginBackgroundRef} style={{
             backgroundImage: `url("/art/background.png")`,
+            pointerEvents: global.state.page === "login" ? "initial" : "none",
         }}>
             <div className='login-field-cont' ref={loginContRef}>
                 <div>

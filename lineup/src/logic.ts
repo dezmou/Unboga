@@ -74,6 +74,12 @@ export const main = async () => {
         })
     })
 
+    socket.on("lobby", (msg: string) => {
+        const lobby = JSON.parse(msg);
+        global.lobby = lobby;
+        render("lobby");
+    })
+
     socket.on("connected", (msg: string) => {
         const params = JSON.parse(msg) as { id: string, token: string };
         global.localState.user = params;

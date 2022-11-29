@@ -1,7 +1,7 @@
 import express from "express"
 import http from "http"
 import { Server, Socket } from "socket.io"
-import { ApiCAll, AskState, CreateUser, Login, State, ToastEvent } from "./common/api.interface"
+import { ApiCAll, AskState, CreateUser, LobbyEntry, Login, State, ToastEvent } from "./common/api.interface"
 import { DefaultEventsMap } from "socket.io/dist/typed-events"
 import { addUser, getUser, getUserByName, onReady } from "./bdd"
 
@@ -21,12 +21,30 @@ const sendState = (socket: SSocket, state: State) => {
     socket.emit("newState", JSON.stringify(state))
 }
 
-const userIdToSocket: { [key: string]: SSocket } = {
+const lobby: {
+    [key: string]: LobbyEntry
+} = {}
 
-}
+const userIdToSocket: { [key: string]: SSocket } = {}
+const socketIdToUserId: { [key: string]: string } = {}
 
-const socketIdToUserId: { [key: string]: string } = {
-
+const updateLobby = async (userId: string) => {
+    if (!userIdToSocket) {
+        if (lobby[userId]) {
+            delete lobby[userId];
+        }
+    } else {
+        if (!lobby[userId]) {
+            const user = (await getUser(userId))!;
+            lobby[userId] = {
+                elo: user.user!.elo,
+                id: userId,
+                name: user.user!.name,
+                status: user.page === "lobby" ? "online" : "inGame"
+            }
+        }
+    }
+    io.emit("lobby", JSON.stringify(lobby))
 }
 
 onReady.subscribe(() => {
@@ -70,7 +88,7 @@ onReady.subscribe(() => {
             if (userId) {
                 delete socketIdToUserId[socket.id];
                 delete userIdToSocket[userId];
-                console.log(userIdToSocket);
+                updateLobby(userId);
             }
         })
 
@@ -92,7 +110,7 @@ onReady.subscribe(() => {
                     if (!userIdToSocket[param.user!.id]) {
                         userIdToSocket[param.user!.id] = socket;
                         socketIdToUserId[socket.id] = param.user!.id;
-                        console.log(userIdToSocket);
+                        updateLobby(param.user!.id);
                     }
                     return sendState(socket, res);
                 }

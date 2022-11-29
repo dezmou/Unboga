@@ -6,6 +6,7 @@ import { global } from "./state"
 import Login from './Login/Login';
 import Toast from './Toast/Toast';
 import { main } from './logic';
+import Lobby from './Lobby/Lobby';
 
 function App() {
   const rd = useRender("global")
@@ -20,6 +21,7 @@ function App() {
       <div className='view'>
         <Toast></Toast>
         <Login></Login>
+        <Lobby></Lobby>
       </div>
     </div>
   </>

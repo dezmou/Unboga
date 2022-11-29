@@ -1,4 +1,4 @@
-import { State } from "../back/src/common/api.interface"
+import { LobbyEntry, State } from "../back/src/common/api.interface"
 
 export const global = {
     localState: {
@@ -19,9 +19,12 @@ export const global = {
             time: 0,
         }
     },
+    lobby: {} as { [key: string]: LobbyEntry },
     state: {
         page: "blank",
         connected: false,
         render: ["global"]
     } as State
 }
+
+

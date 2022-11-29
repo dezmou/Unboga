@@ -33,6 +33,13 @@ export interface ToastEvent {
 
 export type ApiCAll = CreateUser | AskState | Login
 
+export interface LobbyEntry {
+    elo: number,
+    id: string,
+    name: string,
+    status: "online" | "inGame"
+}
+
 export type State = {
     page: "blank" | "login" | "lobby" | "game"
     render: string[]
