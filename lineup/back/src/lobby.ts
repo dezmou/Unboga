@@ -1,5 +1,6 @@
 import { getUser } from "./bdd";
 import { ApiCallBase, Challenge, ToastEvent } from "./common/api.interface";
+import { newGame } from "./game";
 import { io, lobby, SSocket, userIdToSocket } from "./state";
 
 export const cancelChallenge = async (socket: SSocket, param: ApiCallBase) => {
@@ -9,7 +10,7 @@ export const cancelChallenge = async (socket: SSocket, param: ApiCallBase) => {
         if (op) {
             op.emit("toast", JSON.stringify({
                 color: "blue",
-                msg: "challenge declined",
+                msg: "Challenge declined",
                 time: 4000,
             } as ToastEvent))
         }
@@ -23,6 +24,7 @@ export const cancelChallenge = async (socket: SSocket, param: ApiCallBase) => {
 
 export const acceptChallenge = async (socket: SSocket, param: ApiCallBase) => {
     if (!lobby[param.user!.id] || !lobby[param.user!.id].challenge) return;
+    await newGame(lobby[param.user!.id].challenge!.player1, lobby[param.user!.id].challenge!.player2)
 
     const player1 = lobby[param.user!.id].challenge!.player1
     const player2 = lobby[param.user!.id].challenge!.player2

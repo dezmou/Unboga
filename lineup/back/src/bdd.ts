@@ -1,6 +1,7 @@
 import { MongoClient, ObjectId } from "mongodb"
 import { State } from "./common/api.interface";
 import { Subject } from "rxjs"
+import { Game } from "./engine";
 
 const client = new MongoClient(`mongodb://root:chien@mongo:27017`);
 let db: ReturnType<MongoClient["db"]>;
@@ -9,7 +10,10 @@ export const onReady = new Subject<boolean>()
 
 client.connect().then(async r => {
     db = client.db("unbogame");
-    await db.createCollection("users", {}).catch(e => { });
+    await Promise.all([
+        db.createCollection("users", {}).catch(e => { }),
+        db.createCollection("games", {}).catch(e => { }),
+    ])
     onReady.next(true);
 });
 
@@ -43,6 +47,9 @@ export const addUser = async (name: string, password: string) => {
     res.insertedId
     console.log(res);
     return { id: res.insertedId, token }
+}
+export const addGame = async (game: Game) => {
+
 }
 
 export const getUser = async (id: string) => {

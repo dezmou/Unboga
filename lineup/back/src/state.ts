@@ -14,7 +14,6 @@ export const sendState = (socket: SSocket, state: State) => {
     socket.emit("newState", JSON.stringify(state))
 }
 
-
 export type SSocket = Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>;
 
 export const io = new Server(server, { path: '/api' });

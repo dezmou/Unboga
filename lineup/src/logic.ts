@@ -9,7 +9,6 @@ const socket = io(`${window.location.origin}`, {
     transports: ['websocket'],
 });
 
-
 const apiCAll = (params: ApiCAll) => {
     socket.emit(params.action, JSON.stringify({
         ...params,
