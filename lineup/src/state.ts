@@ -26,5 +26,3 @@ export const global = {
         render: ["global"]
     } as State
 }
-
-

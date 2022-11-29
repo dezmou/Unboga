@@ -21,29 +21,29 @@ const sendState = (socket: SSocket, state: State) => {
     socket.emit("newState", JSON.stringify(state))
 }
 
-const lobby: {
-    [key: string]: LobbyEntry
-} = {}
+const lobby: { [key: string]: LobbyEntry } = {}
 
 const userIdToSocket: { [key: string]: SSocket } = {}
 const socketIdToUserId: { [key: string]: string } = {}
 
-const updateLobby = async (userId: string) => {
-    if (!userIdToSocket[userId]) {
-        if (lobby[userId]) {
-            delete lobby[userId];
-        }
-    } else {
-        if (!lobby[userId]) {
-            const user = (await getUser(userId))!;
-            lobby[userId] = {
-                elo: user.user!.elo,
-                id: userId,
-                name: user.user!.name,
-                status: user.page === "lobby" ? "online" : "inGame"
+const updateLobby = async (userIds: string[]) => {
+    await Promise.all(userIds.map(userId => (async () => {
+        if (!userIdToSocket[userId]) {
+            if (lobby[userId]) {
+                delete lobby[userId];
+            }
+        } else {
+            if (!lobby[userId]) {
+                const user = (await getUser(userId))!;
+                lobby[userId] = {
+                    elo: user.user!.elo,
+                    id: userId,
+                    name: user.user!.name,
+                    status: user.inGame ? "inGame" : "online"
+                }
             }
         }
-    }
+    })()));
     io.emit("lobby", JSON.stringify(lobby))
 }
 
@@ -54,8 +54,29 @@ onReady.subscribe(() => {
 
         socket.on("challenge", async (p) => {
             const param = JSON.parse(p) as Challenge
-            const user = await getUser(param.id);
-            console.log(`${param.user!.id} challenge ${user!.user!.name}`);
+            const [user, target] = await Promise.all([
+                getUser(param.user!.id),
+                getUser(param.id)
+            ])
+            if (!user!.inGame
+                && !target!.inGame
+                && userIdToSocket[param.id]
+                && userIdToSocket[param.user!.id]
+                && (lobby[param.id] && lobby[param.id].status === "online")
+                && (lobby[param.user!.id] && lobby[param.user!.id].status === "online")
+                && !lobby[param.id].challenge
+                && !lobby[param.user!.id].challenge
+            ) {
+                lobby[param.id].challenge = { player1: param.user!.id, player2: param.id, initiator: param.user!.id }
+                lobby[param.user!.id].challenge = { player1: param.user!.id, player2: param.id, initiator: param.user!.id }
+                updateLobby([param.id, param.user!.id])
+            } else {
+                socket.emit("toast", JSON.stringify({
+                    color: "red",
+                    msg: "Impossible to challenge user",
+                    time: 4000,
+                } as ToastEvent))
+            }
         })
 
         socket.on("login", async (p) => {
@@ -94,8 +115,13 @@ onReady.subscribe(() => {
             if (userId) {
                 delete socketIdToUserId[socket.id];
                 delete userIdToSocket[userId];
+                if (lobby[userId].challenge) {
+                    const [player1, player2] = [lobby[userId].challenge!.player1, lobby[userId].challenge!.player2]
+                    delete lobby[player1].challenge
+                    delete lobby[player2].challenge
+                }
                 console.log("ROEIGJOIRJGOIPRJGOP", userId);
-                updateLobby(userId);
+                updateLobby([userId]);
             }
         })
 
@@ -117,7 +143,7 @@ onReady.subscribe(() => {
                     if (!userIdToSocket[param.user!.id]) {
                         userIdToSocket[param.user!.id] = socket;
                         socketIdToUserId[socket.id] = param.user!.id;
-                        updateLobby(param.user!.id);
+                        updateLobby([param.user!.id]);
                     }
                     return sendState(socket, res);
                 }

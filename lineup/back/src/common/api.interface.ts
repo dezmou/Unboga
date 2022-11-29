@@ -43,6 +43,7 @@ export interface LobbyEntry {
     id: string,
     name: string,
     status: "online" | "inGame"
+    challenge?: { player1: string, player2: string, initiator: string }
 }
 
 export type State = {
@@ -53,4 +54,5 @@ export type State = {
         token: string
         elo: number
     }
+    inGame?: string
 }

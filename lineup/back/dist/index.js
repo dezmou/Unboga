@@ -31,23 +31,25 @@ const sendState = (socket, state) => {
 const lobby = {};
 const userIdToSocket = {};
 const socketIdToUserId = {};
-const updateLobby = (userId) => __awaiter(void 0, void 0, void 0, function* () {
-    if (!userIdToSocket[userId]) {
-        if (lobby[userId]) {
-            delete lobby[userId];
+const updateLobby = (userIds) => __awaiter(void 0, void 0, void 0, function* () {
+    yield Promise.all(userIds.map(userId => (() => __awaiter(void 0, void 0, void 0, function* () {
+        if (!userIdToSocket[userId]) {
+            if (lobby[userId]) {
+                delete lobby[userId];
+            }
         }
-    }
-    else {
-        if (!lobby[userId]) {
-            const user = (yield (0, bdd_1.getUser)(userId));
-            lobby[userId] = {
-                elo: user.user.elo,
-                id: userId,
-                name: user.user.name,
-                status: user.page === "lobby" ? "online" : "inGame"
-            };
+        else {
+            if (!lobby[userId]) {
+                const user = (yield (0, bdd_1.getUser)(userId));
+                lobby[userId] = {
+                    elo: user.user.elo,
+                    id: userId,
+                    name: user.user.name,
+                    status: user.inGame ? "inGame" : "online"
+                };
+            }
         }
-    }
+    }))()));
     io.emit("lobby", JSON.stringify(lobby));
 });
 bdd_1.onReady.subscribe(() => {
@@ -56,8 +58,29 @@ bdd_1.onReady.subscribe(() => {
         socket.emit("welcome", socket.id);
         socket.on("challenge", (p) => __awaiter(void 0, void 0, void 0, function* () {
             const param = JSON.parse(p);
-            const user = yield (0, bdd_1.getUser)(param.id);
-            console.log(`${param.user.id} challenge ${user.user.name}`);
+            const [user, target] = yield Promise.all([
+                (0, bdd_1.getUser)(param.user.id),
+                (0, bdd_1.getUser)(param.id)
+            ]);
+            if (!user.inGame
+                && !target.inGame
+                && userIdToSocket[param.id]
+                && userIdToSocket[param.user.id]
+                && (lobby[param.id] && lobby[param.id].status === "online")
+                && (lobby[param.user.id] && lobby[param.user.id].status === "online")
+                && !lobby[param.id].challenge
+                && !lobby[param.user.id].challenge) {
+                lobby[param.id].challenge = { player1: param.user.id, player2: param.id, initiator: param.user.id };
+                lobby[param.user.id].challenge = { player1: param.user.id, player2: param.id, initiator: param.user.id };
+                updateLobby([param.id, param.user.id]);
+            }
+            else {
+                socket.emit("toast", JSON.stringify({
+                    color: "red",
+                    msg: "Impossible to challenge user",
+                    time: 4000,
+                }));
+            }
         }));
         socket.on("login", (p) => __awaiter(void 0, void 0, void 0, function* () {
             const param = JSON.parse(p);
@@ -94,8 +117,13 @@ bdd_1.onReady.subscribe(() => {
             if (userId) {
                 delete socketIdToUserId[socket.id];
                 delete userIdToSocket[userId];
+                if (lobby[userId].challenge) {
+                    const [player1, player2] = [lobby[userId].challenge.player1, lobby[userId].challenge.player2];
+                    delete lobby[player1].challenge;
+                    delete lobby[player2].challenge;
+                }
                 console.log("ROEIGJOIRJGOIPRJGOP", userId);
-                updateLobby(userId);
+                updateLobby([userId]);
             }
         });
         socket.on("askState", (p) => __awaiter(void 0, void 0, void 0, function* () {
@@ -118,7 +146,7 @@ bdd_1.onReady.subscribe(() => {
                     if (!userIdToSocket[param.user.id]) {
                         userIdToSocket[param.user.id] = socket;
                         socketIdToUserId[socket.id] = param.user.id;
-                        updateLobby(param.user.id);
+                        updateLobby([param.user.id]);
                     }
                     return sendState(socket, res);
                 }

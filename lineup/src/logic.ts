@@ -30,7 +30,6 @@ export const createUser = (name: string, pass: string) => {
 }
 
 const askState = () => {
-    console.log("ASKSTATE", global.localState.user);
     apiCAll({ action: "askState", user: global.localState.user })
 }
 
