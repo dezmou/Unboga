@@ -1,7 +1,7 @@
 :root {
   --width: 0px;
   --height: 0px;
-  --fontSize: min(17px, calc(var(--width) * 0.025)) ;
+  --fontSize: min(17px, calc(var(--width) * 0.035)) ;
   font-size: var(--fontSize);
 }
 

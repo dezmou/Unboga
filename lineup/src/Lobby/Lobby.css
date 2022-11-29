@@ -4,3 +4,37 @@
     position: absolute;
     top: 0,
 }
+
+.challenge-main-cont {
+    width: var(--width);
+    height: var(--height);
+    position: absolute;
+    display: grid;
+    justify-content: center;
+    align-content: center;
+    transition: opacity 0.25s;
+    opacity: 0;
+}
+
+.challenge-cont {
+    width: calc(var(--width) * 0.8);
+    max-width: 500px;
+    height: calc(var(--width) * 0.2);
+    background: rgb(255, 157, 157);
+    display: grid;
+    justify-content: center;
+    align-content: center;
+    text-align: center;
+}
+
+.challenge-buttons {
+    margin-top: calc(var(--width) * 0.03);
+    display: grid;
+    justify-content: center;
+    align-content: center;
+}
+
+.challenge-buttons-victim {
+    margin-top: calc(var(--width) * 0.03);
+    display : flex;
+}
