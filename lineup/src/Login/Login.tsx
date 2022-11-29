@@ -1,11 +1,10 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { Button, TextField } from "@mui/material";
+import anime from "animejs";
+import { useEffect, useRef, useState } from 'react';
+import { createUser, login, toast } from '../logic';
 import { useRender } from '../render';
-import "./Login.css"
-import { Button, TextField } from "@mui/material"
 import { global } from '../state';
-import { State } from '../../back/src/common/api.interface';
-import anime from "animejs"
-import { createUser, toast, login } from '../logic';
+import "./Login.css";
 
 
 export default () => {
