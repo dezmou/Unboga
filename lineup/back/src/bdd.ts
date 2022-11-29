@@ -49,7 +49,7 @@ export const addUser = async (name: string, password: string) => {
     return { id: res.insertedId, token }
 }
 export const addGame = async (game: Game) => {
-
+    await db.collection("games").insertOne(game)
 }
 
 export const getUser = async (id: string) => {

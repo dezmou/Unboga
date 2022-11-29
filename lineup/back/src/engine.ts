@@ -2,13 +2,17 @@ type cardStatus = "deck" | "player1" | "player2" | "lost"
 type UserCard = {
     status: cardStatus
     villainRefused: boolean
+    points: number,
 }
 
+export type Player = "player1" | "player2"
+
 export interface Game {
+    id: string
     player1: string;
     player2: string;
     nextAction: "selectHero" | "pick" | "discard"
-    nextActionPlayer: "player1" | "player2"
+    nextActionPlayer: Player
     board: {
         id: string
         x: number
@@ -28,7 +32,9 @@ export const gameEngine = () => {
 
     const getNewBoard = () => {
         const getBasePoint = (x: number, y: number) => {
-            return 4
+            if (x >= 4) x += -1
+            if (y >= 4) y += -1
+            return ((Math.abs(x - 3) + Math.abs(y - 3)) * 2) + 1
         }
 
         const board: Game["board"] = [];
@@ -37,8 +43,8 @@ export const gameEngine = () => {
             for (let x = 0; x < 7; x++) {
                 line.push({
                     id: `${x}_${y}`,
-                    player1: { status: "deck", villainRefused: false },
-                    player2: { status: "deck", villainRefused: false },
+                    player1: { status: "deck", villainRefused: false, points: getBasePoint(x, y) },
+                    player2: { status: "deck", villainRefused: false, points: getBasePoint(x, y) },
                     status: "deck",
                     x,
                     y,
@@ -50,21 +56,44 @@ export const gameEngine = () => {
         return board;
     }
 
+    const getRandomFromDeck = () => {
+        while (true) {
+            const card = state.game!.board[Math.floor(Math.random() * 7)][Math.floor(Math.random() * 7)]
+            if (card.status === "deck") return card
+        }
+    }
+
+    const distribute = (player: Player) => {
+        for (let i = 0; i < 8; i++) {
+            const card = getRandomFromDeck()
+            card.status = player
+            card[player].status = player
+        }
+    }
+
     const newGame = (player1: string, player2: string) => {
+        const makeId = () => {
+            return Math.floor((1 + Math.random()) * 0x1000000000000000)
+                .toString(32)
+        }
+
         state.game = {
+            id: makeId(),
             board: getNewBoard(),
             nextAction: "selectHero",
-            nextActionPlayer: ["player1" as "player1", "player2" as "player2"][1],
+            nextActionPlayer: ["player1" as Player, "player2" as Player][1],
             player1,
             player2,
         }
+        distribute("player1");
+        distribute("player2");
     }
 
     const loadGame = (loadedGame: Game) => {
         state.game = loadedGame
     }
 
-    const getUserState = (player: "player1" | "player2") => {
+    const getUserState = (player: Player) => {
 
     }
 
