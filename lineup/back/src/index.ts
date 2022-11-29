@@ -15,11 +15,17 @@ const io = new Server(server, {
     path: '/api',
 });
 
-const sendState = (socket: Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>, state: State) => {
+type SSocket = Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>;
+
+const sendState = (socket: SSocket, state: State) => {
     socket.emit("newState", JSON.stringify(state))
 }
 
-const tokenSocket = {
+const userIdToSocket: { [key: string]: SSocket } = {
+
+}
+
+const socketIdToUserId: { [key: string]: string } = {
 
 }
 
@@ -59,6 +65,15 @@ onReady.subscribe(() => {
             }
         })
 
+        socket.on("disconnect", () => {
+            const userId = socketIdToUserId[socket.id]
+            if (userId) {
+                delete socketIdToUserId[socket.id];
+                delete userIdToSocket[userId];
+                console.log(userIdToSocket);
+            }
+        })
+
         socket.on("askState", async (p: string) => {
             const param = JSON.parse(p) as AskState
             if (!param.user) {
@@ -68,12 +83,17 @@ onReady.subscribe(() => {
                 })
             } else {
                 const res = await getUser(param.user.id)
-                if (!res || res!.user?.token !== param.user.token) {
+                if (!res || res!.user!.token !== param.user.token) {
                     return sendState(socket, {
                         page: "login",
                         render: ["login"]
                     })
                 } else {
+                    if (!userIdToSocket[param.user!.id]) {
+                        userIdToSocket[param.user!.id] = socket;
+                        socketIdToUserId[socket.id] = param.user!.id;
+                        console.log(userIdToSocket);
+                    }
                     return sendState(socket, res);
                 }
             }
