@@ -79,6 +79,12 @@ onReady.subscribe(() => {
             }
         })
 
+        socket.on("acceptChallenge", async (p) => {
+            const param = JSON.parse(p) as ApiCallBase
+            if (!lobby[param.user!.id] || !lobby[param.user!.id].challenge) return;
+            
+        })
+
         socket.on("cancelChallenge", async (p) => {
             const param = JSON.parse(p) as ApiCallBase
             if (!lobby[param.user!.id] || !lobby[param.user!.id].challenge) return;
