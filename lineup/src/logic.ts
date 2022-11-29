@@ -17,6 +17,14 @@ const apiCAll = (params: ApiCAll) => {
     }));
 }
 
+export const cancelChallenge = async () => {
+    apiCAll({ action: "cancelChallenge" })
+}
+
+export const acceptChallenge = async () => {
+    apiCAll({ action: "acceptChallenge" })
+}
+
 export const challenge = async (id: string) => {
     apiCAll({ action: "challenge", id })
 }

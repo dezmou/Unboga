@@ -2,7 +2,7 @@ console.log("CHIENrouge");
 
 export type Call = "login" | "askState"
 
-type ApiCallBase = {
+export type ApiCallBase = {
     user?: {
         id: string
         token: string
@@ -30,13 +30,21 @@ export interface AskState extends ApiCallBase {
     action: "askState"
 }
 
+export interface AcceptChallenge extends ApiCallBase {
+    action: "acceptChallenge"
+}
+
+export interface CancelChallenge extends ApiCallBase {
+    action: "cancelChallenge"
+}
+
 export interface ToastEvent {
     msg: string,
     color: string,
     time: number,
 }
 
-export type ApiCAll = CreateUser | AskState | Login | Challenge
+export type ApiCAll = CreateUser | AskState | Login | Challenge | AcceptChallenge | CancelChallenge
 
 export interface LobbyEntry {
     elo: number,

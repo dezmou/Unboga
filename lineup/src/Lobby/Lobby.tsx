@@ -5,7 +5,7 @@ import { Button, TextField } from "@mui/material"
 import { global } from '../state';
 import { LobbyEntry, State } from '../../back/src/common/api.interface';
 import anime from "animejs"
-import { createUser, toast, login, challenge } from '../logic';
+import { createUser, toast, login, challenge, acceptChallenge, cancelChallenge } from '../logic';
 
 const Challenge = (p: { challenge: LobbyEntry["challenge"] }) => {
 
@@ -25,7 +25,7 @@ const Challenge = (p: { challenge: LobbyEntry["challenge"] }) => {
                                 <Button style={{
                                     backgroundColor: "#8a1414",
                                 }} className='login-button' variant='contained'
-                                    onClick={() => { }}
+                                    onClick={() => { cancelChallenge() }}
                                 >Cancel</Button>
                             </div>
                         </div>
@@ -35,24 +35,22 @@ const Challenge = (p: { challenge: LobbyEntry["challenge"] }) => {
                             {global.lobby[p.challenge!.player1].name} ({global.lobby[p.challenge!.player1].elo} ELO) challenged you !
                         </div>
                         <div className='challenge-buttons-victim'>
-                            
+
                             <div>
                                 <Button style={{
                                     backgroundColor: "green",
                                 }} className='login-button' variant='contained'
-                                    onClick={() => { }}
+                                    onClick={() => { acceptChallenge() }}
                                 >Accept</Button>
                             </div>
-                            <div style={{marginLeft : "10px"}}>
+                            <div style={{ marginLeft: "10px" }}>
                                 <Button style={{
                                     backgroundColor: "#8a1414",
                                 }} className='login-button' variant='contained'
-                                    onClick={() => { }}
+                                    onClick={() => { cancelChallenge() }}
                                 >Decline</Button>
                             </div>
                         </div>
-
-
                     </>}
                 </div>
             </div>

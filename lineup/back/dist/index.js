@@ -82,6 +82,26 @@ bdd_1.onReady.subscribe(() => {
                 }));
             }
         }));
+        socket.on("cancelChallenge", (p) => __awaiter(void 0, void 0, void 0, function* () {
+            const param = JSON.parse(p);
+            if (!lobby[param.user.id] || !lobby[param.user.id].challenge)
+                return;
+            if (lobby[param.user.id].challenge.initiator !== param.user.id) {
+                const op = userIdToSocket[lobby[param.user.id].challenge.player1];
+                if (op) {
+                    op.emit("toast", JSON.stringify({
+                        color: "blue",
+                        msg: "challenge declined",
+                        time: 4000,
+                    }));
+                }
+            }
+            const player1 = lobby[param.user.id].challenge.player1;
+            const player2 = lobby[param.user.id].challenge.player2;
+            lobby[player1].challenge = undefined;
+            lobby[player2].challenge = undefined;
+            updateLobby([]);
+        }));
         socket.on("login", (p) => __awaiter(void 0, void 0, void 0, function* () {
             const param = JSON.parse(p);
             const res = yield (0, bdd_1.getUserByName)(param.name);

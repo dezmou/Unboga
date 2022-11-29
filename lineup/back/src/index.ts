@@ -1,7 +1,7 @@
 import express from "express"
 import http from "http"
 import { Server, Socket } from "socket.io"
-import { ApiCAll, AskState, Challenge, CreateUser, LobbyEntry, Login, State, ToastEvent } from "./common/api.interface"
+import { ApiCAll, ApiCallBase, AskState, Challenge, CreateUser, LobbyEntry, Login, State, ToastEvent } from "./common/api.interface"
 import { DefaultEventsMap } from "socket.io/dist/typed-events"
 import { addUser, getUser, getUserByName, onReady } from "./bdd"
 
@@ -77,6 +77,26 @@ onReady.subscribe(() => {
                     time: 4000,
                 } as ToastEvent))
             }
+        })
+
+        socket.on("cancelChallenge", async (p) => {
+            const param = JSON.parse(p) as ApiCallBase
+            if (!lobby[param.user!.id] || !lobby[param.user!.id].challenge) return;
+            if (lobby[param.user!.id].challenge!.initiator !== param.user!.id) {
+                const op = userIdToSocket[lobby[param.user!.id].challenge!.player1];
+                if (op) {
+                    op.emit("toast", JSON.stringify({
+                        color: "blue",
+                        msg: "challenge declined",
+                        time: 4000,
+                    } as ToastEvent))
+                }
+            }
+            const player1 = lobby[param.user!.id].challenge!.player1
+            const player2 = lobby[param.user!.id].challenge!.player2
+            lobby[player1].challenge = undefined;
+            lobby[player2].challenge = undefined;
+            updateLobby([])
         })
 
         socket.on("login", async (p) => {
