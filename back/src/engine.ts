@@ -46,14 +46,9 @@ export const gameEngine = () => {
         }
     }
 
-    const newGame = (player1: string, player2: string) => {
-        const makeId = () => {
-            return Math.floor((1 + Math.random()) * 0x100000000000000000)
-                .toString(32)
-        }
-
+    const newGame = (id: string, player1: string, player2: string) => {
         state.game = {
-            id: makeId(),
+            id,
             pick: { x: 0, y: 0 },
             board: getNewBoard(),
             nextAction: "selectHero",
@@ -71,7 +66,7 @@ export const gameEngine = () => {
         state.game = loadedGame
     }
 
-    const getUserState = (playerId: string) => {
+    const getUserGame = (playerId: string) => {
         const you = state.game!.player1Id === playerId ? "player1" : "player2";
         const villain = state.game!.player1Id === playerId ? "player2" : "player1";
 
@@ -95,7 +90,7 @@ export const gameEngine = () => {
         funcs: {
             newGame,
             loadGame,
-            getUserState,
+            getUserGame,
         }
     }
 }

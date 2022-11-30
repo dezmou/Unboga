@@ -45,33 +45,37 @@ const gameEngine = () => {
             card[player].status = player;
         }
     };
-    const newGame = (player1, player2) => {
-        const makeId = () => {
-            return Math.floor((1 + Math.random()) * 0x100000000000000000)
-                .toString(32);
-        };
+    const newGame = (id, player1, player2) => {
         state.game = {
-            id: makeId(),
+            id,
+            pick: { x: 0, y: 0 },
             board: getNewBoard(),
             nextAction: "selectHero",
             nextActionPlayer: ["player1", "player2"][1],
-            player1,
-            player2,
+            player1Id: player1,
+            player2Id: player2,
         };
         distribute("player1");
         distribute("player2");
+        const pick = getRandomFromDeck();
+        state.game.pick = { x: pick.x, y: pick.y };
     };
     const loadGame = (loadedGame) => {
         state.game = loadedGame;
     };
-    const getUserState = (player) => {
+    const getUserGame = (playerId) => {
+        const you = state.game.player1Id === playerId ? "player1" : "player2";
+        const villain = state.game.player1Id === playerId ? "player2" : "player1";
+        const userGame = Object.assign(Object.assign({}, state.game), { you,
+            villain, board: state.game.board.map(line => line.map(card => (Object.assign(Object.assign({}, card), { player1: undefined, player2: undefined, status: card[you], points: card.basePoints })))) });
+        return userGame;
     };
     return {
         state,
         funcs: {
             newGame,
             loadGame,
-            getUserState,
+            getUserGame,
         }
     };
 };

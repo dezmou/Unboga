@@ -49,7 +49,7 @@ const askState = (socket, param) => __awaiter(void 0, void 0, void 0, function* 
         });
     }
     else {
-        const res = yield (0, bdd_1.getUser)(param.user.id);
+        const res = yield (0, bdd_1.getUserState)(param.user.id);
         if (!res || res.user.token !== param.user.token) {
             return (0, state_1.sendState)(socket, {
                 page: "login",

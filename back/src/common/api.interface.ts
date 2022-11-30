@@ -1,3 +1,5 @@
+import { UserGame } from "./game.interface"
+
 export type Call = "login" | "askState"
 
 export type ApiCallBase = {
@@ -56,9 +58,11 @@ export type State = {
     page: "blank" | "login" | "lobby" | "game"
     render: string[]
     user?: {
+        id: string
         name: string
         token: string
         elo: number
     }
     inGame?: string
+    game?: UserGame
 }

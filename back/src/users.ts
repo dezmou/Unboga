@@ -1,4 +1,4 @@
-import { addUser, getUser, getUserByName } from "./bdd";
+import { addUser, getUserState, getUserByName } from "./bdd";
 import { ApiCallBase, AskState, CreateUser, Login, ToastEvent } from "./common/api.interface";
 import { updateLobby } from "./lobby";
 import { lobby, sendState, socketIdToUserId, SSocket, userIdToSocket } from "./state";
@@ -38,7 +38,7 @@ export const askState = async (socket: SSocket, param: AskState) => {
             render: ["login"]
         })
     } else {
-        const res = await getUser(param.user.id)
+        const res = await getUserState(param.user.id)
         if (!res || res!.user!.token !== param.user.token) {
             return sendState(socket, {
                 page: "login",

@@ -22,7 +22,7 @@ const cancelChallenge = (socket, param) => __awaiter(void 0, void 0, void 0, fun
             op.emit("toast", JSON.stringify({
                 color: "blue",
                 msg: "Challenge declined",
-                time: 4000,
+                time: 2000,
             }));
         }
     }
@@ -46,8 +46,8 @@ const acceptChallenge = (socket, param) => __awaiter(void 0, void 0, void 0, fun
 exports.acceptChallenge = acceptChallenge;
 const challenge = (socket, param) => __awaiter(void 0, void 0, void 0, function* () {
     const [user, target] = yield Promise.all([
-        (0, bdd_1.getUser)(param.user.id),
-        (0, bdd_1.getUser)(param.id)
+        (0, bdd_1.getUserState)(param.user.id),
+        (0, bdd_1.getUserState)(param.id)
     ]);
     if (!user.inGame
         && !target.inGame
@@ -79,7 +79,7 @@ const updateLobby = (userIds) => __awaiter(void 0, void 0, void 0, function* () 
         }
         else {
             if (!state_1.lobby[userId]) {
-                const user = (yield (0, bdd_1.getUser)(userId));
+                const user = (yield (0, bdd_1.getUserState)(userId));
                 state_1.lobby[userId] = {
                     elo: user.user.elo,
                     id: userId,

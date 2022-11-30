@@ -1,4 +1,4 @@
-import { getUser } from "./bdd";
+import { getUserState } from "./bdd";
 import { ApiCallBase, Challenge, ToastEvent } from "./common/api.interface";
 import { newGame } from "./game";
 import { io, lobby, SSocket, userIdToSocket } from "./state";
@@ -11,7 +11,7 @@ export const cancelChallenge = async (socket: SSocket, param: ApiCallBase) => {
             op.emit("toast", JSON.stringify({
                 color: "blue",
                 msg: "Challenge declined",
-                time: 4000,
+                time: 2000,
             } as ToastEvent))
         }
     }
@@ -35,8 +35,8 @@ export const acceptChallenge = async (socket: SSocket, param: ApiCallBase) => {
 
 export const challenge = async (socket: SSocket, param: Challenge) => {
     const [user, target] = await Promise.all([
-        getUser(param.user!.id),
-        getUser(param.id)
+        getUserState(param.user!.id),
+        getUserState(param.id)
     ])
     if (!user!.inGame
         && !target!.inGame
@@ -67,7 +67,7 @@ export const updateLobby = async (userIds: string[]) => {
             }
         } else {
             if (!lobby[userId]) {
-                const user = (await getUser(userId))!;
+                const user = (await getUserState(userId))!;
                 lobby[userId] = {
                     elo: user.user!.elo,
                     id: userId,
@@ -80,4 +80,3 @@ export const updateLobby = async (userIds: string[]) => {
     console.log("UPDATE LOBBY");
     io.emit("lobby", JSON.stringify(lobby))
 }
-

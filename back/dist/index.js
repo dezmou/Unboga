@@ -16,7 +16,7 @@ const users_1 = require("./users");
 const handles = {
     // Unauthentified methods
     "login": { func: users_1.login, toastIfFail: true, mustBeConnected: false, },
-    "createUser": { func: users_1.createUser, toastIfFail: true, mustBeConnected: true, },
+    "createUser": { func: users_1.createUser, toastIfFail: true, mustBeConnected: false, },
     "askState": { func: users_1.askState, toastIfFail: true, mustBeConnected: false, },
     "disconnect": { func: users_1.disconnect, toastIfFail: false, mustBeConnected: false, },
     // Authentified methods

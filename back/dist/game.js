@@ -10,16 +10,28 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.newGame = void 0;
+const bson_1 = require("bson");
 const bdd_1 = require("./bdd");
 const engine_1 = require("./engine");
 const newGame = (player1, player2) => __awaiter(void 0, void 0, void 0, function* () {
-    const players = yield Promise.all([
-        (0, bdd_1.getUser)(player1),
-        (0, bdd_1.getUser)(player2),
+    const [p1State, p2State] = yield Promise.all([
+        (0, bdd_1.getUserState)(player1),
+        (0, bdd_1.getUserState)(player2),
     ]);
     const game = (0, engine_1.gameEngine)();
-    game.funcs.newGame(player1, player2);
-    yield (0, bdd_1.addGame)(game.state.game);
+    const id = new bson_1.ObjectID();
+    game.funcs.newGame(id.toString(), player1, player2);
+    yield Promise.all([
+        (0, bdd_1.addGame)(game.state.game),
+        ...[p1State, p2State].map((pState) => __awaiter(void 0, void 0, void 0, function* () {
+            pState.inGame = game.state.game.id;
+            const userGame = game.funcs.getUserGame(pState.user.id);
+            pState.game = userGame;
+            pState.page = "game";
+            p1State.render = ["global"];
+            yield (0, bdd_1.updateUserState)(pState.user.id, pState);
+        }))
+    ]);
     // for (let player of players) {
     //     ; (async () => {
     //         player!.page = "game"

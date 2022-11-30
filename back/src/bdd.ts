@@ -8,6 +8,14 @@ let db: ReturnType<MongoClient["db"]>;
 
 export const onReady = new Subject<boolean>()
 
+export interface UserEntry {
+    _id: ObjectId,
+    name: string,
+    password: string,
+    token: string,
+    state: State,
+}
+
 client.connect().then(async r => {
     db = client.db("unbogame");
     await Promise.all([
@@ -29,30 +37,39 @@ export const addUser = async (name: string, password: string) => {
     }
 
     const token = makeId()
+    const id = new ObjectId()
     const newState: State = {
         page: "lobby",
         render: ["global"],
         user: {
+            id: id.toString(),
             elo: 1000,
             name: name,
             token: token,
         }
     }
-    const res = await db.collection("users").insertOne({
+
+    const doc: UserEntry = {
+        _id: id,
         name,
         password,
         token,
         state: newState,
-    })
-    res.insertedId
-    console.log(res);
-    return { id: res.insertedId, token }
+    }
+
+    const res = await db.collection("users").insertOne(doc);
+    return { id, token }
 }
+
 export const addGame = async (game: Game) => {
     await db.collection("games").insertOne({ ...game, _id: new ObjectId(game.id) })
 }
 
-export const getUser = async (id: string) => {
+export const updateUserState = async (id: string, data: State) => {
+    await db.collection("users").updateOne({ _id: new ObjectId(id) }, { $set: { state: data } });
+}
+
+export const getUserState = async (id: string) => {
     const res = (await db.collection("users").findOne({ _id: new ObjectId(id) }));
     if (!res) {
         return;

@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getUserByName = exports.getUser = exports.addGame = exports.addUser = exports.onReady = void 0;
+exports.getUserByName = exports.getUserState = exports.updateUserState = exports.addGame = exports.addUser = exports.onReady = void 0;
 const mongodb_1 = require("mongodb");
 const rxjs_1 = require("rxjs");
 const client = new mongodb_1.MongoClient(`mongodb://root:chien@mongo:27017`);
@@ -33,38 +33,44 @@ const addUser = (name, password) => __awaiter(void 0, void 0, void 0, function* 
         throw "USER_EXIST";
     }
     const token = makeId();
+    const id = new mongodb_1.ObjectId();
     const newState = {
         page: "lobby",
         render: ["global"],
         user: {
+            id: id.toString(),
             elo: 1000,
             name: name,
             token: token,
         }
     };
-    const res = yield db.collection("users").insertOne({
+    const doc = {
+        _id: id,
         name,
         password,
         token,
         state: newState,
-    });
-    res.insertedId;
-    console.log(res);
-    return { id: res.insertedId, token };
+    };
+    const res = yield db.collection("users").insertOne(doc);
+    return { id, token };
 });
 exports.addUser = addUser;
 const addGame = (game) => __awaiter(void 0, void 0, void 0, function* () {
     yield db.collection("games").insertOne(Object.assign(Object.assign({}, game), { _id: new mongodb_1.ObjectId(game.id) }));
 });
 exports.addGame = addGame;
-const getUser = (id) => __awaiter(void 0, void 0, void 0, function* () {
+const updateUserState = (id, data) => __awaiter(void 0, void 0, void 0, function* () {
+    yield db.collection("users").updateOne({ _id: new mongodb_1.ObjectId(id) }, { $set: { state: data } });
+});
+exports.updateUserState = updateUserState;
+const getUserState = (id) => __awaiter(void 0, void 0, void 0, function* () {
     const res = (yield db.collection("users").findOne({ _id: new mongodb_1.ObjectId(id) }));
     if (!res) {
         return;
     }
     return res.state;
 });
-exports.getUser = getUser;
+exports.getUserState = getUserState;
 const getUserByName = (name) => __awaiter(void 0, void 0, void 0, function* () {
     const res = (yield db.collection("users").findOne({ name }));
     if (!res) {
