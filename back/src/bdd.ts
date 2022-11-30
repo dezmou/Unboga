@@ -1,7 +1,7 @@
 import { MongoClient, ObjectId } from "mongodb"
 import { State } from "./common/api.interface";
+import { Game } from "./common/game.interface";
 import { Subject } from "rxjs"
-import { Game } from "./engine";
 
 const client = new MongoClient(`mongodb://root:chien@mongo:27017`);
 let db: ReturnType<MongoClient["db"]>;

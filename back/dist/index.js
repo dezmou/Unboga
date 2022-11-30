@@ -14,13 +14,15 @@ const lobby_1 = require("./lobby");
 const state_1 = require("./state");
 const users_1 = require("./users");
 const handles = {
-    "challenge": { func: lobby_1.challenge, toastIfFail: true, },
-    "acceptChallenge": { func: lobby_1.acceptChallenge, toastIfFail: true, },
-    "cancelChallenge": { func: lobby_1.cancelChallenge, toastIfFail: true, },
-    "login": { func: users_1.login, toastIfFail: true, },
-    "createUser": { func: users_1.createUser, toastIfFail: true, },
-    "askState": { func: users_1.askState, toastIfFail: true },
-    "disconnect": { func: users_1.disconnect, toastIfFail: false },
+    // Unauthentified methods
+    "login": { func: users_1.login, toastIfFail: true, mustBeConnected: false, },
+    "createUser": { func: users_1.createUser, toastIfFail: true, mustBeConnected: true, },
+    "askState": { func: users_1.askState, toastIfFail: true, mustBeConnected: false, },
+    "disconnect": { func: users_1.disconnect, toastIfFail: false, mustBeConnected: false, },
+    // Authentified methods
+    "challenge": { func: lobby_1.challenge, toastIfFail: true, mustBeConnected: true, },
+    "acceptChallenge": { func: lobby_1.acceptChallenge, toastIfFail: true, mustBeConnected: true, },
+    "cancelChallenge": { func: lobby_1.cancelChallenge, toastIfFail: true, mustBeConnected: true, },
 };
 bdd_1.onReady.subscribe(() => {
     state_1.io.on('connection', (socket) => {
@@ -31,6 +33,9 @@ bdd_1.onReady.subscribe(() => {
             const handle = api[1];
             socket.on(action, (p) => __awaiter(void 0, void 0, void 0, function* () {
                 try {
+                    if (handle.mustBeConnected && !state_1.socketIdToUserId[socket.id]) {
+                        throw "not authorized";
+                    }
                     let params = p;
                     try {
                         params = JSON.parse(p);

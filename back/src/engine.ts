@@ -1,29 +1,4 @@
-type cardStatus = "deck" | "player1" | "player2" | "lost"
-type UserCard = {
-    status: cardStatus
-    villainRefused: boolean
-    points: number,
-}
-
-export type Player = "player1" | "player2"
-
-export interface Game {
-    id: string
-    player1: string;
-    player2: string;
-    nextAction: "selectHero" | "pick" | "discard"
-    nextActionPlayer: Player
-    board: {
-        id: string
-        x: number
-        y: number
-        status: cardStatus
-        player1: UserCard
-        player2: UserCard
-        basePoints: number
-    }[][]
-}
-
+import { Game, Player, UserGame } from "./common/game.interface"
 
 export const gameEngine = () => {
     const state = {
@@ -79,22 +54,40 @@ export const gameEngine = () => {
 
         state.game = {
             id: makeId(),
+            pick: { x: 0, y: 0 },
             board: getNewBoard(),
             nextAction: "selectHero",
             nextActionPlayer: ["player1" as Player, "player2" as Player][1],
-            player1,
-            player2,
+            player1Id: player1,
+            player2Id: player2,
         }
         distribute("player1");
         distribute("player2");
+        const pick = getRandomFromDeck();
+        state.game.pick = { x: pick.x, y: pick.y }
     }
 
     const loadGame = (loadedGame: Game) => {
         state.game = loadedGame
     }
 
-    const getUserState = (player: Player) => {
+    const getUserState = (playerId: string) => {
+        const you = state.game!.player1Id === playerId ? "player1" : "player2";
+        const villain = state.game!.player1Id === playerId ? "player2" : "player1";
 
+        const userGame: UserGame = {
+            ...state.game!,
+            you,
+            villain,
+            board: state.game!.board.map(line => line.map(card => ({
+                ...card,
+                player1: undefined,
+                player2: undefined,
+                status: card[you],
+                points: card.basePoints
+            })))
+        }
+        return userGame;
     }
 
     return {

@@ -7,7 +7,7 @@ import { askState, createUser, disconnect, login } from "./users"
 const handles = {
     // Unauthentified methods
     "login": { func: login, toastIfFail: true, mustBeConnected: false, },
-    "createUser": { func: createUser, toastIfFail: true, mustBeConnected: true, },
+    "createUser": { func: createUser, toastIfFail: true, mustBeConnected: false, },
     "askState": { func: askState, toastIfFail: true, mustBeConnected: false, },
     "disconnect": { func: disconnect, toastIfFail: false, mustBeConnected: false, },
 

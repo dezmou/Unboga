@@ -9,7 +9,6 @@ export const newGame = async (player1: string, player2: string) => {
     const game = gameEngine()
     game.funcs.newGame(player1, player2)
     await addGame(game.state.game!);
-    
 
     // for (let player of players) {
     //     ; (async () => {
