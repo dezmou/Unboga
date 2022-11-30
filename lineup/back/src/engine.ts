@@ -8,7 +8,7 @@ type UserCard = {
 export type Player = "player1" | "player2"
 
 export interface Game {
-    id: string
+    _id: string
     player1: string;
     player2: string;
     nextAction: "selectHero" | "pick" | "discard"
@@ -73,12 +73,12 @@ export const gameEngine = () => {
 
     const newGame = (player1: string, player2: string) => {
         const makeId = () => {
-            return Math.floor((1 + Math.random()) * 0x1000000000000000)
+            return Math.floor((1 + Math.random()) * 0x100000000000000000)
                 .toString(32)
         }
 
         state.game = {
-            id: makeId(),
+            _id: makeId(),
             board: getNewBoard(),
             nextAction: "selectHero",
             nextActionPlayer: ["player1" as Player, "player2" as Player][1],
