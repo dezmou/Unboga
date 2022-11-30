@@ -1,4 +1,5 @@
-import { Game, Player, UserGame } from "./common/game.interface"
+import { BOARD_SIZE, Game, Player, UserGame } from "./common/game.interface"
+
 
 export const gameEngine = () => {
     const state = {
@@ -13,9 +14,9 @@ export const gameEngine = () => {
         }
 
         const board: Game["board"] = [];
-        for (let y = 0; y < 7; y++) {
+        for (let y = 0; y < BOARD_SIZE; y++) {
             const line: Game["board"][number] = [];
-            for (let x = 0; x < 7; x++) {
+            for (let x = 0; x < BOARD_SIZE; x++) {
                 line.push({
                     id: `${x}_${y}`,
                     player1: { status: "deck", villainRefused: false, points: getBasePoint(x, y) },
@@ -33,7 +34,7 @@ export const gameEngine = () => {
 
     const getRandomFromDeck = () => {
         while (true) {
-            const card = state.game!.board[Math.floor(Math.random() * 7)][Math.floor(Math.random() * 7)]
+            const card = state.game!.board[Math.floor(Math.random() * BOARD_SIZE)][Math.floor(Math.random() * BOARD_SIZE)]
             if (card.status === "deck") return card
         }
     }

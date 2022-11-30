@@ -1,3 +1,5 @@
+export const BOARD_SIZE = 8
+
 export type cardStatus = "deck" | "player1" | "player2" | "lost"
 
 export type UserCard = {

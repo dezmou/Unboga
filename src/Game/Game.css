@@ -1,9 +1,50 @@
-:root {}
+:root {
+    --board-width: var(--width);
+    --board-height: var(--width);
+    --board-case-size: calc(var(--board-width) / 8);
+}
 
 .game-main-cont {
-    position : absolute;
-    width : var(--width);
-    height : var(--height);
-    background : green;
-    transition : opacity 0.35s;
+    position: absolute;
+    width: var(--width);
+    height: var(--height);
+    transition: opacity 0.35s;
+}
+
+.board-line {
+    width: var(--board-width);
+    display: flex;
+}
+
+.board-case {
+    width: var(--board-case-size);
+    height: var(--board-case-size);
+    outline: 1px solid rgba(128, 128, 128, 0.488);
+    color: white;
+}
+
+.case-piece-cont {
+    position: absolute;
+    width: var(--board-case-size);
+    height: var(--board-case-size);
+}
+
+.case-piece {
+    width: calc(var(--board-case-size) * 0.7);
+    height: calc(var(--board-case-size) * 0.7);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+}
+
+.board-case-background-effect {
+    position: absolute;
+    width: var(--board-case-size);
+    height: var(--board-case-size);
+    mix-blend-mode: multiply;
+}
+
+.case-point {
+    margin-left: calc(var(--board-case-size) * 0.02);
+    margin-top: calc(var(--board-case-size) * 0.02);
 }

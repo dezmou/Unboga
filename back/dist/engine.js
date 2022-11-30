@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.gameEngine = void 0;
+const game_interface_1 = require("./common/game.interface");
 const gameEngine = () => {
     const state = {
         game: undefined
@@ -14,9 +15,9 @@ const gameEngine = () => {
             return ((Math.abs(x - 3) + Math.abs(y - 3)) * 2) + 1;
         };
         const board = [];
-        for (let y = 0; y < 7; y++) {
+        for (let y = 0; y < game_interface_1.BOARD_SIZE; y++) {
             const line = [];
-            for (let x = 0; x < 7; x++) {
+            for (let x = 0; x < game_interface_1.BOARD_SIZE; x++) {
                 line.push({
                     id: `${x}_${y}`,
                     player1: { status: "deck", villainRefused: false, points: getBasePoint(x, y) },
@@ -33,7 +34,7 @@ const gameEngine = () => {
     };
     const getRandomFromDeck = () => {
         while (true) {
-            const card = state.game.board[Math.floor(Math.random() * 7)][Math.floor(Math.random() * 7)];
+            const card = state.game.board[Math.floor(Math.random() * game_interface_1.BOARD_SIZE)][Math.floor(Math.random() * game_interface_1.BOARD_SIZE)];
             if (card.status === "deck")
                 return card;
         }
