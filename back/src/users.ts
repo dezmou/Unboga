@@ -1,7 +1,21 @@
 import { addUser, getUser, getUserByName } from "./bdd";
-import { AskState, CreateUser, Login, ToastEvent } from "./common/api.interface";
+import { ApiCallBase, AskState, CreateUser, Login, ToastEvent } from "./common/api.interface";
 import { updateLobby } from "./lobby";
-import { sendState, socketIdToUserId, SSocket, userIdToSocket } from "./state";
+import { lobby, sendState, socketIdToUserId, SSocket, userIdToSocket } from "./state";
+
+export const disconnect = async (socket: SSocket, param: ApiCallBase) => {
+    const userId = socketIdToUserId[socket.id]
+    if (userId) {
+        delete socketIdToUserId[socket.id];
+        delete userIdToSocket[userId];
+        if (lobby[userId].challenge) {
+            const [player1, player2] = [lobby[userId].challenge!.player1, lobby[userId].challenge!.player2]
+            delete lobby[player1].challenge
+            delete lobby[player2].challenge
+        }
+        updateLobby([userId]);
+    }
+}
 
 export const login = async (socket: SSocket, param: Login) => {
     const res = await getUserByName(param.name)

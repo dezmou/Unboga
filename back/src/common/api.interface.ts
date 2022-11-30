@@ -1,5 +1,3 @@
-console.log("CHIENrouge");
-
 export type Call = "login" | "askState"
 
 export type ApiCallBase = {

@@ -2,7 +2,7 @@ import { getUser, onReady } from "./bdd"
 import { ApiCallBase, AskState, State, ToastEvent } from "./common/api.interface"
 import { acceptChallenge, cancelChallenge, challenge, updateLobby } from "./lobby"
 import { io, lobby, socketIdToUserId, SSocket, userIdToSocket } from "./state"
-import { askState, createUser, login } from "./users"
+import { askState, createUser, disconnect, login } from "./users"
 
 const handles = {
     "challenge": { func: challenge, toastIfFail: true, },
@@ -11,6 +11,7 @@ const handles = {
     "login": { func: login, toastIfFail: true, },
     "createUser": { func: createUser, toastIfFail: true, },
     "askState": { func: askState, toastIfFail: true },
+    "disconnect": { func: disconnect, toastIfFail: false },
 }
 
 onReady.subscribe(() => {
@@ -37,19 +38,5 @@ onReady.subscribe(() => {
                 }
             })
         }
-
-        socket.on("disconnect", () => {
-            const userId = socketIdToUserId[socket.id]
-            if (userId) {
-                delete socketIdToUserId[socket.id];
-                delete userIdToSocket[userId];
-                if (lobby[userId].challenge) {
-                    const [player1, player2] = [lobby[userId].challenge!.player1, lobby[userId].challenge!.player2]
-                    delete lobby[player1].challenge
-                    delete lobby[player2].challenge
-                }
-                updateLobby([userId]);
-            }
-        })
     });
 })
