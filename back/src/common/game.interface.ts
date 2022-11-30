@@ -1,4 +1,5 @@
 export const BOARD_SIZE = 8
+export const INITIAL_CARD_AMOUNT = 12
 
 export type cardStatus = "deck" | "player1" | "player2" | "lost"
 

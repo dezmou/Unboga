@@ -38,11 +38,4 @@ export const newGame = async (player1: string, player2: string) => {
             sendStateToUser(pState!.user!.id, pState!);
         })]
     )
-
-    // for (let player of players) {
-    //     ; (async () => {
-    //         player!.page = "game"
-    //     })()
-    // }
-
 }

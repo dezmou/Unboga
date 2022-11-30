@@ -1,5 +1,4 @@
-import { BOARD_SIZE, Game, Player, UserGame } from "./common/game.interface"
-
+import { BOARD_SIZE, Game, INITIAL_CARD_AMOUNT, Player, UserGame } from "./common/game.interface"
 
 export const gameEngine = () => {
     const state = {
@@ -40,7 +39,7 @@ export const gameEngine = () => {
     }
 
     const distribute = (player: Player) => {
-        for (let i = 0; i < 8; i++) {
+        for (let i = 0; i < INITIAL_CARD_AMOUNT; i++) {
             const card = getRandomFromDeck()
             card.status = player
             card[player].status = player
