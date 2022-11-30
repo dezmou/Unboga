@@ -16,6 +16,10 @@ const apiCAll = (params: ApiCAll) => {
     }));
 }
 
+export const capitulate = async () => {
+    apiCAll({ action: "capitulate", gameId: global.state.game!.id })
+}
+
 export const cancelChallenge = async () => {
     apiCAll({ action: "cancelChallenge" })
 }

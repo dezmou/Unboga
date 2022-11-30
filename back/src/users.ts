@@ -1,5 +1,5 @@
 import { addUser, getUserState, getUserByName } from "./bdd";
-import { ApiCallBase, AskState, CreateUser, Login, ToastEvent } from "./common/api.interface";
+import { ApiCallBase, AskState, CreateUser, Login, State, ToastEvent } from "./common/api.interface";
 import { updateLobby } from "./lobby";
 import { lobby, sendState, socketIdToUserId, SSocket, userIdToSocket } from "./state";
 
@@ -29,6 +29,15 @@ export const login = async (socket: SSocket, param: Login) => {
         return;
     }
     socket.emit("connected", JSON.stringify({ id: res._id, token: res.token }))
+}
+
+export const sendStateToUser = (userId: string, state: State) => {
+    if (!userIdToSocket[userId]) {
+        console.log(Object.keys(userIdToSocket));
+        console.log("NOT FOUND", userId);
+        return;
+    }
+    sendState(userIdToSocket[userId], state);
 }
 
 export const askState = async (socket: SSocket, param: AskState) => {

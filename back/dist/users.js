@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createUser = exports.askState = exports.login = exports.disconnect = void 0;
+exports.createUser = exports.askState = exports.sendStateToUser = exports.login = exports.disconnect = void 0;
 const bdd_1 = require("./bdd");
 const lobby_1 = require("./lobby");
 const state_1 = require("./state");
@@ -41,6 +41,15 @@ const login = (socket, param) => __awaiter(void 0, void 0, void 0, function* () 
     socket.emit("connected", JSON.stringify({ id: res._id, token: res.token }));
 });
 exports.login = login;
+const sendStateToUser = (userId, state) => {
+    if (!state_1.userIdToSocket[userId]) {
+        console.log(Object.keys(state_1.userIdToSocket));
+        console.log("NOT FOUND", userId);
+        return;
+    }
+    (0, state_1.sendState)(state_1.userIdToSocket[userId], state);
+};
+exports.sendStateToUser = sendStateToUser;
 const askState = (socket, param) => __awaiter(void 0, void 0, void 0, function* () {
     if (!param.user) {
         return (0, state_1.sendState)(socket, {

@@ -65,6 +65,13 @@ export const addGame = async (game: Game) => {
     await db.collection("games").insertOne({ ...game, _id: new ObjectId(game.id) })
 }
 
+export const getGame = async (gameId: string) => {
+    console.log(1);
+    const res = (await db.collection("games").findOne({ _id: new ObjectId(gameId) }));
+    console.log(2);
+    return res as any as Game;
+}
+
 export const updateUserState = async (id: string, data: State) => {
     await db.collection("users").updateOne({ _id: new ObjectId(id) }, { $set: { state: data } });
 }

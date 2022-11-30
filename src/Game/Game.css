@@ -1,14 +1,35 @@
 :root {
     --board-width: var(--width);
-    --board-height: var(--width);
+    --board-height: var(--board-width);
     --board-case-size: calc(var(--board-width) / 8);
 }
 
 .game-main-cont {
+    width : var(--width);
+    height : var(--height);
     position: absolute;
-    width: var(--width);
-    height: var(--height);
     transition: opacity 0.35s;
+}
+
+.board-main-layout {
+
+}
+
+.game-top-cont {
+    height : 200px;
+}
+
+.board-cont-grid {
+    width: var(--width);
+    height: var(--board-height);
+}
+
+.board-cont {
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    width: var(--board-width);
+    height: var(--board-width);
 }
 
 .board-line {
@@ -19,7 +40,7 @@
 .board-case {
     width: var(--board-case-size);
     height: var(--board-case-size);
-    outline: 1px solid rgba(128, 128, 128, 0.488);
+    outline: 1px solid rgba(129, 78, 24, 0.196);
     color: white;
 }
 
@@ -30,11 +51,15 @@
 }
 
 .case-piece {
+    margin-top: calc(var(--board-case-size) * 0.15);
     width: calc(var(--board-case-size) * 0.7);
     height: calc(var(--board-case-size) * 0.7);
+    /* background-color : white; */
+
+    border-radius: calc(var(--board-case-size) * 0.35);
     background-repeat: no-repeat;
     background-position: center;
-    background-size: contain;
+    background-size: 102%;
 }
 
 .board-case-background-effect {
@@ -45,6 +70,9 @@
 }
 
 .case-point {
-    margin-left: calc(var(--board-case-size) * 0.02);
-    margin-top: calc(var(--board-case-size) * 0.02);
+    position: absolute;
+    margin-left: calc(var(--board-case-size) * 0.03);
+    margin-top: calc(var(--board-case-size) * 0.03);
+    color: rgb(217, 183, 151);
+    font-size: calc(var(--board-case-size) * 0.25);
 }

@@ -10,6 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const bdd_1 = require("./bdd");
+const game_1 = require("./game");
 const lobby_1 = require("./lobby");
 const state_1 = require("./state");
 const users_1 = require("./users");
@@ -23,6 +24,7 @@ const handles = {
     "challenge": { func: lobby_1.challenge, toastIfFail: true, mustBeConnected: true, },
     "acceptChallenge": { func: lobby_1.acceptChallenge, toastIfFail: true, mustBeConnected: true, },
     "cancelChallenge": { func: lobby_1.cancelChallenge, toastIfFail: true, mustBeConnected: true, },
+    "capitulate": { func: game_1.capitulate, toastIfFail: true, mustBeConnected: true, },
 };
 bdd_1.onReady.subscribe(() => {
     state_1.io.on('connection', (socket) => {

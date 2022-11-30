@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getUserByName = exports.getUserState = exports.updateUserState = exports.addGame = exports.addUser = exports.onReady = void 0;
+exports.getUserByName = exports.getUserState = exports.updateUserState = exports.getGame = exports.addGame = exports.addUser = exports.onReady = void 0;
 const mongodb_1 = require("mongodb");
 const rxjs_1 = require("rxjs");
 const client = new mongodb_1.MongoClient(`mongodb://root:chien@mongo:27017`);
@@ -59,6 +59,13 @@ const addGame = (game) => __awaiter(void 0, void 0, void 0, function* () {
     yield db.collection("games").insertOne(Object.assign(Object.assign({}, game), { _id: new mongodb_1.ObjectId(game.id) }));
 });
 exports.addGame = addGame;
+const getGame = (gameId) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log(1);
+    const res = (yield db.collection("games").findOne({ _id: new mongodb_1.ObjectId(gameId) }));
+    console.log(2);
+    return res;
+});
+exports.getGame = getGame;
 const updateUserState = (id, data) => __awaiter(void 0, void 0, void 0, function* () {
     yield db.collection("users").updateOne({ _id: new mongodb_1.ObjectId(id) }, { $set: { state: data } });
 });

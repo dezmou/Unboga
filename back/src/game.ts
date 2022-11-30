@@ -1,6 +1,22 @@
 import { ObjectID } from "bson"
-import { addGame, getUserState, updateUserState } from "./bdd"
+import { addGame, getGame, getUserState, updateUserState } from "./bdd"
+import { Capitulate } from "./common/api.interface"
 import { gameEngine } from "./engine"
+import { SSocket } from "./state"
+import { sendStateToUser } from "./users"
+
+export const capitulate = async (socket: SSocket, param: Capitulate) => {
+    console.log("CAPITULATE", param);
+    const game = await getGame(param.gameId);
+    await Promise.all([game.player1Id, game.player2Id].map(async (playerId) => {
+        const state = (await getUserState(playerId))!;
+        state.game = undefined;
+        state.inGame = undefined;
+        state.page = "lobby"
+        await updateUserState(playerId, state);
+        sendStateToUser(playerId, state);
+    }))
+}
 
 export const newGame = async (player1: string, player2: string) => {
     const [p1State, p2State] = await Promise.all([
@@ -19,6 +35,7 @@ export const newGame = async (player1: string, player2: string) => {
             pState!.page = "game"
             p1State!.render = ["global"]
             await updateUserState(pState!.user!.id, pState!);
+            sendStateToUser(pState!.user!.id, pState!);
         })]
     )
 
