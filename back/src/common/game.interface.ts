@@ -43,3 +43,20 @@ export type UserGame = Modify<Game, {
         player2: undefined
     }[][]
 }>
+
+export const powers = {
+    
+    confidentForce: {
+        id: "confidentForce",
+        name: "Confident force",
+        description: "Amplify your gain and lose by 40%",
+        image: "confident.jpg"
+    },
+
+    deserterJack: {
+        id: "confidentForce",
+        name: "Deserter Jack",
+        description: "One of your piece disapear",
+        image: "deserter.jpg",
+    }
+}

@@ -1,6 +1,7 @@
+import anime from 'animejs';
 import { useEffect, useMemo, useRef } from 'react';
 import { capitulate } from '../logic';
-import { useRender } from '../render';
+import { useRender, render } from '../render';
 import { global } from '../state';
 import "./Game.css";
 
@@ -9,6 +10,21 @@ const GameContent = () => {
     const you = useMemo(() => global.state.game!.you, [global.state.game])
     const vilain = useMemo(() => global.state.game!.villain, [global.state.game])
 
+    useEffect(() => {
+        for (let line of board) {
+            for (let card of line) {
+                if (card.status.status === you) {
+                    console.log("ANIME", card.id);
+                    const chien = anime({
+                        targets: `#card_${card.id} > .case-point`,
+                        scale: "1.5",
+                    })
+                    // chien.play();
+                }
+            }
+        }
+
+    }, [global.state.game!.id])
 
     const getCardColor = (points: number) => {
         points = 14 - points;
@@ -29,7 +45,7 @@ const GameContent = () => {
                         backgroundImage: "url(/wood.webp)",
                     }}>
                         {board.map((line, y) => <div className='board-line' key={y}>
-                            {line.map((card, x) => <div className='board-case' key={x} >
+                            {line.map((card, x) => <div className={`board-case`} id={`card_${card.id}`} key={x} >
                                 <div className='board-case-background-effect' style={{
                                     background: getCardColor(card.points),
                                 }}>
@@ -39,7 +55,7 @@ const GameContent = () => {
                                 </div>
                                 <div className='case-piece-cont grid' >
                                     <div className='case-piece' style={{
-                                        backgroundImage: card.status.status === you ? "url(/red_normal.png)" : "none",
+                                        backgroundImage: card.status.status === you ? "url(/blue_normal.png)" : "none",
                                         boxShadow: card.status.status === you ? `0px 0px 5px 0px #000000` : "none",
                                     }}>
                                     </div>
@@ -60,12 +76,15 @@ export default () => {
 
     useEffect(() => {
         if (global.state.page === "game") {
-
+            if (!global.state.game) {
+                global.state.page = "lobby"
+                render("global");
+            }
         }
     }, [global.state.page])
 
 
     return <>
-        {global.state.page === "game" && <GameContent></GameContent>}
+        {global.state.page === "game" && global.state.game && <GameContent></GameContent>}
     </>
 }
