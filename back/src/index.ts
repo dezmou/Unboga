@@ -1,7 +1,7 @@
-import { getUser, onReady } from "./bdd"
-import { ApiCallBase, AskState, State, ToastEvent } from "./common/api.interface"
-import { acceptChallenge, cancelChallenge, challenge, updateLobby } from "./lobby"
-import { io, lobby, socketIdToUserId, SSocket, userIdToSocket } from "./state"
+import { onReady } from "./bdd"
+import { ToastEvent } from "./common/api.interface"
+import { acceptChallenge, cancelChallenge, challenge } from "./lobby"
+import { io } from "./state"
 import { askState, createUser, disconnect, login } from "./users"
 
 const handles = {
@@ -24,8 +24,11 @@ onReady.subscribe(() => {
             const handle = api[1]
             socket.on(action, async (p) => {
                 try {
-                    await handle.func(socket, JSON.parse(p))
+                    let params = p;
+                    try { params = JSON.parse(p) } catch (e) { }
+                    await handle.func(socket, params)
                 } catch (e) {
+                    console.log(e);
                     if (handle.toastIfFail) {
                         try {
                             socket.emit("toast", JSON.stringify({

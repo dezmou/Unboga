@@ -4,6 +4,7 @@ import { updateLobby } from "./lobby";
 import { lobby, sendState, socketIdToUserId, SSocket, userIdToSocket } from "./state";
 
 export const disconnect = async (socket: SSocket, param: ApiCallBase) => {
+    console.log("DISCONNECT");
     const userId = socketIdToUserId[socket.id]
     if (userId) {
         delete socketIdToUserId[socket.id];

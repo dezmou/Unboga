@@ -89,6 +89,7 @@ const updateLobby = (userIds) => __awaiter(void 0, void 0, void 0, function* () 
             }
         }
     }))()));
+    console.log("UPDATE LOBBY");
     state_1.io.emit("lobby", JSON.stringify(state_1.lobby));
 });
 exports.updateLobby = updateLobby;

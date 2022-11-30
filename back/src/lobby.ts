@@ -77,6 +77,7 @@ export const updateLobby = async (userIds: string[]) => {
             }
         }
     })()));
+    console.log("UPDATE LOBBY");
     io.emit("lobby", JSON.stringify(lobby))
 }
 

@@ -20,6 +20,7 @@ const handles = {
     "login": { func: users_1.login, toastIfFail: true, },
     "createUser": { func: users_1.createUser, toastIfFail: true, },
     "askState": { func: users_1.askState, toastIfFail: true },
+    "disconnect": { func: users_1.disconnect, toastIfFail: false },
 };
 bdd_1.onReady.subscribe(() => {
     state_1.io.on('connection', (socket) => {
@@ -30,9 +31,15 @@ bdd_1.onReady.subscribe(() => {
             const handle = api[1];
             socket.on(action, (p) => __awaiter(void 0, void 0, void 0, function* () {
                 try {
-                    yield handle.func(socket, JSON.parse(p));
+                    let params = p;
+                    try {
+                        params = JSON.parse(p);
+                    }
+                    catch (e) { }
+                    yield handle.func(socket, params);
                 }
                 catch (e) {
+                    console.log(e);
                     if (handle.toastIfFail) {
                         try {
                             socket.emit("toast", JSON.stringify({
@@ -46,18 +53,5 @@ bdd_1.onReady.subscribe(() => {
                 }
             }));
         }
-        socket.on("disconnect", () => {
-            const userId = state_1.socketIdToUserId[socket.id];
-            if (userId) {
-                delete state_1.socketIdToUserId[socket.id];
-                delete state_1.userIdToSocket[userId];
-                if (state_1.lobby[userId].challenge) {
-                    const [player1, player2] = [state_1.lobby[userId].challenge.player1, state_1.lobby[userId].challenge.player2];
-                    delete state_1.lobby[player1].challenge;
-                    delete state_1.lobby[player2].challenge;
-                }
-                (0, lobby_1.updateLobby)([userId]);
-            }
-        });
     });
 });

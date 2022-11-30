@@ -54,7 +54,7 @@ const addUser = (name, password) => __awaiter(void 0, void 0, void 0, function* 
 });
 exports.addUser = addUser;
 const addGame = (game) => __awaiter(void 0, void 0, void 0, function* () {
-    yield db.collection("games").insertOne(Object.assign(Object.assign({}, game), { _id: new mongodb_1.ObjectId(game._id) }));
+    yield db.collection("games").insertOne(Object.assign(Object.assign({}, game), { _id: new mongodb_1.ObjectId(game.id) }));
 });
 exports.addGame = addGame;
 const getUser = (id) => __awaiter(void 0, void 0, void 0, function* () {

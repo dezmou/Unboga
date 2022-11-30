@@ -51,7 +51,7 @@ const gameEngine = () => {
                 .toString(32);
         };
         state.game = {
-            _id: makeId(),
+            id: makeId(),
             board: getNewBoard(),
             nextAction: "selectHero",
             nextActionPlayer: ["player1", "player2"][1],
