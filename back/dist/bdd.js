@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getUserByName = exports.getUser = exports.addUser = exports.onReady = void 0;
+exports.getUserByName = exports.getUser = exports.addGame = exports.addUser = exports.onReady = void 0;
 const mongodb_1 = require("mongodb");
 const rxjs_1 = require("rxjs");
 const client = new mongodb_1.MongoClient(`mongodb://root:chien@mongo:27017`);
@@ -17,7 +17,10 @@ let db;
 exports.onReady = new rxjs_1.Subject();
 client.connect().then((r) => __awaiter(void 0, void 0, void 0, function* () {
     db = client.db("unbogame");
-    yield db.createCollection("users", {}).catch(e => { });
+    yield Promise.all([
+        db.createCollection("users", {}).catch(e => { }),
+        db.createCollection("games", {}).catch(e => { }),
+    ]);
     exports.onReady.next(true);
 }));
 const makeId = () => {
@@ -50,6 +53,10 @@ const addUser = (name, password) => __awaiter(void 0, void 0, void 0, function* 
     return { id: res.insertedId, token };
 });
 exports.addUser = addUser;
+const addGame = (game) => __awaiter(void 0, void 0, void 0, function* () {
+    yield db.collection("games").insertOne(Object.assign(Object.assign({}, game), { _id: new mongodb_1.ObjectId(game._id) }));
+});
+exports.addGame = addGame;
 const getUser = (id) => __awaiter(void 0, void 0, void 0, function* () {
     const res = (yield db.collection("users").findOne({ _id: new mongodb_1.ObjectId(id) }));
     if (!res) {

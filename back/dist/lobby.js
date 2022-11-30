@@ -11,6 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.updateLobby = exports.challenge = exports.acceptChallenge = exports.cancelChallenge = void 0;
 const bdd_1 = require("./bdd");
+const game_1 = require("./game");
 const state_1 = require("./state");
 const cancelChallenge = (socket, param) => __awaiter(void 0, void 0, void 0, function* () {
     if (!state_1.lobby[param.user.id] || !state_1.lobby[param.user.id].challenge)
@@ -20,7 +21,7 @@ const cancelChallenge = (socket, param) => __awaiter(void 0, void 0, void 0, fun
         if (op) {
             op.emit("toast", JSON.stringify({
                 color: "blue",
-                msg: "challenge declined",
+                msg: "Challenge declined",
                 time: 4000,
             }));
         }
@@ -35,6 +36,7 @@ exports.cancelChallenge = cancelChallenge;
 const acceptChallenge = (socket, param) => __awaiter(void 0, void 0, void 0, function* () {
     if (!state_1.lobby[param.user.id] || !state_1.lobby[param.user.id].challenge)
         return;
+    yield (0, game_1.newGame)(state_1.lobby[param.user.id].challenge.player1, state_1.lobby[param.user.id].challenge.player2);
     const player1 = state_1.lobby[param.user.id].challenge.player1;
     const player2 = state_1.lobby[param.user.id].challenge.player2;
     state_1.lobby[player1].challenge = undefined;
