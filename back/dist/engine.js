@@ -40,7 +40,7 @@ const gameEngine = () => {
         }
     };
     const distribute = (player) => {
-        for (let i = 0; i < 8; i++) {
+        for (let i = 0; i < game_interface_1.INITIAL_CARD_AMOUNT; i++) {
             const card = getRandomFromDeck();
             card.status = player;
             card[player].status = player;

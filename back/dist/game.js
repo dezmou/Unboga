@@ -47,10 +47,5 @@ const newGame = (player1, player2) => __awaiter(void 0, void 0, void 0, function
             (0, users_1.sendStateToUser)(pState.user.id, pState);
         }))
     ]);
-    // for (let player of players) {
-    //     ; (async () => {
-    //         player!.page = "game"
-    //     })()
-    // }
 });
 exports.newGame = newGame;
