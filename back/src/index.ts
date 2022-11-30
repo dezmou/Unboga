@@ -1,17 +1,20 @@
 import { onReady } from "./bdd"
 import { ToastEvent } from "./common/api.interface"
 import { acceptChallenge, cancelChallenge, challenge } from "./lobby"
-import { io } from "./state"
+import { io, socketIdToUserId } from "./state"
 import { askState, createUser, disconnect, login } from "./users"
 
 const handles = {
-    "challenge": { func: challenge, toastIfFail: true, },
-    "acceptChallenge": { func: acceptChallenge, toastIfFail: true, },
-    "cancelChallenge": { func: cancelChallenge, toastIfFail: true, },
-    "login": { func: login, toastIfFail: true, },
-    "createUser": { func: createUser, toastIfFail: true, },
-    "askState": { func: askState, toastIfFail: true },
-    "disconnect": { func: disconnect, toastIfFail: false },
+    // Unauthentified methods
+    "login": { func: login, toastIfFail: true, mustBeConnected: false, },
+    "createUser": { func: createUser, toastIfFail: true, mustBeConnected: true, },
+    "askState": { func: askState, toastIfFail: true, mustBeConnected: false, },
+    "disconnect": { func: disconnect, toastIfFail: false, mustBeConnected: false, },
+
+    // Authentified methods
+    "challenge": { func: challenge, toastIfFail: true, mustBeConnected: true, },
+    "acceptChallenge": { func: acceptChallenge, toastIfFail: true, mustBeConnected: true, },
+    "cancelChallenge": { func: cancelChallenge, toastIfFail: true, mustBeConnected: true, },
 }
 
 onReady.subscribe(() => {
@@ -24,6 +27,7 @@ onReady.subscribe(() => {
             const handle = api[1]
             socket.on(action, async (p) => {
                 try {
+                    if (handle.mustBeConnected && !socketIdToUserId[socket.id]) { throw "not authorized" }
                     let params = p;
                     try { params = JSON.parse(p) } catch (e) { }
                     await handle.func(socket, params)
