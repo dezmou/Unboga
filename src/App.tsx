@@ -7,6 +7,7 @@ import Login from './Login/Login';
 import Toast from './Toast/Toast';
 import { main } from './logic';
 import Lobby from './Lobby/Lobby';
+import Game from './Game/Game';
 
 function App() {
   const rd = useRender("global")
@@ -22,6 +23,7 @@ function App() {
         <Toast></Toast>
         <Login></Login>
         <Lobby></Lobby>
+        <Game></Game>
       </div>
     </div>
   </>

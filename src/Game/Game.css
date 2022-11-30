@@ -1,0 +1,9 @@
+:root {}
+
+.game-main-cont {
+    position : absolute;
+    width : var(--width);
+    height : var(--height);
+    background : green;
+    transition : opacity 0.35s;
+}
