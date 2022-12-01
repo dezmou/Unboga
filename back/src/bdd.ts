@@ -61,6 +61,10 @@ export const addUser = async (name: string, password: string) => {
     return { id, token }
 }
 
+export const updateGame = async (game: Game) => {
+    await db.collection("games").updateOne({ _id: new ObjectId(game.id) }, { $set: game });
+}
+
 export const addGame = async (game: Game) => {
     await db.collection("games").insertOne({ ...game, _id: new ObjectId(game.id) })
 }

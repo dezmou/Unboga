@@ -25,6 +25,7 @@ const handles = {
     "acceptChallenge": { func: lobby_1.acceptChallenge, toastIfFail: true, mustBeConnected: true, },
     "cancelChallenge": { func: lobby_1.cancelChallenge, toastIfFail: true, mustBeConnected: true, },
     "capitulate": { func: game_1.capitulate, toastIfFail: true, mustBeConnected: true, },
+    "play": { func: game_1.play, toastIfFail: true, mustBeConnected: true, },
 };
 bdd_1.onReady.subscribe(() => {
     state_1.io.on('connection', (socket) => {
@@ -40,7 +41,7 @@ bdd_1.onReady.subscribe(() => {
                     }
                     let params = p;
                     try {
-                        params = JSON.parse(p);
+                        params = (Object.assign(Object.assign({}, JSON.parse(p)), { userId: state_1.socketIdToUserId[socket.id] }));
                     }
                     catch (e) { }
                     yield handle.func(socket, params);

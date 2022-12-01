@@ -1,3 +1,5 @@
+import { powers } from "../powers"
+
 export const BOARD_SIZE = 8
 export const INITIAL_CARD_AMOUNT = 12
 
@@ -8,16 +10,24 @@ export type UserCard = {
     villainRefused: boolean
     points: number
 }
+export type PlayerStatus = {
+    gold: number
+    powers: (keyof typeof powers)[]
+    powerReady : boolean
+}
 
 export type Player = "player1" | "player2"
 
 export type Game = {
     id: string
+    roundId: string
     player1Id: string;
     player2Id: string;
     nextAction: "selectHero" | "pick" | "discard"
     nextActionPlayer: Player
     pick: { x: number, y: number }
+    player1: PlayerStatus
+    player2: PlayerStatus
     board: {
         id: string
         x: number

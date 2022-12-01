@@ -1,6 +1,6 @@
 import { onReady } from "./bdd"
 import { ToastEvent } from "./common/api.interface"
-import { capitulate } from "./game"
+import { capitulate, play } from "./game"
 import { acceptChallenge, cancelChallenge, challenge } from "./lobby"
 import { io, socketIdToUserId } from "./state"
 import { askState, createUser, disconnect, login } from "./users"
@@ -17,6 +17,7 @@ const handles = {
     "acceptChallenge": { func: acceptChallenge, toastIfFail: true, mustBeConnected: true, },
     "cancelChallenge": { func: cancelChallenge, toastIfFail: true, mustBeConnected: true, },
     "capitulate": { func: capitulate, toastIfFail: true, mustBeConnected: true, },
+    "play": { func: play, toastIfFail: true, mustBeConnected: true, },
 }
 
 onReady.subscribe(() => {
@@ -31,7 +32,7 @@ onReady.subscribe(() => {
                 try {
                     if (handle.mustBeConnected && !socketIdToUserId[socket.id]) { throw "not authorized" }
                     let params = p;
-                    try { params = JSON.parse(p) } catch (e) { }
+                    try { params = ({ ...JSON.parse(p), userId: socketIdToUserId[socket.id] }) } catch (e) { }
                     await handle.func(socket, params)
                 } catch (e) {
                     console.log(e);

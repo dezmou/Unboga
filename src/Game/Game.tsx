@@ -1,6 +1,6 @@
 import anime from 'animejs';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { capitulate } from '../logic';
+import { capitulate, selectPowers } from '../logic';
 import { powers } from "./powers"
 import { useRender, render } from '../render';
 import { global } from '../state';
@@ -100,7 +100,7 @@ const GameContent = () => {
                         <Button style={{
                             backgroundColor: "green",
                         }} className='login-button' variant='contained'
-                            onClick={() => { }}
+                            onClick={() => { selectPowers(Object.keys(selectedPowers) as any) }}
                         >Ready</Button>
                     </div>}
 

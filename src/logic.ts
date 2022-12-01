@@ -1,7 +1,8 @@
 import { io, connect } from "socket.io-client"
 import { render } from "./render";
 import { global } from "./state"
-import { ApiCAll, Call, State, ToastEvent } from "../back/src/common/api.interface"
+import { ApiCAll, Call, PlaySelectPowers, State, ToastEvent } from "../back/src/common/api.interface"
+import { powers } from "./Game/powers";
 
 const socket = io(`${window.location.origin}`, {
     path: "/api",
@@ -14,6 +15,10 @@ const apiCAll = (params: ApiCAll) => {
         ...params,
         user: global.localState.user
     }));
+}
+
+export const selectPowers = async (spowers: (keyof typeof powers)[]) => {
+    apiCAll({ action: "play", play: "selectPower", powers: spowers } as PlaySelectPowers)
 }
 
 export const capitulate = async () => {

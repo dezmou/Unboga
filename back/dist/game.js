@@ -9,13 +9,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.newGame = exports.capitulate = void 0;
+exports.newGame = exports.play = exports.capitulate = void 0;
 const bson_1 = require("bson");
 const bdd_1 = require("./bdd");
 const engine_1 = require("./engine");
 const users_1 = require("./users");
 const capitulate = (socket, param) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log("CAPITULATE", param);
     const game = yield (0, bdd_1.getGame)(param.gameId);
     yield Promise.all([game.player1Id, game.player2Id].map((playerId) => __awaiter(void 0, void 0, void 0, function* () {
         const state = (yield (0, bdd_1.getUserState)(playerId));
@@ -27,6 +26,28 @@ const capitulate = (socket, param) => __awaiter(void 0, void 0, void 0, function
     })));
 });
 exports.capitulate = capitulate;
+const play = (socket, param) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = (yield (0, bdd_1.getUserState)(param.userId));
+    const gameState = (yield (0, bdd_1.getGame)(user.game.id));
+    const op = ((yield (0, bdd_1.getUserState)(gameState.player1Id === param.userId ? gameState.player2Id : gameState.player1Id)));
+    const game = (0, engine_1.gameEngine)();
+    game.funcs.loadGame(gameState);
+    if (param.play === "selectPower") {
+        const p = param;
+        game.funcs.selectPowers(p.userId, p.powers);
+    }
+    yield Promise.all([
+        (0, bdd_1.updateGame)(game.state.game),
+        ...[user, op].map((pState) => __awaiter(void 0, void 0, void 0, function* () {
+            const userGame = game.funcs.getUserGame(pState.user.id);
+            pState.game = userGame;
+            pState.render = ["game"];
+            yield (0, bdd_1.updateUserState)(pState.user.id, pState);
+            (0, users_1.sendStateToUser)(pState.user.id, pState);
+        }))
+    ]);
+});
+exports.play = play;
 const newGame = (player1, player2) => __awaiter(void 0, void 0, void 0, function* () {
     const [p1State, p2State] = yield Promise.all([
         (0, bdd_1.getUserState)(player1),
@@ -42,7 +63,7 @@ const newGame = (player1, player2) => __awaiter(void 0, void 0, void 0, function
             const userGame = game.funcs.getUserGame(pState.user.id);
             pState.game = userGame;
             pState.page = "game";
-            p1State.render = ["global"];
+            pState.render = ["global"];
             yield (0, bdd_1.updateUserState)(pState.user.id, pState);
             (0, users_1.sendStateToUser)(pState.user.id, pState);
         }))

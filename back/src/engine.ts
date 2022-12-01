@@ -1,8 +1,19 @@
 import { BOARD_SIZE, Game, INITIAL_CARD_AMOUNT, Player, UserGame } from "./common/game.interface"
+import { powers } from "./powers"
+
+const makeId = () => {
+    return Math.floor((1 + Math.random()) * 0x1000000000000000)
+        .toString(32)
+}
 
 export const gameEngine = () => {
     const state = {
         game: undefined as Game | undefined
+    }
+
+    const op = {
+        player1: "player2" as Player,
+        player2: "player1" as Player,
     }
 
     const getNewBoard = () => {
@@ -49,12 +60,15 @@ export const gameEngine = () => {
     const newGame = (id: string, player1: string, player2: string) => {
         state.game = {
             id,
+            roundId: makeId(),
             pick: { x: 0, y: 0 },
             board: getNewBoard(),
             nextAction: "selectHero",
             nextActionPlayer: ["player1" as Player, "player2" as Player][1],
             player1Id: player1,
             player2Id: player2,
+            player1: { gold: 100, powers: [], powerReady: false },
+            player2: { gold: 100, powers: [], powerReady: false },
         }
         distribute("player1");
         distribute("player2");
@@ -64,6 +78,19 @@ export const gameEngine = () => {
 
     const loadGame = (loadedGame: Game) => {
         state.game = loadedGame
+    }
+
+    const getPlayerById = (playerId: string) => {
+        return state.game!.player1Id === playerId ? "player1" : "player2" as Player
+    }
+
+    const selectPowers = (playerId: string, selectedPowers: (keyof typeof powers)[]) => {
+        const player = getPlayerById(playerId);
+        state.game![player].powers = selectedPowers;
+        state.game![player].powerReady = true;
+        if (state.game![op[player]].powerReady) {
+            state.game!.nextAction = "pick"
+        }
     }
 
     const getUserGame = (playerId: string) => {
@@ -91,6 +118,7 @@ export const gameEngine = () => {
             newGame,
             loadGame,
             getUserGame,
+            selectPowers,
         }
     }
 }

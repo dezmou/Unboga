@@ -1,3 +1,4 @@
+import { powers } from "../powers"
 import { UserGame } from "./game.interface"
 
 export type Call = "login" | "askState"
@@ -7,6 +8,7 @@ export type ApiCallBase = {
         id: string
         token: string
     }
+    userId?: string
 }
 
 export interface CreateUser extends ApiCallBase {
@@ -49,7 +51,18 @@ export interface ToastEvent {
     time: number,
 }
 
-export type ApiCAll = CreateUser | AskState | Login | Challenge | AcceptChallenge | CancelChallenge | Capitulate
+export interface Play extends ApiCallBase {
+    action: "play";
+    play: "selectPower" | "pickTake" | "pickRandom" | "discard" | "knock"
+    gameId: string;
+}
+
+export interface PlaySelectPowers extends Play {
+    play: "selectPower"
+    powers: (keyof typeof powers)[]
+}
+
+export type ApiCAll = CreateUser | AskState | Login | Challenge | AcceptChallenge | CancelChallenge | Capitulate | Play
 
 export interface LobbyEntry {
     elo: number,

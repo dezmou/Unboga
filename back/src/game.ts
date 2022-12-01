@@ -1,12 +1,11 @@
 import { ObjectID } from "bson"
-import { addGame, getGame, getUserState, updateUserState } from "./bdd"
-import { Capitulate } from "./common/api.interface"
+import { addGame, getGame, getUserState, updateGame, updateUserState } from "./bdd"
+import { Capitulate, Play, PlaySelectPowers } from "./common/api.interface"
 import { gameEngine } from "./engine"
 import { SSocket } from "./state"
 import { sendStateToUser } from "./users"
 
 export const capitulate = async (socket: SSocket, param: Capitulate) => {
-    console.log("CAPITULATE", param);
     const game = await getGame(param.gameId);
     await Promise.all([game.player1Id, game.player2Id].map(async (playerId) => {
         const state = (await getUserState(playerId))!;
@@ -16,6 +15,30 @@ export const capitulate = async (socket: SSocket, param: Capitulate) => {
         await updateUserState(playerId, state);
         sendStateToUser(playerId, state);
     }))
+}
+
+export const play = async (socket: SSocket, param: Play) => {
+    const user = (await getUserState(param.userId!))!;
+    const gameState = (await getGame(user.game!.id))!;
+    const op = ((await getUserState(gameState.player1Id === param.userId! ? gameState.player2Id : gameState.player1Id)))!
+    const game = gameEngine()
+    game.funcs.loadGame(gameState);
+
+    if (param.play === "selectPower") {
+        const p = param as PlaySelectPowers
+        game.funcs.selectPowers(p.userId!, p.powers);
+    }
+
+    await Promise.all([
+        updateGame(game.state.game!),
+        ...[user, op].map(async pState => {
+            const userGame = game.funcs.getUserGame(pState!.user!.id);
+            pState!.game = userGame;
+            pState!.render = ["game"]
+            await updateUserState(pState!.user!.id, pState!);
+            sendStateToUser(pState!.user!.id, pState!);
+        })]
+    )
 }
 
 export const newGame = async (player1: string, player2: string) => {
@@ -33,7 +56,7 @@ export const newGame = async (player1: string, player2: string) => {
             const userGame = game.funcs.getUserGame(pState!.user!.id);
             pState!.game = userGame;
             pState!.page = "game"
-            p1State!.render = ["global"]
+            pState!.render = ["global"]
             await updateUserState(pState!.user!.id, pState!);
             sendStateToUser(pState!.user!.id, pState!);
         })]
