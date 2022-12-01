@@ -60,7 +60,7 @@ bdd_1.onReady.subscribe(() => {
                     }
                 }
                 finally {
-                    console.log(state_1.socketIdToUserId);
+                    console.log(socket.id, state_1.socketIdToUserId);
                 }
             }));
         }
