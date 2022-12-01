@@ -2,10 +2,11 @@
     --board-width: var(--width);
     --board-size: var(--board-width);
     --board-case-size: calc(var(--board-size) / 8);
-    --top-height: calc(var(--width) * 0.5);
     --top-min-height: calc(var(--width) * 0.05);
     --info-cont-height: calc(var(--width) * 0.12);
     --button-zone-heigth: calc(var(--width) * 0.12);
+    --top-base-height: calc(var(--height) - (var(--board-size) + var(--info-cont-height) + var(--button-zone-heigth)));
+    --top-height: var(--top-base-height);
 }
 
 .bottom-zone {
