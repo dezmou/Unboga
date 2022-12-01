@@ -46,7 +46,7 @@ onReady.subscribe(() => {
                         } catch (e) { }
                     }
                 } finally {
-                    console.log(socketIdToUserId);
+                    console.log(socket.id, socketIdToUserId);
                 }
             })
         }

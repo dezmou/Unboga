@@ -59,16 +59,20 @@ const watchLayout = async () => {
     const root = document.documentElement
 
     while (true) {
-        const allWidth = window.innerWidth;
-        const allHeight = window.innerHeight;
+        // const allWidth = window.innerWidth;
+        // const allHeight = window.innerHeight;
+
+        const allWidth = window.visualViewport!.width;
+        const allHeight = window.visualViewport!.height;
+
         if (global.localState.size.width !== allWidth || global.localState.size.height !== allHeight) {
             global.localState.size.width = allWidth;
             global.localState.size.height = allHeight;
 
             let width = allWidth;
             let height = allHeight;
-            const ratio = allHeight / allWidth
-            width = Math.min(allWidth, allWidth * ratio * 0.7);
+            // const ratio = allHeight / allWidth
+            width = Math.min(allWidth, allHeight * 0.4);
             root.style.setProperty('--width', `${width}px`);
             root.style.setProperty('--height', `${height}px`);
         }
