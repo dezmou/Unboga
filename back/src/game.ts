@@ -2,6 +2,7 @@ import { ObjectID } from "bson"
 import { addGame, getGame, getUserState, updateGame, updateUserState } from "./bdd"
 import { Capitulate, Play, PlaySelectPowers } from "./common/api.interface"
 import { gameEngine } from "./engine"
+import { updateLobby } from "./lobby"
 import { SSocket } from "./state"
 import { sendStateToUser } from "./users"
 
@@ -15,6 +16,7 @@ export const capitulate = async (socket: SSocket, param: Capitulate) => {
         await updateUserState(playerId, state);
         sendStateToUser(playerId, state);
     }))
+    updateLobby([game.player1Id, game.player2Id]);
 }
 
 export const play = async (socket: SSocket, param: Play) => {

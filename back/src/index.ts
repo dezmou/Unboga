@@ -45,6 +45,8 @@ onReady.subscribe(() => {
                             } as ToastEvent))
                         } catch (e) { }
                     }
+                } finally {
+                    console.log(socketIdToUserId);
                 }
             })
         }

@@ -56,6 +56,7 @@ export const challenge = async (socket: SSocket, param: Challenge) => {
             msg: "Impossible to challenge user",
             time: 4000,
         } as ToastEvent))
+        console.log(lobby);
     }
 }
 
@@ -66,17 +67,20 @@ export const updateLobby = async (userIds: string[]) => {
                 delete lobby[userId];
             }
         } else {
+            const user = (await getUserState(userId))!;
             if (!lobby[userId]) {
-                const user = (await getUserState(userId))!;
                 lobby[userId] = {
                     elo: user.user!.elo,
                     id: userId,
                     name: user.user!.name,
                     status: user.inGame ? "inGame" : "online"
                 }
+            } else {
+                lobby[userId].status = user.inGame ? "inGame" : "online"
             }
         }
     })()));
     console.log("UPDATE LOBBY");
+    console.log(lobby);
     io.emit("lobby", JSON.stringify(lobby))
 }

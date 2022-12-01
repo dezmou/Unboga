@@ -13,6 +13,7 @@ exports.newGame = exports.play = exports.capitulate = void 0;
 const bson_1 = require("bson");
 const bdd_1 = require("./bdd");
 const engine_1 = require("./engine");
+const lobby_1 = require("./lobby");
 const users_1 = require("./users");
 const capitulate = (socket, param) => __awaiter(void 0, void 0, void 0, function* () {
     const game = yield (0, bdd_1.getGame)(param.gameId);
@@ -24,6 +25,7 @@ const capitulate = (socket, param) => __awaiter(void 0, void 0, void 0, function
         yield (0, bdd_1.updateUserState)(playerId, state);
         (0, users_1.sendStateToUser)(playerId, state);
     })));
+    (0, lobby_1.updateLobby)([game.player1Id, game.player2Id]);
 });
 exports.capitulate = capitulate;
 const play = (socket, param) => __awaiter(void 0, void 0, void 0, function* () {
