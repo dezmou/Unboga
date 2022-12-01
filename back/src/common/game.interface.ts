@@ -1,12 +1,12 @@
 export const BOARD_SIZE = 8
 export const INITIAL_CARD_AMOUNT = 12
 
-export type cardStatus = "deck" | "player1" | "player2" | "lost"
+export type CardStatus = "deck" | "player1" | "player2" | "lost"
 
 export type UserCard = {
-    status: cardStatus
+    status: CardStatus
     villainRefused: boolean
-    points: number,
+    points: number
 }
 
 export type Player = "player1" | "player2"
@@ -22,7 +22,7 @@ export type Game = {
         id: string
         x: number
         y: number
-        status: cardStatus
+        status: CardStatus
         player1: UserCard
         player2: UserCard
         basePoints: number
@@ -43,20 +43,3 @@ export type UserGame = Modify<Game, {
         player2: undefined
     }[][]
 }>
-
-export const powers = {
-    
-    confidentForce: {
-        id: "confidentForce",
-        name: "Confident force",
-        description: "Amplify your gain and lose by 40%",
-        image: "confident.jpg"
-    },
-
-    deserterJack: {
-        id: "confidentForce",
-        name: "Deserter Jack",
-        description: "One of your piece disapear",
-        image: "deserter.jpg",
-    }
-}

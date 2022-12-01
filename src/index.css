@@ -5,8 +5,15 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow: hidden;
 }
 
 .flex {
   display : flex;
 }
+
+@font-face {
+  font-family: 'lcd'; 
+  src: url('./assets/digital-7.ttf'); /*URL to font*/
+}
+

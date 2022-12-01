@@ -1,32 +1,52 @@
 import anime from 'animejs';
 import { useEffect, useMemo, useRef } from 'react';
 import { capitulate } from '../logic';
+import { powers } from "./powers"
 import { useRender, render } from '../render';
 import { global } from '../state';
 import "./Game.css";
+import { Button } from '@mui/material';
+
 
 const GameContent = () => {
-    const board = useMemo(() => global.state.game!.board, [global.state.game!.board])
+    const board = useMemo(() => global.state.game!.board!, [global.state.game!.board])
     const you = useMemo(() => global.state.game!.you, [global.state.game])
     const vilain = useMemo(() => global.state.game!.villain, [global.state.game])
+    const game = useMemo(() => global.state.game!, [global.state.game])
 
     useEffect(() => {
-        for (let line of board) {
-            for (let card of line) {
-                if (card.status.status === you) {
-                    console.log("ANIME", card.id);
-                    const chien = anime({
-                        targets: `#card_${card.id} > .case-point`,
-                        scale: "1.5",
-                    })
-                    // chien.play();
+        const root = document.documentElement
+        if (game.nextAction === "selectHero") {
+            for (let line of board) {
+                for (let card of line) {
+                    if (card.status.status === you) {
+                        console.log("ANIME", card.id);
+                        anime({
+                            targets: `#card_${card.id} .case-piece`,
+                            scale: "1.9",
+                            opacity: 0,
+                            duration: 0,
+                        })
+                        anime({
+                            targets: `#card_${card.id} .case-piece`,
+                            scale: "1",
+                            opacity: 1,
+                            // duration: 700,
+                            delay: Math.random() * 300,
+                            // elasticity: 1000,
+                            // easing: "linear",
+                        })
+                    }
                 }
             }
+            setTimeout(() => {
+                root.style.setProperty('--board-size', `calc(var(--board-width) * 0.6)`);
+                root.style.setProperty('--top-height', `var(--top-min-height)`);
+            }, 800)
         }
-
     }, [global.state.game!.id])
 
-    const getCardColor = (points: number) => {
+    const getBoardColor = (points: number) => {
         points = 14 - points;
         return `rgba(${points * 13},${points * 8},${points * 5},0.9)`;
     }
@@ -38,7 +58,9 @@ const GameContent = () => {
         }}>
             <div className='board-main-layout'>
                 <div className='game-top-cont'>
-
+                    <div className='game-top-buttons'>
+                        <button style={{ height: "100%" }} onClick={() => capitulate()}>Capitulate</button>
+                    </div>
                 </div>
                 <div className='board-cont-grid grid'>
                     <div className='board-cont' style={{
@@ -47,7 +69,7 @@ const GameContent = () => {
                         {board.map((line, y) => <div className='board-line' key={y}>
                             {line.map((card, x) => <div className={`board-case`} id={`card_${card.id}`} key={x} >
                                 <div className='board-case-background-effect' style={{
-                                    background: getCardColor(card.points),
+                                    background: getBoardColor(card.points),
                                 }}>
                                 </div>
                                 <div className='case-point' >
@@ -64,7 +86,33 @@ const GameContent = () => {
                         </div>)}
                     </div>
                 </div>
-                <button onClick={() => capitulate()}>Capitulate</button>
+                <div className='infos-cont grid'>
+                    <div>
+                        Choose Heros powers<br />
+                        2 maximum<br />
+                    </div>
+                </div>
+                <div className='buttons-zone'>
+                    {game.nextAction === "selectHero" && <div className='button-cont grid'>
+                        <Button style={{
+                            backgroundColor: "green",
+                        }} className='login-button' variant='contained'
+                            onClick={() => { }}
+                        >Ready</Button>
+                    </div>}
+
+                </div>
+                <div className='bottom-zone'>
+                    <div className='power-select-cont'>
+                        {[...Object.values(powers), ...Object.values(powers), ...Object.values(powers), ...Object.values(powers), ...Object.values(powers)].map((power, i) => <div className='power-cont' key={i}>
+                            <div className='power-picture'>
+
+                            </div>
+                            {power.name}
+
+                        </div>)}
+                    </div>
+                </div>
             </div>
         </div>
     </>

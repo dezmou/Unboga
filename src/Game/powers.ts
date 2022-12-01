@@ -1,0 +1,18 @@
+export const powers = {
+
+    confidentForce: {
+        id: "confidentForce",
+        name: "Confident force",
+        description: "Amplify your gain and lose by 40%",
+        image: "confident.jpg",
+        cost: 10,
+    },
+
+    deserterJack: {
+        id: "confidentForce",
+        name: "Deserter Jack",
+        description: "One of your piece disapear back to the pool",
+        image: "deserter.jpg",
+        cost: 10,
+    }
+}
