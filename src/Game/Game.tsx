@@ -110,11 +110,12 @@ const GameContent = () => {
                         {Object.values(powers).map((power, i) => <div className='power-cont' style={{
                             background: selectedPowers[power.id] ? "#dadada" : "white"
                         }} key={i} onClick={() => {
-                            if (selectedPowers.length >= 2) return;
                             if (selectedPowers[power.id]) {
                                 delete selectedPowers[power.id];
                             } else {
-                                selectedPowers[power.id] = true;
+                                if (Object.keys(selectedPowers).length < 2) {
+                                    selectedPowers[power.id] = true;
+                                }
                             }
 
                             rd();

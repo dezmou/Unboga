@@ -14,5 +14,14 @@ export const powers = {
         description: "One of your piece disapear back to the pool",
         image: "deserter.jpg",
         cost: 10,
+    },
+
+    mirror: {
+        id: "mirror",
+        name: "Mirror of Darkness",
+        description: "Points of your board are reversed",
+        image: "mirror.jpg",
+        cost: 10,
     }
+
 }
