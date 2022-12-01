@@ -34,10 +34,7 @@ const GameContent = () => {
                             targets: `#card_${card.id} .case-piece`,
                             scale: "1",
                             opacity: 1,
-                            // duration: 700,
                             delay: Math.random() * 300,
-                            // elasticity: 1000,
-                            // easing: "linear",
                         })
                     }
                 }
@@ -97,21 +94,14 @@ const GameContent = () => {
                         </div>)}
                     </div>
                 </div>
-                <div className='infos-cont grid'>
-                    <div>
-                        Choose Heros powers<br />
-                        2 maximum<br />
-                    </div>
-                </div>
                 <div className='buttons-zone'>
-                    {game.nextAction === "selectHero" && <div className='button-cont grid'>
+                    {game.nextAction === "selectHero" && !game[you].powerReady && <div className='button-cont grid'>
                         <Button style={{
                             backgroundColor: "green",
                         }} className='login-button' variant='contained'
                             onClick={() => { selectPowers(Object.keys(selectedPowers) as any) }}
                         >Ready</Button>
                     </div>}
-
                 </div>
                 <div className='bottom-zone'>
                     <div className='power-select-cont'>
@@ -125,7 +115,6 @@ const GameContent = () => {
                                     selectedPowers[power.id] = true;
                                 }
                             }
-
                             rd();
                         }}>
                             <div className='power-picture'>
@@ -136,6 +125,13 @@ const GameContent = () => {
                         </div>)}
                     </div>
                 </div>
+                <div className='infos-cont grid'>
+                    <div>
+                        Choose Heros powers<br />
+                        2 maximum<br />
+                    </div>
+                </div>
+
             </div>
         </div>
     </>

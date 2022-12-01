@@ -77,6 +77,12 @@ const watchLayout = async () => {
 }
 
 export const main = async () => {
+    
+    window.onbeforeunload = () => {
+        console.log("UNLOAD");
+        socket.close();
+    }
+    
     socket.on("welcome", (id) => {
         const user = localStorage.getItem("user");
         global.localState.user = user ? JSON.parse(user) : undefined
