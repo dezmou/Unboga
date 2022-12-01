@@ -127,8 +127,8 @@ const GameContent = () => {
                 </div>
                 <div className='infos-cont grid'>
                     <div>
-                        Choose Heros powers<br />
-                        2 maximum<br />
+                        <div className='info-line'>Choose Heros powers</div>
+                        <div className='info-line'>2 maximum</div>
                     </div>
                 </div>
 

@@ -59,34 +59,35 @@ const watchLayout = async () => {
     const root = document.documentElement
 
     while (true) {
-        // const allWidth = window.innerWidth;
-        // const allHeight = window.innerHeight;
-
-        const allWidth = window.visualViewport!.width;
-        const allHeight = window.visualViewport!.height;
+        const allWidth = window.innerWidth;
+        const allHeight = window.innerHeight;
 
         if (global.localState.size.width !== allWidth || global.localState.size.height !== allHeight) {
+
             global.localState.size.width = allWidth;
             global.localState.size.height = allHeight;
 
             let width = allWidth;
             let height = allHeight;
             // const ratio = allHeight / allWidth
-            width = Math.min(allWidth, allHeight * 0.4);
+            width = Math.min(allWidth, allHeight * 0.6);
             root.style.setProperty('--width', `${width}px`);
             root.style.setProperty('--height', `${height}px`);
+
+            root.style.setProperty('--allWidth', `${allWidth}px`);
+            root.style.setProperty('--allHeight', `${allHeight}px`);
         }
         await new Promise(r => setTimeout(r, 100));
     }
 }
 
 export const main = async () => {
-    
+
     window.onbeforeunload = () => {
         console.log("UNLOAD");
         socket.close();
     }
-    
+
     socket.on("welcome", (id) => {
         const user = localStorage.getItem("user");
         global.localState.user = user ? JSON.parse(user) : undefined
