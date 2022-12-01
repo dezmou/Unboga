@@ -47,7 +47,15 @@ const GameContent = () => {
                 root.style.setProperty('--top-height', `var(--top-min-height)`);
             }, 800)
         }
-    }, [global.state.game!.id])
+    }, [global.state.game!.roundId])
+
+    useEffect(() => {
+        const root = document.documentElement
+        if (game[you].powerReady) {
+            root.style.setProperty('--board-size', `var(--board-width)`);
+            root.style.setProperty('--top-height', `var(--top-base-height)`);
+        }
+    }, [game])
 
     const getBoardColor = (points: number) => {
         points = 14 - points;
