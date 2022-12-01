@@ -9,7 +9,7 @@ export const powers = {
     },
 
     deserterJack: {
-        id: "confidentForce",
+        id: "deserterJack",
         name: "Deserter Jack",
         description: "One of your piece disapear back to the pool",
         image: "deserter.jpg",

@@ -1,5 +1,5 @@
 import anime from 'animejs';
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { capitulate } from '../logic';
 import { powers } from "./powers"
 import { useRender, render } from '../render';
@@ -7,8 +7,11 @@ import { global } from '../state';
 import "./Game.css";
 import { Button } from '@mui/material';
 
+const selectedPowers: any = {}
 
 const GameContent = () => {
+    const rd = useRender();
+
     const board = useMemo(() => global.state.game!.board!, [global.state.game!.board])
     const you = useMemo(() => global.state.game!.you, [global.state.game])
     const vilain = useMemo(() => global.state.game!.villain, [global.state.game])
@@ -104,7 +107,18 @@ const GameContent = () => {
                 </div>
                 <div className='bottom-zone'>
                     <div className='power-select-cont'>
-                        {[...Object.values(powers), ...Object.values(powers), ...Object.values(powers), ...Object.values(powers), ...Object.values(powers)].map((power, i) => <div className='power-cont' key={i}>
+                        {Object.values(powers).map((power, i) => <div className='power-cont' style={{
+                            background: selectedPowers[power.id] ? "#dadada" : "white"
+                        }} key={i} onClick={() => {
+                            if (selectedPowers.length >= 2) return;
+                            if (selectedPowers[power.id]) {
+                                delete selectedPowers[power.id];
+                            } else {
+                                selectedPowers[power.id] = true;
+                            }
+
+                            rd();
+                        }}>
                             <div className='power-picture'>
 
                             </div>
