@@ -116,6 +116,30 @@ const GameContent = () => {
                             onClick={() => { selectPowers(Object.keys(selectedPowers) as any) }}
                         >Ready</Button>
                     </div>}
+                    {game.nextActionPlayer === you && <>
+                        {game.nextAction === "pick" && <>
+                            <div className='pick-buttons'>
+                                <div>
+                                    <Button style={{
+                                        backgroundColor: "green",
+                                        width : "calc(var(--width) * 0.5)",
+                                        height : "var(--button-zone-heigth)",
+                                    }} className='login-button' variant='contained'
+                                        onClick={() => { }}
+                                    >Pick green</Button>
+                                </div>
+                                <div>
+                                    <Button style={{
+                                        backgroundColor: "#a0641d",
+                                        width : "calc(var(--width) * 0.5)",
+                                        height : "var(--button-zone-heigth)",
+                                    }} className='login-button' variant='contained'
+                                        onClick={() => { }}
+                                    >Pick Random</Button>
+                                </div>
+                            </div>
+                        </>}
+                    </>}
                 </div>
                 <div className='bottom-zone'>
                     <div className='power-select-cont'>

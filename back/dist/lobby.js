@@ -67,7 +67,6 @@ const challenge = (socket, param) => __awaiter(void 0, void 0, void 0, function*
             msg: "Impossible to challenge user",
             time: 4000,
         }));
-        console.log(state_1.lobby);
     }
 });
 exports.challenge = challenge;
@@ -93,8 +92,6 @@ const updateLobby = (userIds) => __awaiter(void 0, void 0, void 0, function* () 
             }
         }
     }))()));
-    console.log("UPDATE LOBBY");
-    console.log(state_1.lobby);
     state_1.io.emit("lobby", JSON.stringify(state_1.lobby));
 });
 exports.updateLobby = updateLobby;

@@ -207,6 +207,30 @@ export const gameEngine = () => {
                         line2: "He is taking soo much time",
                     }
                 }
+            } else if (state.game!.nextAction === "pick") {
+                if (state.game!.nextActionPlayer === you) {
+                    return {
+                        line1: "Take target or random",
+                        line2: ""
+                    }
+                } else {
+                    return {
+                        line1: "It is scum turn to pick",
+                        line2: ""
+                    }
+                }
+            } else if (state.game!.nextAction === "discard") {
+                if (state.game!.nextActionPlayer === you) {
+                    return {
+                        line1: "Discard a piece",
+                        line2: ""
+                    }
+                } else {
+                    return {
+                        line1: "It is scum turn",
+                        line2: "to discard a piece"
+                    }
+                }
             }
             return {
                 line1: "",
