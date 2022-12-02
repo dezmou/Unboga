@@ -2,7 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.gameEngine = void 0;
 const game_interface_1 = require("./common/game.interface");
-const MIN_TO_KNOCK = 500;
 const makeId = () => {
     return Math.floor((1 + Math.random()) * 0x1000000000000000)
         .toString(32);
@@ -154,8 +153,8 @@ const gameEngine = () => {
             nextActionPlayer: ["player1", "player2"][Math.floor(Math.random() * 2)],
             player1Id: player1,
             player2Id: player2,
-            player1: { gold: 100, powers: [], powerReady: false, points: 0, ready: true },
-            player2: { gold: 100, powers: [], powerReady: false, points: 0, ready: true },
+            player1: { gold: game_interface_1.START_GOLD, powers: [], powerReady: false, points: 0, ready: true },
+            player2: { gold: game_interface_1.START_GOLD, powers: [], powerReady: false, points: 0, ready: true },
         };
         distribute("player1");
         distribute("player2");
@@ -172,7 +171,7 @@ const gameEngine = () => {
     };
     const canKnock = (player) => {
         if (state.game.nextActionPlayer === player && state.game.nextAction === "discard") {
-            if (state.game[player].points <= MIN_TO_KNOCK) {
+            if (state.game[player].points <= game_interface_1.MIN_TO_KNOCK) {
                 return true;
             }
         }
@@ -318,10 +317,10 @@ const gameEngine = () => {
             if (state.game.roundResult) {
                 let line2 = "";
                 if (state.game.roundResult.reason === "knock_full") {
-                    line2 = `${state.game.roundResult.knocker === you ? "you" : "scum"} knocked FULL and won ${state.game.roundResult.pointsWin}`;
+                    line2 = `${state.game.roundResult.knocker === you ? "you" : "he"} knocked FULL and won ${state.game.roundResult.pointsWin}`;
                 }
                 else if (state.game.roundResult.reason === "knock_win") {
-                    line2 = `${state.game.roundResult.knocker === you ? "you" : "scum"} knocked and won ${state.game.roundResult.pointsWin}`;
+                    line2 = `${state.game.roundResult.knocker === you ? "you" : "he"}  won ${state.game.roundResult.pointsWin}`;
                 }
                 else {
                     line2 = `${state.game.roundResult.knocker === you ? "scum" : "you"} counter knocked and won ${state.game.roundResult.pointsWin}`;
@@ -336,7 +335,7 @@ const gameEngine = () => {
                     if (!state.game[you].powerReady) {
                         return {
                             line1: "Choose powers (2 max)",
-                            line2: "",
+                            line2: `You will play ${state.game.nextActionPlayer === you ? "first" : "second"}`,
                         };
                     }
                     else {
