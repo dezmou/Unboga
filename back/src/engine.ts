@@ -1,6 +1,8 @@
 import { BOARD_SIZE, CardStatus, Game, INITIAL_CARD_AMOUNT, Player, UserCard, UserGame } from "./common/game.interface"
 import { powers } from "./powers"
 
+const MIN_TO_KNOCK = 500
+
 const makeId = () => {
     return Math.floor((1 + Math.random()) * 0x1000000000000000)
         .toString(32)
@@ -154,8 +156,8 @@ export const gameEngine = () => {
             nextActionPlayer: ["player1" as Player, "player2" as Player][1],
             player1Id: player1,
             player2Id: player2,
-            player1: { gold: 100, powers: [], powerReady: false, points: 0 },
-            player2: { gold: 100, powers: [], powerReady: false, points: 0 },
+            player1: { gold: 100, powers: [], powerReady: false, points: 0, ready: true },
+            player2: { gold: 100, powers: [], powerReady: false, points: 0, ready: true },
         }
         distribute("player1");
         distribute("player2");
@@ -173,6 +175,15 @@ export const gameEngine = () => {
         return state.game!.player1Id === playerId ? "player1" : "player2" as Player
     }
 
+    const canKnock = (player: Player) => {
+        if (state.game!.nextActionPlayer === player && state.game!.nextAction === "discard") {
+            if (state.game![player].points <= MIN_TO_KNOCK) {
+                return true;
+            }
+        }
+        return false
+    }
+
     const selectPowers = (playerId: string, selectedPowers: (keyof typeof powers)[]) => {
         const player = getPlayerById(playerId);
         state.game![player].powers = selectedPowers;
@@ -182,24 +193,103 @@ export const gameEngine = () => {
         }
     }
 
-    const pickRandom = (playerId: string) => {
+    const discard = (playerId: string, x: number, y: number) => {
         const player = getPlayerById(playerId)
         if (state.game!.nextActionPlayer !== player) throw "not you to play"
         if (state.game!.nextAction !== "discard") throw "not discard time"
+        const card = state.game!.board[y][x];
+        if (card.status !== player) throw "not your card"
+        card.status = "deck"
+        card[player].status = "deck"
+        card[op[player]].villainRefused = true;
+        state.game!.pick = { x, y };
+        state.game!.justPicked = undefined;
+
+        state.game!.nextAction = "pick"
+        state.game!.nextActionPlayer = op[player];
+        evaluate("player1")
+        evaluate("player2")
+    }
+
+    const knock = (playerId: string) => {
+        const player = getPlayerById(playerId)
+        if (state.game!.nextActionPlayer !== player) throw "not you to play"
+        if (state.game!.nextAction !== "discard") throw "not pick time"
+        if (!canKnock(player)) throw "cannot knock"
+
+        const points = state.game![player].points;
+        const pointsOp = state.game![op[player]].points;
+        let result: Game["roundResult"] = {
+            pointsWin: 0,
+            reason: "knock_win",
+            winner: player,
+            knocker: player
+        };
+
+        if (points === 0) {
+            result.reason = "knock_full"
+            result.pointsWin += 40
+        }
+        const diff = pointsOp - points;
+
+        if (points !== 0 && points >= pointsOp) {
+            result.reason = "knock_lost"
+            result.winner = op[player];
+            result.pointsWin += 40;
+        }
+
+        result.pointsWin += Math.abs(diff);
+        const baseScore = result.pointsWin;
+
+        state.game![result.winner].gold += result.pointsWin;
+        state.game![op[result.winner]].gold += -result.pointsWin;
+
+        state.game!.player1.ready = false;
+        state.game!.player2.ready = false;
+        state.game!.roundResult = result;
+    }
+
+    const pickRandom = (playerId: string) => {
+        const player = getPlayerById(playerId)
+        if (state.game!.nextActionPlayer !== player) throw "not you to play"
+        if (state.game!.nextAction !== "pick") throw "not pick time"
         const pick = state.game!.board[state.game!.pick!.y][state.game!.pick!.x]
         pick.status = "lost"
         pick[op[player]].villainRefused = true;
         pick[player].status = "lost";
         pick[op[player]].status = "lost";
 
+        let totalRemaining = 0;
+        for (let line of state.game!.board) {
+            for (let piece of line) {
+                if (piece.status === "deck") {
+                    totalRemaining += 1;
+                }
+            }
+        }
+        if (totalRemaining === 0) {
+            for (let line of state.game!.board) {
+                for (let piece of line) {
+                    if (piece.status === "lost") {
+                        piece.status = "deck"
+                        piece.player1.status = "deck"
+                        piece.player1.villainRefused = false
+                        piece.player2.status = "deck"
+                        piece.player2.villainRefused = false
+                    }
+                }
+            }
+        }
+
         const card = getRandomFromDeck();
+        state.game!.justPicked = { x: card.x, y: card.y }
         card.status = player
         card[player].status = player
 
         evaluate("player1")
         evaluate("player2")
-        state.game!.nextAction = "pick"
-        state.game!.nextActionPlayer = op[state.game!.nextActionPlayer];
+        state.game!.pick = undefined
+        state.game!.nextAction = "discard"
     }
 
     const pickGreen = (playerId: string) => {
@@ -207,11 +297,14 @@ export const gameEngine = () => {
         if (state.game!.nextActionPlayer !== player) throw "not you to play"
         if (state.game!.nextAction !== "pick") throw "not pick time"
         const gameCard = state.game!.board[state.game!.pick!.y][state.game!.pick!.x]
+        state.game!.justPicked = { x: gameCard.x, y: gameCard.y }
+
         gameCard.status = player;
         gameCard[player].status = player;
         gameCard[op[player]].status = player;
         evaluate("player1")
         evaluate("player2")
+        state.game!.pick = undefined
         state.game!.nextAction = "discard"
     }
 
@@ -222,46 +315,62 @@ export const gameEngine = () => {
         const getVillainStatus = (): UserGame["opStatus"] => {
             return {
                 ...state.game![villain],
-                points: undefined,
-                powers: undefined,
+                points: state.game!.roundResult ? state.game![villain].points : undefined,
+                powers: state.game!.nextAction === "selectHero" ? undefined : state.game![villain].powers,
             }
         }
+        const possibleKnock = canKnock(you);
 
         const getInfos = (): UserGame["infos"] => {
-            if (state.game!.nextAction === "selectHero") {
-                if (!state.game![you].powerReady) {
-                    return {
-                        line1: "Choose powers (2 max)",
-                        line2: "",
-                    }
+            if (state.game!.roundResult) {
+                let line2 = ""
+                if (state.game!.roundResult.reason === "knock_full") {
+                    line2 = `${state.game!.roundResult.knocker === you ? "you" : "scum"} knocked FULL and won ${state.game!.roundResult.pointsWin}`
+                } else if (state.game!.roundResult.reason === "knock_win") {
+                    line2 = `${state.game!.roundResult.knocker === you ? "you" : "scum"} knocked and won ${state.game!.roundResult.pointsWin}`
                 } else {
-                    return {
-                        line1: "Waiting scum to choose powers",
-                        line2: "He is taking soo much time",
-                    }
+                    line2 = `${state.game!.roundResult.knocker === you ? "scum" : "you"} counter knocked and won ${state.game!.roundResult.pointsWin}`
                 }
-            } else if (state.game!.nextAction === "pick") {
-                if (state.game!.nextActionPlayer === you) {
-                    return {
-                        line1: "Take target or random",
-                        line2: ""
-                    }
-                } else {
-                    return {
-                        line1: "It is scum turn to pick",
-                        line2: ""
-                    }
+                return {
+                    line1: `${state.game!.roundResult.knocker === you ? "you" : "scum"} Knocked with ${state.game![state.game!.roundResult.knocker].points} points`,
+                    line2
                 }
-            } else if (state.game!.nextAction === "discard") {
-                if (state.game!.nextActionPlayer === you) {
-                    return {
-                        line1: "Discard a piece",
-                        line2: ""
+            } else {
+                if (state.game!.nextAction === "selectHero") {
+                    if (!state.game![you].powerReady) {
+                        return {
+                            line1: "Choose powers (2 max)",
+                            line2: "",
+                        }
+                    } else {
+                        return {
+                            line1: "Waiting scum to choose powers",
+                            line2: "He is taking soo much time",
+                        }
                     }
-                } else {
-                    return {
-                        line1: "It is scum turn",
-                        line2: "to discard a piece"
+                } else if (state.game!.nextAction === "pick") {
+                    if (state.game!.nextActionPlayer === you) {
+                        return {
+                            line1: "Pick green or random",
+                            line2: ""
+                        }
+                    } else {
+                        return {
+                            line1: "It is scum turn to pick",
+                            line2: ""
+                        }
+                    }
+                } else if (state.game!.nextAction === "discard") {
+                    if (state.game!.nextActionPlayer === you) {
+                        return {
+                            line1: "Discard a piece",
+                            line2: possibleKnock ? `or knock ${state.game![you].points}` : ""
+                        }
+                    } else {
+                        return {
+                            line1: "It is scum turn",
+                            line2: "to discard a piece"
+                        }
                     }
                 }
             }
@@ -271,22 +380,41 @@ export const gameEngine = () => {
             }
         }
 
+        const getUserCard = (card: Game["board"][number][number]) => {
+            let streak = false;
+            if (card.status === you && card[you].inStreak) {
+                streak = true;
+            }
+            if (state.game!.roundResult && card.status === villain && card[villain].inStreak) {
+                streak = true;
+            }
+
+            const res = {
+                ...card,
+                player1: undefined,
+                player2: undefined,
+                status: {
+                    ...card[you],
+                    status: state.game!.roundResult ? card.status : card[you].status,
+                    inStreak: streak,
+                } as UserCard,
+                points: card.basePoints
+            };
+            return res;
+        }
+
         const userGame: UserGame = {
             ...state.game!,
             you,
             villain,
-            board: state.game!.board.map(line => line.map(card => ({
-                ...card,
-                player1: undefined,
-                player2: undefined,
-                status: card[you],
-                points: card.basePoints
-            }))),
+            board: state.game!.board.map(line => line.map(card => getUserCard(card))),
+            justPicked: state.game!.nextActionPlayer === you ? state.game!.justPicked : undefined,
             player1: undefined,
             player2: undefined,
             youStatus: state.game![you],
             opStatus: getVillainStatus(),
-            infos: getInfos()
+            infos: getInfos(),
+            canKnock: possibleKnock
         }
         return userGame;
     }
@@ -300,6 +428,8 @@ export const gameEngine = () => {
             selectPowers,
             pickGreen,
             pickRandom,
+            discard,
+            knock,
         }
     }
 }

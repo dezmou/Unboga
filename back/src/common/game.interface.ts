@@ -19,6 +19,7 @@ export type PlayerStatus = {
     powers: (keyof typeof powers)[]
     powerReady: boolean
     points: number
+    ready : boolean
 }
 
 export type OpStatus = Modify<PlayerStatus, {
@@ -36,8 +37,15 @@ export type Game = {
     nextAction: "selectHero" | "pick" | "discard"
     nextActionPlayer: Player
     pick?: { x: number, y: number }
+    justPicked?: { x: number, y: number }
     player1: PlayerStatus
     player2: PlayerStatus
+    roundResult?: {
+        knocker : Player
+        winner: Player
+        pointsWin: number
+        reason: "knock_win" | "knock_lost" | "knock_full"
+    }
     board: {
         id: string
         x: number
@@ -61,6 +69,7 @@ export type UserGame = Modify<Game, {
         player1: undefined
         player2: undefined
     }[][]
+    canKnock: boolean
     player1: undefined
     player2: undefined
     youStatus: PlayerStatus

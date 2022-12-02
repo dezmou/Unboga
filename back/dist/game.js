@@ -38,6 +38,22 @@ const play = (socket, param) => __awaiter(void 0, void 0, void 0, function* () {
         const p = param;
         game.funcs.selectPowers(p.userId, p.powers);
     }
+    else if (param.play === "pickGreen") {
+        const p = param;
+        game.funcs.pickGreen(p.userId);
+    }
+    else if (param.play === "pickRandom") {
+        const p = param;
+        game.funcs.pickRandom(p.userId);
+    }
+    else if (param.play === "discard") {
+        const p = param;
+        game.funcs.discard(p.userId, p.x, p.y);
+    }
+    else if (param.play === "knock") {
+        const p = param;
+        game.funcs.knock(p.userId);
+    }
     yield Promise.all([
         (0, bdd_1.updateGame)(game.state.game),
         ...[user, op].map((pState) => __awaiter(void 0, void 0, void 0, function* () {

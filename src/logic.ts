@@ -1,7 +1,7 @@
 import { io, connect } from "socket.io-client"
 import { render } from "./render";
 import { global } from "./state"
-import { ApiCAll, Call, PlayPickGreen, PlayPickRandom, PlaySelectPowers, State, ToastEvent } from "../back/src/common/api.interface"
+import { ApiCAll, Call, PlayDiscard, PlayKnock, PlayPickGreen, PlayPickRandom, PlaySelectPowers, State, ToastEvent } from "../back/src/common/api.interface"
 import { powers } from "./Game/powers";
 
 const socket = io(`${window.location.origin}`, {
@@ -15,6 +15,14 @@ const apiCAll = (params: ApiCAll) => {
         ...params,
         user: global.localState.user
     }));
+}
+
+export const knock = async () => {
+    apiCAll({ action: "play", play: "knock", } as PlayKnock)
+}
+
+export const discard = async (x: number, y: number) => {
+    apiCAll({ action: "play", play: "discard", x, y } as PlayDiscard)
 }
 
 export const pickgreen = async () => {
@@ -110,6 +118,12 @@ export const main = async () => {
             ...param,
             opened: true,
         })
+    })
+
+    socket.on("reload", () => {
+        setTimeout(() => {
+            window.location.reload()
+        }, 1000)
     })
 
     socket.on("lobby", (msg: string) => {

@@ -70,6 +70,16 @@ export interface PlayPickRandom extends Play {
     play: "pickRandom"
 }
 
+export interface PlayKnock extends Play {
+    play: "knock"
+}
+
+export interface PlayDiscard extends Play {
+    play: "discard",
+    x: number,
+    y: number
+}
+
 export type ApiCAll = CreateUser | AskState | Login | Challenge | AcceptChallenge | CancelChallenge | Capitulate | Play
 
 export interface LobbyEntry {

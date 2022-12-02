@@ -31,9 +31,9 @@ onReady.subscribe(() => {
             socket.on(action, async (p) => {
                 try {
                     if (handle.mustBeConnected && !socketIdToUserId[socket.id]) {
-                        await askState(socket, JSON.parse(p));
                         if (!socketIdToUserId[socket.id]) {
-                            throw "not authorized"
+                            socket.emit("reload", "");
+                            throw "not authorized, reloading page..."
                         }
                     }
                     let params = p;
