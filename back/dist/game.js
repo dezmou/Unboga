@@ -54,6 +54,10 @@ const play = (socket, param) => __awaiter(void 0, void 0, void 0, function* () {
         const p = param;
         game.funcs.knock(p.userId);
     }
+    else if (param.play === "ready") {
+        const p = param;
+        game.funcs.setReady(p.userId);
+    }
     yield Promise.all([
         (0, bdd_1.updateGame)(game.state.game),
         ...[user, op].map((pState) => __awaiter(void 0, void 0, void 0, function* () {

@@ -1,7 +1,7 @@
 import { io, connect } from "socket.io-client"
 import { render } from "./render";
 import { global } from "./state"
-import { ApiCAll, Call, PlayDiscard, PlayKnock, PlayPickGreen, PlayPickRandom, PlaySelectPowers, State, ToastEvent } from "../back/src/common/api.interface"
+import { ApiCAll, Call, PlayDiscard, PlayKnock, PlayPickGreen, PlayPickRandom, PlayReady, PlaySelectPowers, State, ToastEvent } from "../back/src/common/api.interface"
 import { powers } from "./Game/powers";
 
 const socket = io(`${window.location.origin}`, {
@@ -15,6 +15,10 @@ const apiCAll = (params: ApiCAll) => {
         ...params,
         user: global.localState.user
     }));
+}
+
+export const ready = async () => {
+    apiCAll({ action: "play", play: "ready", } as PlayReady)
 }
 
 export const knock = async () => {

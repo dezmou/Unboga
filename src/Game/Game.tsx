@@ -1,6 +1,6 @@
 import anime from 'animejs';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { capitulate, discard, knock, pickgreen, pickRandom, selectPowers } from '../logic';
+import { capitulate, discard, knock, pickgreen, pickRandom, ready, selectPowers } from '../logic';
 import { powers } from "./powers"
 import { useRender, render } from '../render';
 import { global } from '../state';
@@ -166,7 +166,7 @@ const GameContent = () => {
                             <Button style={{
                                 backgroundColor: "green",
                             }} className='login-button' variant='contained'
-                                onClick={() => { selectPowers(Object.keys(selectedPowers) as any) }}
+                                onClick={() => { selectPowers(selectedPowers) }}
                             >Ready</Button>
                         </div>}
                         {game.nextActionPlayer === you && <>
@@ -207,7 +207,7 @@ const GameContent = () => {
                             </>}
                         </>}
                     </>}
-                    {game.roundResult && <>
+                    {game.roundResult && !game.youStatus.ready && <>
                         <div className='pick-knock'>
                             <div>
                                 <Button style={{
@@ -215,7 +215,7 @@ const GameContent = () => {
                                     width: "calc(var(--width) * 0.5)",
                                     height: "var(--button-zone-heigth)",
                                 }} className='login-button' variant='contained'
-                                    onClick={() => { knock() }}
+                                    onClick={() => { ready() }}
                                 >Ready</Button>
                             </div>
                         </div>

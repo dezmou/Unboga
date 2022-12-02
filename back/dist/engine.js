@@ -134,6 +134,16 @@ const gameEngine = () => {
         }
         state.game[player].points = amount;
     };
+    // TODO no duplicate code
+    const newRound = () => {
+        state.game = Object.assign(Object.assign({}, state.game), { roundId: makeId(), board: getNewBoard(), nextAction: "selectHero", nextActionPlayer: ["player1", "player2"][Math.floor(Math.random() * 2)], player1: { gold: state.game.player1.gold, powers: [], powerReady: false, points: 0, ready: true }, player2: { gold: state.game.player2.gold, powers: [], powerReady: false, points: 0, ready: true } });
+        distribute("player1");
+        distribute("player2");
+        evaluate("player1");
+        evaluate("player2");
+        const pick = getRandomFromDeck();
+        state.game.pick = { x: pick.x, y: pick.y };
+    };
     const newGame = (id, player1, player2) => {
         state.game = {
             id,
@@ -141,7 +151,7 @@ const gameEngine = () => {
             pick: { x: 0, y: 0 },
             board: getNewBoard(),
             nextAction: "selectHero",
-            nextActionPlayer: ["player1", "player2"][1],
+            nextActionPlayer: ["player1", "player2"][Math.floor(Math.random() * 2)],
             player1Id: player1,
             player2Id: player2,
             player1: { gold: 100, powers: [], powerReady: false, points: 0, ready: true },
@@ -228,6 +238,16 @@ const gameEngine = () => {
         state.game.player1.ready = false;
         state.game.player2.ready = false;
         state.game.roundResult = result;
+    };
+    const setReady = (playerId) => {
+        const player = getPlayerById(playerId);
+        if (!state.game.roundResult)
+            throw "not the time to be ready";
+        state.game[player].ready = true;
+        if (state.game.player1.ready && state.game.player2.ready) {
+            newRound();
+            state.game.roundResult = undefined;
+        }
     };
     const pickRandom = (playerId) => {
         const player = getPlayerById(playerId);
@@ -385,6 +405,7 @@ const gameEngine = () => {
             pickRandom,
             discard,
             knock,
+            setReady
         }
     };
 };

@@ -41,6 +41,9 @@ export const play = async (socket: SSocket, param: Play) => {
     } else if (param.play === "knock") {
         const p = param as PlayKnock
         game.funcs.knock(p.userId!);
+    } else if (param.play === "ready") {
+        const p = param as PlayKnock
+        game.funcs.setReady(p.userId!);
     }
 
     await Promise.all([
