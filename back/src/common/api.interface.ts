@@ -53,13 +53,21 @@ export interface ToastEvent {
 
 export interface Play extends ApiCallBase {
     action: "play";
-    play: "selectPower" | "pickTake" | "pickRandom" | "discard" | "knock"
+    play: "selectPower" | "pickGreen" | "pickRandom" | "discard" | "knock"
     gameId: string;
 }
 
 export interface PlaySelectPowers extends Play {
     play: "selectPower"
     powers: (keyof typeof powers)[]
+}
+
+export interface PlayPickGreen extends Play {
+    play: "pickGreen"
+}
+
+export interface PlayPickRandom extends Play {
+    play: "pickRandom"
 }
 
 export type ApiCAll = CreateUser | AskState | Login | Challenge | AcceptChallenge | CancelChallenge | Capitulate | Play

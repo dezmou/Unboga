@@ -1,6 +1,6 @@
 import { ObjectID } from "bson"
 import { addGame, getGame, getUserState, updateGame, updateUserState } from "./bdd"
-import { Capitulate, Play, PlaySelectPowers } from "./common/api.interface"
+import { Capitulate, Play, PlayPickGreen, PlayPickRandom, PlaySelectPowers } from "./common/api.interface"
 import { gameEngine } from "./engine"
 import { updateLobby } from "./lobby"
 import { SSocket } from "./state"
@@ -29,6 +29,12 @@ export const play = async (socket: SSocket, param: Play) => {
     if (param.play === "selectPower") {
         const p = param as PlaySelectPowers
         game.funcs.selectPowers(p.userId!, p.powers);
+    } else if (param.play === "pickGreen") {
+        const p = param as PlayPickGreen
+        game.funcs.pickGreen(p.userId!)
+    } else if (param.play === "pickRandom") {
+        const p = param as PlayPickRandom
+        game.funcs.pickRandom(p.userId!)
     }
 
     await Promise.all([

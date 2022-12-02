@@ -182,6 +182,39 @@ export const gameEngine = () => {
         }
     }
 
+    const pickRandom = (playerId: string) => {
+        const player = getPlayerById(playerId)
+        if (state.game!.nextActionPlayer !== player) throw "not you to play"
+        if (state.game!.nextAction !== "discard") throw "not discard time"
+        const pick = state.game!.board[state.game!.pick!.y][state.game!.pick!.x]
+        pick.status = "lost"
+        pick[op[player]].villainRefused = true;
+        pick[player].status = "lost";
+        pick[op[player]].status = "lost";
+
+        const card = getRandomFromDeck();
+        card.status = player
+        card[player].status = player
+
+        evaluate("player1")
+        evaluate("player2")
+        state.game!.nextAction = "pick"
+        state.game!.nextActionPlayer = op[state.game!.nextActionPlayer];
+    }
+
+    const pickGreen = (playerId: string) => {
+        const player = getPlayerById(playerId)
+        if (state.game!.nextActionPlayer !== player) throw "not you to play"
+        if (state.game!.nextAction !== "pick") throw "not pick time"
+        const gameCard = state.game!.board[state.game!.pick!.y][state.game!.pick!.x]
+        gameCard.status = player;
+        gameCard[player].status = player;
+        gameCard[op[player]].status = player;
+        evaluate("player1")
+        evaluate("player2")
+        state.game!.nextAction = "discard"
+    }
+
     const getUserGame = (playerId: string) => {
         const you = state.game!.player1Id === playerId ? "player1" : "player2";
         const villain = state.game!.player1Id === playerId ? "player2" : "player1";
@@ -265,6 +298,8 @@ export const gameEngine = () => {
             loadGame,
             getUserGame,
             selectPowers,
+            pickGreen,
+            pickRandom,
         }
     }
 }

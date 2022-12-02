@@ -1,6 +1,6 @@
 import anime from 'animejs';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { capitulate, selectPowers } from '../logic';
+import { capitulate, pickgreen, pickRandom, selectPowers } from '../logic';
 import { powers } from "./powers"
 import { useRender, render } from '../render';
 import { global } from '../state';
@@ -122,19 +122,19 @@ const GameContent = () => {
                                 <div>
                                     <Button style={{
                                         backgroundColor: "green",
-                                        width : "calc(var(--width) * 0.5)",
-                                        height : "var(--button-zone-heigth)",
+                                        width: "calc(var(--width) * 0.5)",
+                                        height: "var(--button-zone-heigth)",
                                     }} className='login-button' variant='contained'
-                                        onClick={() => { }}
+                                        onClick={() => { pickgreen() }}
                                     >Pick green</Button>
                                 </div>
                                 <div>
                                     <Button style={{
                                         backgroundColor: "#a0641d",
-                                        width : "calc(var(--width) * 0.5)",
-                                        height : "var(--button-zone-heigth)",
+                                        width: "calc(var(--width) * 0.5)",
+                                        height: "var(--button-zone-heigth)",
                                     }} className='login-button' variant='contained'
-                                        onClick={() => { }}
+                                        onClick={() => { pickRandom() }}
                                     >Pick Random</Button>
                                 </div>
                             </div>
