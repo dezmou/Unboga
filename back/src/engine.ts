@@ -1,7 +1,5 @@
-import { BOARD_SIZE, CardStatus, Game, INITIAL_CARD_AMOUNT, Player, UserCard, UserGame } from "./common/game.interface"
+import { BOARD_SIZE, CardStatus, Game, INITIAL_CARD_AMOUNT, MIN_TO_KNOCK, Player, START_GOLD, UserCard, UserGame } from "./common/game.interface"
 import { powers } from "./powers"
-
-const MIN_TO_KNOCK = 500
 
 const makeId = () => {
     return Math.floor((1 + Math.random()) * 0x1000000000000000)
@@ -175,8 +173,8 @@ export const gameEngine = () => {
             nextActionPlayer: ["player1" as Player, "player2" as Player][Math.floor(Math.random() * 2)],
             player1Id: player1,
             player2Id: player2,
-            player1: { gold: 100, powers: [], powerReady: false, points: 0, ready: true },
-            player2: { gold: 100, powers: [], powerReady: false, points: 0, ready: true },
+            player1: { gold: START_GOLD, powers: [], powerReady: false, points: 0, ready: true },
+            player2: { gold: START_GOLD, powers: [], powerReady: false, points: 0, ready: true },
         }
         distribute("player1");
         distribute("player2");
@@ -356,9 +354,9 @@ export const gameEngine = () => {
             if (state.game!.roundResult) {
                 let line2 = ""
                 if (state.game!.roundResult.reason === "knock_full") {
-                    line2 = `${state.game!.roundResult.knocker === you ? "you" : "scum"} knocked FULL and won ${state.game!.roundResult.pointsWin}`
+                    line2 = `${state.game!.roundResult.knocker === you ? "you" : "he"} knocked FULL and won ${state.game!.roundResult.pointsWin}`
                 } else if (state.game!.roundResult.reason === "knock_win") {
-                    line2 = `${state.game!.roundResult.knocker === you ? "you" : "scum"} knocked and won ${state.game!.roundResult.pointsWin}`
+                    line2 = `${state.game!.roundResult.knocker === you ? "you" : "he"}  won ${state.game!.roundResult.pointsWin}`
                 } else {
                     line2 = `${state.game!.roundResult.knocker === you ? "scum" : "you"} counter knocked and won ${state.game!.roundResult.pointsWin}`
                 }
@@ -371,7 +369,7 @@ export const gameEngine = () => {
                     if (!state.game![you].powerReady) {
                         return {
                             line1: "Choose powers (2 max)",
-                            line2: "",
+                            line2: `You will play ${state.game!.nextActionPlayer === you ? "first" : "second"}`,
                         }
                     } else {
                         return {

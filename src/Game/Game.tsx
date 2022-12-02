@@ -40,7 +40,7 @@ const GameContent = () => {
                 }
             }
             setTimeout(() => {
-                root.style.setProperty('--board-size', `calc(var(--board-width) * 0.6)`);
+                root.style.setProperty('--board-size', `calc(var(--board-width) * 0.45)`);
                 root.style.setProperty('--top-height', `var(--top-min-height)`);
             }, 800)
         }
@@ -120,12 +120,26 @@ const GameContent = () => {
                         }}>Capitulate</button>
                     </div>
                 </div>
+                <div className='gold-cont'>
+                    <div className='gold-value-cont'>
+                        <div className='gold-value-flex'>
+                            <div className='gold-value'>{game.youStatus.gold}</div>
+                            <div className='gold-value-symb'></div>
+                        </div>
+
+                        <div className='gold-value-flex'>
+                            <div className='gold-value-symb'></div>
+                            <div className='gold-value'>{game.opStatus.gold}</div>
+                        </div>
+                    </div>
+
+                </div>
                 <div className='points-cont'>
                     <div className='point-value'>
                         {game.youStatus.points} points
                     </div>
                     <div className='point-value'>
-                        {game.opStatus.points && <>{game.opStatus.points} points</>}
+                        {game.opStatus.points !== undefined && <>{game.opStatus.points} points</>}
                     </div>
                 </div>
                 <div className='board-cont-grid grid'>
@@ -220,14 +234,15 @@ const GameContent = () => {
                                     height: "var(--button-zone-heigth)",
                                 }} className='login-button' variant='contained'
                                     onClick={() => { ready() }}
-                                >Ready</Button>
+                                >Next round</Button>
                             </div>
                         </div>
                     </>}
                 </div>
                 <div className='bottom-zone'>
                     <div className='power-select-cont'>
-                        {Object.values(powers).map((power, i) => <div className='power-cont' style={{
+
+                        {/* {Object.values(powers).map((power, i) => <div className='power-cont' style={{
                             background: selectedPowers[power.id] ? "#dadada" : "white"
                         }} key={i} onClick={() => {
                             if (selectedPowers[power.id]) {
@@ -244,7 +259,8 @@ const GameContent = () => {
                             </div>
                             {power.name}
 
-                        </div>)}
+                        </div>)} */}
+
                     </div>
                 </div>
                 <div className='infos-cont grid'>

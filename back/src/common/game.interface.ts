@@ -3,6 +3,8 @@ type Modify<T, R> = Omit<T, keyof R> & R;
 
 export const BOARD_SIZE = 8
 export const INITIAL_CARD_AMOUNT = 12
+export const MIN_TO_KNOCK = 40
+export const START_GOLD = 150
 
 export type CardStatus = "deck" | "player1" | "player2" | "lost"
 

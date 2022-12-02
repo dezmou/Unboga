@@ -235,6 +235,7 @@ const gameEngine = () => {
         const baseScore = result.pointsWin;
         state.game[result.winner].gold += result.pointsWin;
         state.game[op[result.winner]].gold += -result.pointsWin;
+        state.game.justPicked = undefined;
         state.game.player1.ready = false;
         state.game.player2.ready = false;
         state.game.roundResult = result;

@@ -6,12 +6,13 @@
     --info-cont-height: calc(var(--width) * 0.15);
     --button-zone-heigth: calc(var(--width) * 0.14);
     --points-cont-height: calc(var(--width) * 0.08);
-    --top-base-height: calc(var(--height) - (var(--board-size) + var(--info-cont-height) + var(--button-zone-heigth) + var(--points-cont-height)));
+    --gold-cont-height: calc(var(--width) * 0.06);
+    --top-base-height: calc(var(--height) - (var(--board-size) + var(--info-cont-height) + var(--button-zone-heigth) + var(--points-cont-height) + var(--gold-cont-height)));
     --top-height: var(--top-base-height);
 }
 
 .bottom-zone {
-    height: calc(var(--height) - (var(--board-size) + var(--top-height) + var(--info-cont-height) + var(--button-zone-heigth) + var(--points-cont-height)));
+    height: calc(var(--height) - (var(--board-size) + var(--top-height) + var(--info-cont-height) + var(--button-zone-heigth) + var(--points-cont-height) + var(--gold-cont-height)));
     overflow-y: scroll;
     -ms-overflow-style: none;
     /* IE and Edge */
@@ -61,6 +62,36 @@
     margin-right: calc(var(--points-cont-height) * 0.25);
 }
 
+.gold-cont {
+    width: var(--width);
+    height: var(--gold-cont-height);
+}
+
+.gold-value-cont {
+    width: var(--width);
+    height: var(--gold-cont-height);
+    line-height: var(--gold-cont-height);
+    display: flex;
+    justify-content: space-between;
+}
+
+.gold-value-flex {
+    display: flex;
+}
+
+.gold-value {
+    color : #ffe587;
+    text-align: center;
+    width: calc(var(--width) * 0.08)
+}
+
+.gold-value-symb {
+    width: calc(var(--width) * 0.06);
+    height: 100%;
+    background-image : url("../assets/gold.png");
+    background-size: contain;
+}
+
 .board-main-layout {}
 
 .game-top-cont {
@@ -88,7 +119,8 @@
     width: var(--board-size);
     height: var(--board-size);
     transition: height 0.35s, width 0.35s;
-    box-shadow: 1px 1px 4px 3px rgba(0, 0, 0, 0.77);
+    /* box-shadow: 1px 1px 4px 3px rgba(0, 0, 0, 0.77); */
+    box-shadow: 0px 4px 4px -1px rgba(0, 0, 0, 0.77);
 }
 
 .board-line {
@@ -142,15 +174,15 @@
 }
 
 .case-forbid {
-    position : absolute;
-    width : calc(var(--board-case-size) * 0.33);
-    height : calc(var(--board-case-size) * 0.33);
-    margin-left : calc(var(--board-case-size) - (var(--board-case-size) * 0.33));
-    background-image : url(../assets/forbid.png);
+    position: absolute;
+    width: calc(var(--board-case-size) * 0.33);
+    height: calc(var(--board-case-size) * 0.33);
+    margin-left: calc(var(--board-case-size) - (var(--board-case-size) * 0.33));
+    background-image: url(../assets/forbid.png);
     background-size: contain;
     background-repeat: no-repeat;
     transition: height 0.35s, width 0.35s, background 0.35s;
-    opacity : 0.5;
+    opacity: 0.5;
 }
 
 .case-target {
