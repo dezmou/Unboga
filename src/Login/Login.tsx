@@ -141,6 +141,7 @@ export default () => {
                     <div>
                         <Button style={{
                             backgroundColor: "#8a1414",
+                            fontSize : `calc(var(--fontSize) * 0.7)`,
                         }} className='login-button' variant='contained'
                             onClick={() => { applyLogin() }}
                         >Login</Button>
@@ -148,6 +149,7 @@ export default () => {
                     <div>
                         <Button style={{
                             backgroundColor: "#8a1414",
+                            fontSize : `calc(var(--fontSize) * 0.7)`,
                         }} className='login-button' variant='contained'
                             onClick={() => { creatUser() }}
                         >New Account</Button>

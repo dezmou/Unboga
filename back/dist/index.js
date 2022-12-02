@@ -37,7 +37,10 @@ bdd_1.onReady.subscribe(() => {
             socket.on(action, (p) => __awaiter(void 0, void 0, void 0, function* () {
                 try {
                     if (handle.mustBeConnected && !state_1.socketIdToUserId[socket.id]) {
-                        throw "not authorized";
+                        yield (0, users_1.askState)(socket, JSON.parse(p));
+                        if (!state_1.socketIdToUserId[socket.id]) {
+                            throw "not authorized";
+                        }
                     }
                     let params = p;
                     try {

@@ -1,4 +1,4 @@
-import { BOARD_SIZE, Game, INITIAL_CARD_AMOUNT, Player, UserGame } from "./common/game.interface"
+import { BOARD_SIZE, CardStatus, Game, INITIAL_CARD_AMOUNT, Player, UserCard, UserGame } from "./common/game.interface"
 import { powers } from "./powers"
 
 const makeId = () => {
@@ -24,13 +24,23 @@ export const gameEngine = () => {
         }
 
         const board: Game["board"] = [];
+
+        const initCardStatus = (x: number, y: number): UserCard => ({
+            status: "deck",
+            villainRefused: false,
+            points: getBasePoint(x, y),
+            hori: false,
+            inStreak: false,
+            verti: false,
+        })
+
         for (let y = 0; y < BOARD_SIZE; y++) {
             const line: Game["board"][number] = [];
             for (let x = 0; x < BOARD_SIZE; x++) {
                 line.push({
                     id: `${x}_${y}`,
-                    player1: { status: "deck", villainRefused: false, points: getBasePoint(x, y) },
-                    player2: { status: "deck", villainRefused: false, points: getBasePoint(x, y) },
+                    player1: initCardStatus(x, y),
+                    player2: initCardStatus(x, y),
                     status: "deck",
                     x,
                     y,
@@ -57,6 +67,83 @@ export const gameEngine = () => {
         }
     }
 
+    const getCardValue = (card: Game["board"][number][number], player: Player) => {
+        return card.basePoints;
+    }
+
+    const evaluate = (player: Player) => {
+        const horiStreak = []
+        const vertiStreak = []
+        const board = state.game!.board
+        for (let y = 0; y < BOARD_SIZE; y++) {
+            let streak = [];
+            for (let x = 0; x < BOARD_SIZE; x++) {
+                const card = board[y][x]
+                if (card.status === player) {
+                    streak.push(card);
+                }
+                if (card.status !== player || x + 1 === BOARD_SIZE) {
+                    if (streak.length >= 3) {
+                        horiStreak.push(streak);
+                    }
+                    streak = [];
+                }
+            }
+        }
+
+        for (let x = 0; x < BOARD_SIZE; x++) {
+            let streak = [];
+            for (let y = 0; y < BOARD_SIZE; y++) {
+                const card = board[y][x]
+                if (card.status === player) {
+                    streak.push(card);
+                }
+                if (card.status !== player || y + 1 === BOARD_SIZE) {
+                    if (streak.length >= 3) {
+                        vertiStreak.push(streak);
+                    }
+                    streak = [];
+                }
+            }
+        }
+
+        for (let line of board) {
+            for (let card of line) {
+                card[player].inStreak = false;
+                card[player].hori = false;
+                card[player].verti = false;
+            }
+        }
+
+        for (let hori of horiStreak) {
+            for (let card of hori) {
+                card[player].inStreak = true;
+                card[player].hori = true;
+            }
+        }
+        for (let verti of vertiStreak) {
+            for (let card of verti) {
+                card[player].inStreak = true;
+                card[player].verti = true;
+            }
+        }
+
+        const pointsRemaining = [];
+        for (let line of board) {
+            for (let card of line) {
+                if (card.status === player && !card[player].inStreak) {
+                    pointsRemaining.push(getCardValue(card, player));
+                }
+            }
+        }
+        pointsRemaining.sort((a, b) => a - b);
+        let amount = 0;
+        for (let point of pointsRemaining) {
+            amount += point;
+        }
+        state.game![player].points = amount
+    }
+
     const newGame = (id: string, player1: string, player2: string) => {
         state.game = {
             id,
@@ -67,11 +154,13 @@ export const gameEngine = () => {
             nextActionPlayer: ["player1" as Player, "player2" as Player][1],
             player1Id: player1,
             player2Id: player2,
-            player1: { gold: 100, powers: [], powerReady: false },
-            player2: { gold: 100, powers: [], powerReady: false },
+            player1: { gold: 100, powers: [], powerReady: false, points: 0 },
+            player2: { gold: 100, powers: [], powerReady: false, points: 0 },
         }
         distribute("player1");
         distribute("player2");
+        evaluate("player1")
+        evaluate("player2")
         const pick = getRandomFromDeck();
         state.game.pick = { x: pick.x, y: pick.y }
     }
@@ -97,6 +186,34 @@ export const gameEngine = () => {
         const you = state.game!.player1Id === playerId ? "player1" : "player2";
         const villain = state.game!.player1Id === playerId ? "player2" : "player1";
 
+        const getVillainStatus = (): UserGame["opStatus"] => {
+            return {
+                ...state.game![villain],
+                points: undefined,
+                powers: undefined,
+            }
+        }
+
+        const getInfos = (): UserGame["infos"] => {
+            if (state.game!.nextAction === "selectHero") {
+                if (!state.game![you].powerReady) {
+                    return {
+                        line1: "Choose powers (2 max)",
+                        line2: "",
+                    }
+                } else {
+                    return {
+                        line1: "Waiting scum to choose powers",
+                        line2: "He is taking soo much time",
+                    }
+                }
+            }
+            return {
+                line1: "",
+                line2: "",
+            }
+        }
+
         const userGame: UserGame = {
             ...state.game!,
             you,
@@ -107,7 +224,12 @@ export const gameEngine = () => {
                 player2: undefined,
                 status: card[you],
                 points: card.basePoints
-            })))
+            }))),
+            player1: undefined,
+            player2: undefined,
+            youStatus: state.game![you],
+            opStatus: getVillainStatus(),
+            infos: getInfos()
         }
         return userGame;
     }

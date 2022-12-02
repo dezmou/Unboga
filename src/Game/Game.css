@@ -4,7 +4,7 @@
     --board-case-size: calc(var(--board-size) / 8);
     --top-min-height: calc(var(--width) * 0.05);
     --info-cont-height: calc(var(--width) * 0.15);
-    --button-zone-heigth: calc(var(--width) * 0.12);
+    --button-zone-heigth: calc(var(--width) * 0.14);
     --top-base-height: calc(var(--height) - (var(--board-size) + var(--info-cont-height) + var(--button-zone-heigth)));
     --top-height: var(--top-base-height);
 }
@@ -32,6 +32,7 @@
 }
 
 .game-main-cont {
+    user-select: none;
     width: var(--width);
     height: var(--height);
     position: absolute;

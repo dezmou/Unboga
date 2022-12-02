@@ -6,6 +6,7 @@ import { useRender, render } from '../render';
 import { global } from '../state';
 import "./Game.css";
 import { Button } from '@mui/material';
+import { Game, UserCard, UserGame } from '../../back/src/common/game.interface';
 
 const selectedPowers: any = {}
 
@@ -23,7 +24,6 @@ const GameContent = () => {
             for (let line of board) {
                 for (let card of line) {
                     if (card.status.status === you) {
-                        console.log("ANIME", card.id);
                         anime({
                             targets: `#card_${card.id} .case-piece`,
                             scale: "1.9",
@@ -48,7 +48,7 @@ const GameContent = () => {
 
     useEffect(() => {
         const root = document.documentElement
-        if (game[you].powerReady) {
+        if (game.youStatus.powerReady) {
             root.style.setProperty('--board-size', `var(--board-width)`);
             root.style.setProperty('--top-height', `var(--top-base-height)`);
         }
@@ -57,6 +57,12 @@ const GameContent = () => {
     const getBoardColor = (points: number) => {
         points = 14 - points;
         return `rgba(${points * 13},${points * 8},${points * 5},0.9)`;
+    }
+
+    const getPiecePicture = (piece: UserGame["board"][number][number]) => {
+        if (piece.status.inStreak) return "url(/blue_lined.png)"
+        if (piece.status.status === you) return "url(/blue_normal.png)"
+        return "none"
     }
 
     return <>
@@ -85,8 +91,9 @@ const GameContent = () => {
                                 </div>
                                 <div className='case-piece-cont grid' >
                                     <div className='case-piece' style={{
-                                        backgroundImage: card.status.status === you ? "url(/blue_normal.png)" : "none",
-                                        boxShadow: card.status.status === you ? `0px 0px 5px 0px #000000` : "none",
+                                        // backgroundImage: card.status.status === you ? "url(/blue_normal.png)" : "none",
+                                        backgroundImage: getPiecePicture(card),
+                                        // boxShadow: card.status.status === you ? `0px 0px 5px 0px #000000` : "none",
                                     }}>
                                     </div>
                                 </div>
@@ -95,7 +102,7 @@ const GameContent = () => {
                     </div>
                 </div>
                 <div className='buttons-zone'>
-                    {game.nextAction === "selectHero" && !game[you].powerReady && <div className='button-cont grid'>
+                    {game.nextAction === "selectHero" && !game.youStatus.powerReady && <div className='button-cont grid'>
                         <Button style={{
                             backgroundColor: "green",
                         }} className='login-button' variant='contained'
@@ -127,8 +134,8 @@ const GameContent = () => {
                 </div>
                 <div className='infos-cont grid'>
                     <div>
-                        <div className='info-line'>Choose Heros powers</div>
-                        <div className='info-line'>2 maximum</div>
+                        <div className='info-line'>{game.infos.line1}</div>
+                        <div className='info-line'>{game.infos.line2}</div>
                     </div>
                 </div>
 

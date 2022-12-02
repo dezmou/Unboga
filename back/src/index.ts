@@ -30,7 +30,12 @@ onReady.subscribe(() => {
             const handle = api[1]
             socket.on(action, async (p) => {
                 try {
-                    if (handle.mustBeConnected && !socketIdToUserId[socket.id]) { throw "not authorized" }
+                    if (handle.mustBeConnected && !socketIdToUserId[socket.id]) {
+                        await askState(socket, JSON.parse(p));
+                        if (!socketIdToUserId[socket.id]) {
+                            throw "not authorized"
+                        }
+                    }
                     let params = p;
                     try { params = ({ ...JSON.parse(p), userId: socketIdToUserId[socket.id] }) } catch (e) { }
                     await handle.func(socket, params)
