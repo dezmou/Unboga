@@ -141,6 +141,18 @@
     font-size: calc(var(--board-case-size) * 0.25);
 }
 
+.case-forbid {
+    position : absolute;
+    width : calc(var(--board-case-size) * 0.33);
+    height : calc(var(--board-case-size) * 0.33);
+    margin-left : calc(var(--board-case-size) - (var(--board-case-size) * 0.33));
+    background-image : url(../assets/forbid.png);
+    background-size: contain;
+    background-repeat: no-repeat;
+    transition: height 0.35s, width 0.35s, background 0.35s;
+    opacity : 0.5;
+}
+
 .case-target {
     position: absolute;
     width: var(--board-case-size);

@@ -138,10 +138,14 @@ const GameContent = () => {
                                     clickPiece(card)
                                 }}
                             >
+
                                 <div className='board-case-background-effect' style={{
                                     background: getBoardColor(card),
                                 }}>
                                 </div>
+                                {card.status.villainRefused && <div className='case-forbid'>
+                                </div>
+                                }
 
                                 <div className='case-point' >
                                     {card.points}
