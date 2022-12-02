@@ -56,7 +56,6 @@ export const challenge = async (socket: SSocket, param: Challenge) => {
             msg: "Impossible to challenge user",
             time: 4000,
         } as ToastEvent))
-        console.log(lobby);
     }
 }
 
@@ -80,7 +79,5 @@ export const updateLobby = async (userIds: string[]) => {
             }
         }
     })()));
-    console.log("UPDATE LOBBY");
-    console.log(lobby);
     io.emit("lobby", JSON.stringify(lobby))
 }

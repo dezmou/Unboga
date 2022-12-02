@@ -118,6 +118,14 @@
     font-size: calc(var(--board-case-size) * 0.25);
 }
 
+.case-target {
+    position: absolute;
+    width: var(--board-case-size);
+    height: var(--board-case-size);
+    background: red;
+
+}
+
 .infos-cont {
     width: calc(var(--width));
     height: var(--info-cont-height);

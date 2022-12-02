@@ -62,6 +62,12 @@ const GameContent = () => {
     const getPiecePicture = (piece: UserGame["board"][number][number]) => {
         if (piece.status.inStreak) return "url(/blue_lined.png)"
         if (piece.status.status === you) return "url(/blue_normal.png)"
+        if (game.pick) {
+            if (game.pick.x === piece.x && game.pick.y === piece.y) {
+                return "url(/target.png)"
+            }
+        }
+        // return "url(/empty.png)"
         return "none"
     }
 
@@ -86,6 +92,7 @@ const GameContent = () => {
                                     background: getBoardColor(card.points),
                                 }}>
                                 </div>
+
                                 <div className='case-point' >
                                     {card.points}
                                 </div>
