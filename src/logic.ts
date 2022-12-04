@@ -49,6 +49,10 @@ export const cancelChallenge = async () => {
     apiCAll({ action: "cancelChallenge" })
 }
 
+export const playBot = async () => {
+    apiCAll({ action: "playBot" })
+}
+
 export const acceptChallenge = async () => {
     apiCAll({ action: "acceptChallenge" })
 }

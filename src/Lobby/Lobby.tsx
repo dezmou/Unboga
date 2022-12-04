@@ -5,7 +5,7 @@ import { Button, TextField } from "@mui/material"
 import { global } from '../state';
 import { LobbyEntry, State } from '../../back/src/common/api.interface';
 import anime from "animejs"
-import { createUser, toast, login, challenge, acceptChallenge, cancelChallenge } from '../logic';
+import { createUser, toast, login, challenge, acceptChallenge, cancelChallenge, playBot } from '../logic';
 
 const Challenge = (p: { challenge: LobbyEntry["challenge"] }) => {
 
@@ -74,10 +74,15 @@ export default () => {
 
     return <>
         {global.state.page === "lobby" && global.lobby[global.localState.user!.id] && <>
+
             <div className='lobby-main-cont' style={{
                 opacity: global.state.page === "lobby" ? "1" : 0,
                 pointerEvents: global.state.page === "lobby" ? "initial" : "none",
             }}>
+                <button onClick={() => {
+                    playBot()
+                }}>play bot</button>
+
                 {Object.values(global.lobby).map((user, i) => <div key={i}>
                     <strong>{user.name}</strong>  (elo : {user.elo}) <span style={{ color: "green" }}>{user.status}</span>
                     <button onClick={() => {

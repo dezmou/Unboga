@@ -5,6 +5,10 @@
     top: 0,
 }
 
+.lobby-main-cont button {
+    height: calc(var(--width) * 0.05)
+}
+
 .challenge-main-cont {
     width: var(--width);
     height: var(--height);
@@ -36,5 +40,5 @@
 
 .challenge-buttons-victim {
     margin-top: calc(var(--width) * 0.03);
-    display : flex;
+    display: flex;
 }

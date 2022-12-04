@@ -45,6 +45,10 @@ export interface CancelChallenge extends ApiCallBase {
     action: "cancelChallenge"
 }
 
+export interface PlayBot extends ApiCallBase {
+    action: "playBot"
+}
+
 export interface ToastEvent {
     msg: string,
     color: string,
@@ -84,7 +88,7 @@ export interface PlayDiscard extends Play {
     y: number
 }
 
-export type ApiCAll = CreateUser | AskState | Login | Challenge | AcceptChallenge | CancelChallenge | Capitulate | Play
+export type ApiCAll = CreateUser | AskState | Login | Challenge | AcceptChallenge | CancelChallenge | Capitulate | Play | PlayBot
 
 export interface LobbyEntry {
     elo: number,

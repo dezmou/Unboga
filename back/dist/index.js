@@ -22,6 +22,7 @@ const handles = {
     "disconnect": { func: users_1.disconnect, toastIfFail: false, mustBeConnected: false, },
     // Authentified methods
     "challenge": { func: lobby_1.challenge, toastIfFail: true, mustBeConnected: true, },
+    "playBot": { func: lobby_1.playBot, toastIfFail: true, mustBeConnected: true, },
     "acceptChallenge": { func: lobby_1.acceptChallenge, toastIfFail: true, mustBeConnected: true, },
     "cancelChallenge": { func: lobby_1.cancelChallenge, toastIfFail: true, mustBeConnected: true, },
     "capitulate": { func: game_1.capitulate, toastIfFail: true, mustBeConnected: true, },

@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateLobby = exports.challenge = exports.acceptChallenge = exports.cancelChallenge = void 0;
+exports.updateLobby = exports.challenge = exports.playBot = exports.acceptChallenge = exports.cancelChallenge = void 0;
 const bdd_1 = require("./bdd");
 const game_1 = require("./game");
 const state_1 = require("./state");
@@ -44,6 +44,10 @@ const acceptChallenge = (socket, param) => __awaiter(void 0, void 0, void 0, fun
     (0, exports.updateLobby)([]);
 });
 exports.acceptChallenge = acceptChallenge;
+const playBot = (socket, param) => __awaiter(void 0, void 0, void 0, function* () {
+    yield (0, game_1.newGameBot)(param.userId);
+});
+exports.playBot = playBot;
 const challenge = (socket, param) => __awaiter(void 0, void 0, void 0, function* () {
     const [user, target] = yield Promise.all([
         (0, bdd_1.getUserState)(param.user.id),
