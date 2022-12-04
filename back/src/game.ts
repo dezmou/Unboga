@@ -83,6 +83,9 @@ export const play = async (socket: SSocket, param: Play) => {
             })]
         )
     } else {
+        game.state.game!.player2.ready = true
+        game.state.game!.player2.powerReady = true;
+        game.state.game!.player2.powers = [];
         await Promise.all([
             updateGame(game.state.game!),
             ...[user].map(async pState => {

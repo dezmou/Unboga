@@ -97,6 +97,9 @@ const play = (socket, param) => __awaiter(void 0, void 0, void 0, function* () {
         ]);
     }
     else {
+        game.state.game.player2.ready = true;
+        game.state.game.player2.powerReady = true;
+        game.state.game.player2.powers = [];
         yield Promise.all([
             (0, bdd_1.updateGame)(game.state.game),
             ...[user].map((pState) => __awaiter(void 0, void 0, void 0, function* () {
