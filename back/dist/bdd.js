@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getUserByName = exports.getUserState = exports.updateUserState = exports.getGame = exports.addGame = exports.updateGame = exports.addUser = exports.onReady = void 0;
 const mongodb_1 = require("mongodb");
 const rxjs_1 = require("rxjs");
+const game_1 = require("./game");
 const client = new mongodb_1.MongoClient(`mongodb://root:chien@mongo:27017`);
 let db;
 exports.onReady = new rxjs_1.Subject();
@@ -21,6 +22,25 @@ client.connect().then((r) => __awaiter(void 0, void 0, void 0, function* () {
         db.createCollection("users", {}).catch(e => { }),
         db.createCollection("games", {}).catch(e => { }),
     ]);
+    const id = new mongodb_1.ObjectId(game_1.BOT_ID); //bot
+    const newState = {
+        page: "lobby",
+        render: ["global"],
+        user: {
+            id: id.toString(),
+            elo: 1000,
+            name: "bot",
+            token: "bot_",
+        }
+    };
+    const doc = {
+        _id: id,
+        name: "bot",
+        password: "bot",
+        token: "bot_",
+        state: newState,
+    };
+    const res = yield db.collection("users").insertOne(doc, {}).catch(e => { });
     exports.onReady.next(true);
 }));
 const makeId = () => {

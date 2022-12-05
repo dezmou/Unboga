@@ -2,6 +2,7 @@ import { MongoClient, ObjectId } from "mongodb"
 import { State } from "./common/api.interface";
 import { Game } from "./common/game.interface";
 import { Subject } from "rxjs"
+import { BOT_ID } from "./game";
 
 const client = new MongoClient(`mongodb://root:chien@mongo:27017`);
 let db: ReturnType<MongoClient["db"]>;
@@ -22,6 +23,27 @@ client.connect().then(async r => {
         db.createCollection("users", {}).catch(e => { }),
         db.createCollection("games", {}).catch(e => { }),
     ])
+    const id = new ObjectId(BOT_ID) //bot
+
+    const newState: State = {
+        page: "lobby",
+        render: ["global"],
+        user: {
+            id: id.toString(),
+            elo: 1000,
+            name: "bot",
+            token: "bot_",
+        }
+    }
+    const doc: UserEntry = {
+        _id: id,
+        name: "bot",
+        password: "bot",
+        token: "bot_",
+        state: newState,
+    }
+    const res = await db.collection("users").insertOne(doc, {}).catch(e => { });
+
     onReady.next(true);
 });
 

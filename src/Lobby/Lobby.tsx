@@ -1,11 +1,10 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { Button } from "@mui/material";
+import { useEffect, useRef } from 'react';
+import { LobbyEntry } from '../../back/src/common/api.interface';
+import { acceptChallenge, cancelChallenge, challenge, playBot } from '../logic';
 import { useRender } from '../render';
-import "./Lobby.css"
-import { Button, TextField } from "@mui/material"
 import { global } from '../state';
-import { LobbyEntry, State } from '../../back/src/common/api.interface';
-import anime from "animejs"
-import { createUser, toast, login, challenge, acceptChallenge, cancelChallenge, playBot } from '../logic';
+import "./Lobby.css";
 
 const Challenge = (p: { challenge: LobbyEntry["challenge"] }) => {
 

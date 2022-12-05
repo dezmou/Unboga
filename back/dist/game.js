@@ -9,12 +9,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.newGame = exports.newGameBot = exports.play = exports.capitulate = void 0;
+exports.newGame = exports.play = exports.capitulate = exports.BOT_ID = void 0;
 const bson_1 = require("bson");
 const bdd_1 = require("./bdd");
 const engine_1 = require("./engine");
 const lobby_1 = require("./lobby");
 const users_1 = require("./users");
+exports.BOT_ID = "aaaaaaaaaaaaaaaaaaaaaaaa";
 const capitulate = (socket, param) => __awaiter(void 0, void 0, void 0, function* () {
     const game = yield (0, bdd_1.getGame)(param.gameId);
     yield Promise.all([game.player1Id, game.player2Id].map((playerId) => __awaiter(void 0, void 0, void 0, function* () {
@@ -31,10 +32,9 @@ exports.capitulate = capitulate;
 const botPlay = (gameState) => __awaiter(void 0, void 0, void 0, function* () {
     const game = gameState.state.game;
     const func = gameState.funcs;
-    if (game.nextActionPlayer !== "player2")
-        return;
+    yield new Promise(r => setTimeout(r, Math.floor(Math.random() * 500)));
     if (game.nextAction === "pick") {
-        if (Math.random() > 0.2) {
+        if (Math.random() > 0.33) {
             func.pickRandom("bot");
         }
         else {
@@ -53,6 +53,7 @@ const botPlay = (gameState) => __awaiter(void 0, void 0, void 0, function* () {
         })();
         func.discard("bot", card.x, card.y);
     }
+    return true;
 });
 const play = (socket, param) => __awaiter(void 0, void 0, void 0, function* () {
     const user = (yield (0, bdd_1.getUserState)(param.userId));
@@ -83,82 +84,37 @@ const play = (socket, param) => __awaiter(void 0, void 0, void 0, function* () {
         const p = param;
         game.funcs.setReady(p.userId);
     }
-    if (game.state.game.player2Id !== "bot") {
+    const updateUserGame = (state) => __awaiter(void 0, void 0, void 0, function* () {
+        const userGame = game.funcs.getUserGame(state.user.id);
+        state.game = userGame;
+        state.render = ["game"];
+        yield (0, bdd_1.updateUserState)(state.user.id, state);
+        (0, users_1.sendStateToUser)(state.user.id, state);
+    });
+    if (game.state.game.player2Id !== exports.BOT_ID) {
         const op = ((yield (0, bdd_1.getUserState)(gameState.player1Id === param.userId ? gameState.player2Id : gameState.player1Id)));
         yield Promise.all([
             (0, bdd_1.updateGame)(game.state.game),
-            ...[user, op].map((pState) => __awaiter(void 0, void 0, void 0, function* () {
-                const userGame = game.funcs.getUserGame(pState.user.id);
-                pState.game = userGame;
-                pState.render = ["game"];
-                yield (0, bdd_1.updateUserState)(pState.user.id, pState);
-                (0, users_1.sendStateToUser)(pState.user.id, pState);
-            }))
+            ...[user, op].map((pState) => __awaiter(void 0, void 0, void 0, function* () { return updateUserGame(pState); }))
         ]);
     }
     else {
-        game.state.game.player2.ready = true;
-        game.state.game.player2.powerReady = true;
-        game.state.game.player2.powers = [];
-        yield Promise.all([
-            (0, bdd_1.updateGame)(game.state.game),
-            ...[user].map((pState) => __awaiter(void 0, void 0, void 0, function* () {
-                const userGame = game.funcs.getUserGame(pState.user.id);
-                pState.game = userGame;
-                pState.render = ["game"];
-                yield (0, bdd_1.updateUserState)(pState.user.id, pState);
-                (0, users_1.sendStateToUser)(pState.user.id, pState);
-            }))
-        ]);
-        botPlay(game);
-        yield new Promise(r => setTimeout(r, 300));
-        yield Promise.all([
-            (0, bdd_1.updateGame)(game.state.game),
-            ...[user].map((pState) => __awaiter(void 0, void 0, void 0, function* () {
-                const userGame = game.funcs.getUserGame(pState.user.id);
-                pState.game = userGame;
-                pState.render = ["game"];
-                yield (0, bdd_1.updateUserState)(pState.user.id, pState);
-                (0, users_1.sendStateToUser)(pState.user.id, pState);
-            }))
-        ]);
-        botPlay(game);
-        yield new Promise(r => setTimeout(r, 300));
-        yield Promise.all([
-            (0, bdd_1.updateGame)(game.state.game),
-            ...[user].map((pState) => __awaiter(void 0, void 0, void 0, function* () {
-                const userGame = game.funcs.getUserGame(pState.user.id);
-                pState.game = userGame;
-                pState.render = ["game"];
-                yield (0, bdd_1.updateUserState)(pState.user.id, pState);
-                (0, users_1.sendStateToUser)(pState.user.id, pState);
-            }))
-        ]);
+        if (!game.state.game.player2.ready) {
+            game.funcs.setReady(exports.BOT_ID);
+        }
+        if (!game.state.game.player2.powerReady) {
+            game.funcs.selectPowers(exports.BOT_ID, []);
+        }
+        yield Promise.all([updateUserGame(user), (0, bdd_1.updateGame)(game.state.game)]);
+        while (game.state.game.nextActionPlayer === "player2"
+            && game.state.game.player1.ready
+            && game.state.game.player1.powerReady) {
+            yield botPlay(game);
+            yield Promise.all([updateUserGame(user), (0, bdd_1.updateGame)(game.state.game)]);
+        }
     }
 });
 exports.play = play;
-const newGameBot = (player) => __awaiter(void 0, void 0, void 0, function* () {
-    const pState = yield (0, bdd_1.getUserState)(player);
-    const game = (0, engine_1.gameEngine)();
-    const id = new bson_1.ObjectID();
-    game.funcs.newGame(id.toString(), player, "bot");
-    game.state.game["player2"].powerReady = true;
-    game.state.game["player2"].powers = [];
-    yield Promise.all([
-        (0, bdd_1.addGame)(game.state.game),
-        (() => __awaiter(void 0, void 0, void 0, function* () {
-            pState.inGame = game.state.game.id;
-            const userGame = game.funcs.getUserGame(pState.user.id);
-            console.log(userGame);
-            pState.game = userGame;
-            pState.page = "game";
-            pState.render = ["global"];
-            yield (0, bdd_1.updateUserState)(pState.user.id, pState);
-            (0, users_1.sendStateToUser)(pState.user.id, pState);
-        }))()
-    ]);
-});
-exports.newGameBot = newGameBot;
 const newGame = (player1, player2) => __awaiter(void 0, void 0, void 0, function* () {
     const [p1State, p2State] = yield Promise.all([
         (0, bdd_1.getUserState)(player1),
@@ -169,7 +125,7 @@ const newGame = (player1, player2) => __awaiter(void 0, void 0, void 0, function
     game.funcs.newGame(id.toString(), player1, player2);
     yield Promise.all([
         (0, bdd_1.addGame)(game.state.game),
-        ...[p1State, p2State].map((pState) => __awaiter(void 0, void 0, void 0, function* () {
+        ...(player2 !== exports.BOT_ID ? [p1State, p2State] : [p1State]).map((pState) => __awaiter(void 0, void 0, void 0, function* () {
             pState.inGame = game.state.game.id;
             const userGame = game.funcs.getUserGame(pState.user.id);
             pState.game = userGame;

@@ -1,6 +1,6 @@
 import { getUserState } from "./bdd";
 import { ApiCallBase, Challenge, PlayBot, ToastEvent } from "./common/api.interface";
-import { newGame, newGameBot } from "./game";
+import { BOT_ID, newGame} from "./game";
 import { io, lobby, SSocket, userIdToSocket } from "./state";
 
 export const cancelChallenge = async (socket: SSocket, param: ApiCallBase) => {
@@ -28,13 +28,13 @@ export const acceptChallenge = async (socket: SSocket, param: ApiCallBase) => {
 
     const player1 = lobby[param.user!.id].challenge!.player1
     const player2 = lobby[param.user!.id].challenge!.player2
-    lobby[player1].challenge = undefined;
-    lobby[player2].challenge = undefined;
+    if (lobby[player1]) lobby[player1].challenge = undefined;
+    if (lobby[player2]) lobby[player2].challenge = undefined;
     updateLobby([])
 }
 
 export const playBot = async (socket: SSocket, param: PlayBot) => {
-    await newGameBot(param.userId!,)
+    await newGame(param.userId!, BOT_ID);
 }
 
 export const challenge = async (socket: SSocket, param: Challenge) => {

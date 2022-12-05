@@ -1,10 +1,12 @@
 import { ObjectID } from "bson"
 import { addGame, getGame, getUserState, updateGame, updateUserState } from "./bdd"
-import { Capitulate, Play, PlayDiscard, PlayKnock, PlayPickGreen, PlayPickRandom, PlaySelectPowers } from "./common/api.interface"
+import { Capitulate, Play, PlayDiscard, PlayKnock, PlayPickGreen, PlayPickRandom, PlaySelectPowers, State } from "./common/api.interface"
 import { gameEngine } from "./engine"
-import { updateLobby } from "./lobby"
+import { playBot, updateLobby } from "./lobby"
 import { SSocket } from "./state"
 import { sendStateToUser } from "./users"
+
+export const BOT_ID = "aaaaaaaaaaaaaaaaaaaaaaaa";
 
 export const capitulate = async (socket: SSocket, param: Capitulate) => {
     const game = await getGame(param.gameId);
@@ -22,10 +24,10 @@ export const capitulate = async (socket: SSocket, param: Capitulate) => {
 const botPlay = async (gameState: ReturnType<typeof gameEngine>) => {
     const game = gameState.state.game!;
     const func = gameState.funcs
-    if (game.nextActionPlayer !== "player2") return;
+    await new Promise(r => setTimeout(r, Math.floor(Math.random() * 500)))
 
     if (game.nextAction === "pick") {
-        if (Math.random() > 0.2) {
+        if (Math.random() > 0.33) {
             func.pickRandom("bot");
         } else {
             func.pickGreen("bot");
@@ -42,6 +44,7 @@ const botPlay = async (gameState: ReturnType<typeof gameEngine>) => {
         })()
         func.discard("bot", card.x, card.y)
     }
+    return true;
 }
 
 export const play = async (socket: SSocket, param: Play) => {
@@ -70,81 +73,36 @@ export const play = async (socket: SSocket, param: Play) => {
         game.funcs.setReady(p.userId!);
     }
 
-    if (game.state.game!.player2Id !== "bot") {
+    const updateUserGame = async (state: State) => {
+        const userGame = game.funcs.getUserGame(state!.user!.id);
+        state!.game = userGame;
+        state!.render = ["game"]
+        await updateUserState(state!.user!.id, state!);
+        sendStateToUser(state!.user!.id, state!);
+    }
+
+    if (game.state.game!.player2Id !== BOT_ID) {
         const op = ((await getUserState(gameState.player1Id === param.userId! ? gameState.player2Id : gameState.player1Id)))!
         await Promise.all([
             updateGame(game.state.game!),
-            ...[user, op].map(async pState => {
-                const userGame = game.funcs.getUserGame(pState!.user!.id);
-                pState!.game = userGame;
-                pState!.render = ["game"]
-                await updateUserState(pState!.user!.id, pState!);
-                sendStateToUser(pState!.user!.id, pState!);
-            })]
+            ...[user, op].map(async pState => updateUserGame(pState))]
         )
     } else {
-        game.state.game!.player2.ready = true
-        game.state.game!.player2.powerReady = true;
-        game.state.game!.player2.powers = [];
-        await Promise.all([
-            updateGame(game.state.game!),
-            ...[user].map(async pState => {
-                const userGame = game.funcs.getUserGame(pState!.user!.id);
-                pState!.game = userGame;
-                pState!.render = ["game"]
-                await updateUserState(pState!.user!.id, pState!);
-                sendStateToUser(pState!.user!.id, pState!);
-            })]
-        )
-
-        botPlay(game);
-        await new Promise(r => setTimeout(r, 300));
-        await Promise.all([
-            updateGame(game.state.game!),
-            ...[user].map(async pState => {
-                const userGame = game.funcs.getUserGame(pState!.user!.id);
-                pState!.game = userGame;
-                pState!.render = ["game"]
-                await updateUserState(pState!.user!.id, pState!);
-                sendStateToUser(pState!.user!.id, pState!);
-            })]
-        )
-
-        botPlay(game);
-        await new Promise(r => setTimeout(r, 300));
-        await Promise.all([
-            updateGame(game.state.game!),
-            ...[user].map(async pState => {
-                const userGame = game.funcs.getUserGame(pState!.user!.id);
-                pState!.game = userGame;
-                pState!.render = ["game"]
-                await updateUserState(pState!.user!.id, pState!);
-                sendStateToUser(pState!.user!.id, pState!);
-            })]
-        )
+        if (!game.state.game!.player2.ready) {
+            game.funcs.setReady(BOT_ID);
+        }
+        if (!game.state.game!.player2.powerReady) {
+            game.funcs.selectPowers(BOT_ID, [])
+        }
+        await Promise.all([updateUserGame(user), updateGame(game.state.game!)]);
+        while (game.state.game!.nextActionPlayer === "player2"
+            && game.state.game!.player1.ready
+            && game.state.game!.player1.powerReady
+        ) {
+            await botPlay(game);
+            await Promise.all([updateUserGame(user), updateGame(game.state.game!)]);
+        }
     }
-}
-
-export const newGameBot = async (player: string) => {
-    const pState = await getUserState(player);
-    const game = gameEngine()
-    const id = new ObjectID()
-    game.funcs.newGame(id.toString(), player, "bot")
-    game.state.game!["player2"].powerReady = true;
-    game.state.game!["player2"].powers = [];
-    await Promise.all([
-        addGame(game.state.game!),
-        (async () => {
-            pState!.inGame = game.state.game!.id
-            const userGame = game.funcs.getUserGame(pState!.user!.id);
-            console.log(userGame);
-            pState!.game = userGame;
-            pState!.page = "game"
-            pState!.render = ["global"]
-            await updateUserState(pState!.user!.id, pState!);
-            sendStateToUser(pState!.user!.id, pState!);
-        })()
-    ])
 }
 
 export const newGame = async (player1: string, player2: string) => {
@@ -157,7 +115,7 @@ export const newGame = async (player1: string, player2: string) => {
     game.funcs.newGame(id.toString(), player1, player2)
     await Promise.all([
         addGame(game.state.game!),
-        ...[p1State, p2State].map(async pState => {
+        ...(player2 !== BOT_ID ? [p1State, p2State] : [p1State]).map(async pState => {
             pState!.inGame = game.state.game!.id
             const userGame = game.funcs.getUserGame(pState!.user!.id);
             pState!.game = userGame;
