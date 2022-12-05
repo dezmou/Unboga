@@ -197,7 +197,7 @@ const gameEngine = () => {
         const points = state.game[player].points;
         const pointsOp = state.game[op[player]].points;
         let result = {
-            pointsWin: 30,
+            pointsWin: game_interface_1.FULL_POINTS,
             reason: "knock_full",
             winner: player,
             knocker: player
@@ -251,7 +251,7 @@ const gameEngine = () => {
         if (points >= pointsOp) {
             result.reason = "knock_lost";
             result.winner = op[player];
-            result.pointsWin += 30;
+            result.pointsWin += game_interface_1.SANCTION_POINTS;
         }
         result.pointsWin += Math.abs(diff);
         state.game[result.winner].gold += result.pointsWin;
@@ -439,12 +439,3 @@ const gameEngine = () => {
     };
 };
 exports.gameEngine = gameEngine;
-let total = 0;
-for (let i = 0; i < 10000; i++) {
-    const chien = (0, exports.gameEngine)();
-    chien.funcs.newGame("feref", "a", "b");
-    console.log(chien.state.game.player1.points);
-    total += chien.state.game.player1.points;
-}
-console.log();
-console.log(total / 10000);

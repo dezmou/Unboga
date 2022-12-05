@@ -126,7 +126,17 @@ const GameContent = () => {
                             <div className='gold-value'>{game.youStatus.gold}</div>
                             <div className='gold-value-symb'></div>
                         </div>
+                        <div className='gold-bar-cont'>
+                            <div className='gold-bar-cont-little'>
+                                <div className='gold-bar gold-bar-player1' style={{
+                                    width: `${Math.floor(game.youStatus.gold / 300 * 100) - 1}%`
+                                }}></div>
+                                <div className='gold-bar gold-bar-player2' style={{
+                                    width: `${Math.floor(game.opStatus.gold / 300 * 100) - 1}%`
+                                }}></div>
+                            </div>
 
+                        </div>
                         <div className='gold-value-flex'>
                             <div className='gold-value-symb'></div>
                             <div className='gold-value'>{game.opStatus.gold}</div>
@@ -179,8 +189,8 @@ const GameContent = () => {
                     </div>
                 </div>
                 <div className='buttons-zone' style={{
-                    opacity : global.localState.hideButtons ? "0" : 1,
-                    pointerEvents : global.localState.hideButtons ? "none" : "initial",
+                    opacity: global.localState.hideButtons ? "0" : 1,
+                    pointerEvents: global.localState.hideButtons ? "none" : "initial",
                 }}>
                     {!game.roundResult && <>
                         {game.nextAction === "selectHero" && !game.youStatus.powerReady && <div className='button-cont grid'>

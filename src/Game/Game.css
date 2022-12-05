@@ -75,12 +75,41 @@
     justify-content: space-between;
 }
 
+.gold-bar-cont {
+    width: 100%;
+    height: var(--gold-cont-height);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.gold-bar-cont-little {
+    height: calc(var(--gold-cont-height) * 0.1);
+    margin-top: calc(var(--gold-cont-height) * 0.3);
+    display: flex;
+    justify-content: space-between;
+}
+
+.gold-bar {
+    background: #ffe587;
+    height: 100%;
+    transition : width 1s;
+}
+
+.gold-bar-player1 {
+    border-radius: 0 5px 5px 0;
+}
+
+.gold-bar-player2 {
+    border-radius: 5px 0 0 5px;
+}
+
 .gold-value-flex {
     display: flex;
 }
 
 .gold-value {
-    color : #ffe587;
+    color: #ffe587;
     text-align: center;
     width: calc(var(--width) * 0.08)
 }
@@ -88,7 +117,7 @@
 .gold-value-symb {
     width: calc(var(--width) * 0.06);
     height: 100%;
-    background-image : url("../assets/gold.png");
+    background-image: url("../assets/gold.png");
     background-size: contain;
 }
 
