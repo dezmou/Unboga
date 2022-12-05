@@ -17,7 +17,8 @@ export const global = {
             opened: false,
             color: "",
             time: 0,
-        }
+        },
+        hideButtons: false,
     },
     lobby: {} as { [key: string]: LobbyEntry },
     state: {

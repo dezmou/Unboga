@@ -18,26 +18,40 @@ const apiCAll = (params: ApiCAll) => {
 }
 
 export const ready = async () => {
+    global.localState.hideButtons = true;
+    render("game")
     apiCAll({ action: "play", play: "ready", } as PlayReady)
 }
 
 export const knock = async () => {
+    global.localState.hideButtons = true;
+    render("game")
     apiCAll({ action: "play", play: "knock", } as PlayKnock)
 }
 
 export const discard = async (x: number, y: number) => {
+    const game = global.state.game!;
+    game.board[y][x].status.status = "lost";
+    game.nextActionPlayer = game.nextActionPlayer === "player1" ? "player2" : "player1"
+    render("game")
     apiCAll({ action: "play", play: "discard", x, y } as PlayDiscard)
 }
 
 export const pickgreen = async () => {
+    global.localState.hideButtons = true;
+    render("game")
     apiCAll({ action: "play", play: "pickGreen" } as PlayPickGreen)
 }
 
 export const pickRandom = async () => {
+    global.localState.hideButtons = true;
+    render("game")
     apiCAll({ action: "play", play: "pickRandom" } as PlayPickRandom)
 }
 
 export const selectPowers = async (spowers: (keyof typeof powers)[]) => {
+    global.localState.hideButtons = true;
+    render("game")
     apiCAll({ action: "play", play: "selectPower", powers: spowers } as PlaySelectPowers)
 }
 
@@ -93,7 +107,6 @@ const watchLayout = async () => {
 
             let width = allWidth;
             let height = allHeight;
-            // const ratio = allHeight / allWidth
             width = Math.min(allWidth, allHeight * 0.6);
             root.style.setProperty('--width', `${width}px`);
             root.style.setProperty('--height', `${height}px`);
@@ -150,6 +163,7 @@ export const main = async () => {
     socket.on("newState", (msg: string) => {
         global.state = JSON.parse(msg);
         console.log("STATE", global.state);
+        global.localState.hideButtons = false;
         if (global.state.page === "login") {
             localStorage.removeItem("user");
         }

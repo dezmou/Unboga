@@ -26,8 +26,8 @@
 
 .buttons-zone {
     height: var(--button-zone-heigth);
+    transition: opacity 0.1s;
 }
-
 
 .button-cont {
     height: calc(var(--button-zone-heigth) * 0.9);

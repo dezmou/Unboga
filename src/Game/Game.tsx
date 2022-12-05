@@ -178,7 +178,10 @@ const GameContent = () => {
                         </div>)}
                     </div>
                 </div>
-                <div className='buttons-zone'>
+                <div className='buttons-zone' style={{
+                    opacity : global.localState.hideButtons ? "0" : 1,
+                    pointerEvents : global.localState.hideButtons ? "none" : "initial",
+                }}>
                     {!game.roundResult && <>
                         {game.nextAction === "selectHero" && !game.youStatus.powerReady && <div className='button-cont grid'>
                             <Button style={{

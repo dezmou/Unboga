@@ -39,6 +39,7 @@ onReady.subscribe(() => {
                     }
                     let params = p;
                     try { params = ({ ...JSON.parse(p), userId: socketIdToUserId[socket.id] }) } catch (e) { }
+                    // await new Promise(r => setTimeout(r, 400)); // test latence
                     await handle.func(socket, params)
                 } catch (e) {
                     console.log(e);

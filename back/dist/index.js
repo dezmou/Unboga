@@ -48,6 +48,7 @@ bdd_1.onReady.subscribe(() => {
                         params = (Object.assign(Object.assign({}, JSON.parse(p)), { userId: state_1.socketIdToUserId[socket.id] }));
                     }
                     catch (e) { }
+                    // await new Promise(r => setTimeout(r, 400)); // test latence
                     yield handle.func(socket, params);
                 }
                 catch (e) {
