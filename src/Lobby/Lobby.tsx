@@ -82,13 +82,63 @@ export default () => {
                     playBot()
                 }}>play bot</button>
 
-                {Object.values(global.lobby).map((user, i) => <div key={i}>
-                    <strong>{user.name}</strong>  (elo : {user.elo}) <span style={{ color: "green" }}>{user.status}</span>
-                    <button onClick={() => {
-                        clickChallenge(user.id);
-                    }}>challenge !</button>
-                    {user.challenge && "CHALLENGE !"}
-                </div>)}
+                <div className="lobby-tab-cont">
+                    {/* <div className="lobby-tab-header">
+                        <div className="header-name">
+                            CHIEN
+                        </div>
+                        <div className="header-elo">
+                            ELO
+                        </div>
+                        <div className="header-status">
+                            ONLINE
+                        </div>
+                        <div className="header-challenge">
+                            CHALLENGE
+                        </div>
+                    </div> */}
+                    <div className="lobby-users-cont">
+                        {Object.values(global.lobby).sort((a, b) => b.elo - a.elo).map((user, i) => <div className="lobby-user-line" style={{
+                            backgroundColor: i % 2 === 0 ? "#f5f5f5" : "#ffffff",
+                        }} key={i}>
+                            <div className="lobby-line-name">
+                                <div style={{
+                                    marginLeft: "7px"
+                                }}></div>
+                                {user.name}
+                            </div>
+                            <div className="lobby-line-elo">
+                                {user.elo} ELO
+                            </div>
+                            <div className="lobby-line-status">
+                                {(() => {
+                                    if (user.challenge) return <span style={{ color: "orange" }}>challenging..</span>
+                                    if (user.status === "online") return <span style={{ color: "green" }}>online</span>
+                                    if (user.status === "inGame") return <span style={{ color: "red" }}>in game</span>
+                                })()}
+                            </div>
+                            <div className="lobby-line-button">
+                                {user.status === "online"
+                                    && !user.challenge
+                                    && user.id !== global.state.user!.id
+                                    && !global.lobby[global.localState.user!.id].challenge
+                                    && <>
+                                        <Button style={{
+                                            backgroundColor: "#53ac62",
+                                            width: "calc( var(--challenge-button-width) * 0.8)",
+                                            height: "calc(var( --line-height)) * 0.8 ",
+                                            fontSize: `calc(var(--fontSize) * 0.7)`,
+                                        }} className='login-button' variant='contained'
+                                            onClick={() => { clickChallenge(user.id) }}
+                                        >Challenge</Button>
+                                    </>}
+                            </div>
+                            {/* {user.challenge && "CHALLENGE !"} */}
+                        </div>)}
+
+                    </div>
+                </div>
+
             </div>
             {global.lobby[global.localState.user!.id].challenge && <>
                 <Challenge challenge={global.lobby[global.localState.user!.id].challenge}></Challenge>
