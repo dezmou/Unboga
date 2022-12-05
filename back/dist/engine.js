@@ -143,6 +143,7 @@ const gameEngine = () => {
         const pick = getRandomFromDeck();
         state.game.pick = { x: pick.x, y: pick.y };
     };
+    // TODO no duplicate code
     const newGame = (id, player1, player2) => {
         state.game = {
             id,
@@ -185,6 +186,29 @@ const gameEngine = () => {
             state.game.nextAction = "pick";
         }
     };
+    const onRoundEnd = () => {
+        state.game.justPicked = undefined;
+        state.game.player1.ready = false;
+        state.game.player2.ready = false;
+    };
+    const onZeroPoint = (player) => {
+        if (state.game[player].points !== 0)
+            throw "not zero points";
+        const points = state.game[player].points;
+        const pointsOp = state.game[op[player]].points;
+        let result = {
+            pointsWin: 30,
+            reason: "knock_full",
+            winner: player,
+            knocker: player
+        };
+        const diff = pointsOp - points;
+        result.pointsWin += Math.abs(diff);
+        state.game[result.winner].gold += result.pointsWin;
+        state.game[op[result.winner]].gold += -result.pointsWin;
+        state.game.roundResult = result;
+        onRoundEnd();
+    };
     const discard = (playerId, x, y) => {
         const player = getPlayerById(playerId);
         if (state.game.nextActionPlayer !== player)
@@ -203,6 +227,9 @@ const gameEngine = () => {
         state.game.nextActionPlayer = op[player];
         evaluate("player1");
         evaluate("player2");
+        if (state.game[player].points === 0) {
+            onZeroPoint(player);
+        }
     };
     const knock = (playerId) => {
         const player = getPlayerById(playerId);
@@ -220,24 +247,17 @@ const gameEngine = () => {
             winner: player,
             knocker: player
         };
-        if (points === 0) {
-            result.reason = "knock_full";
-            result.pointsWin += 40;
-        }
         const diff = pointsOp - points;
-        if (points !== 0 && points >= pointsOp) {
+        if (points >= pointsOp) {
             result.reason = "knock_lost";
             result.winner = op[player];
-            result.pointsWin += 40;
+            result.pointsWin += 30;
         }
         result.pointsWin += Math.abs(diff);
-        const baseScore = result.pointsWin;
         state.game[result.winner].gold += result.pointsWin;
         state.game[op[result.winner]].gold += -result.pointsWin;
-        state.game.justPicked = undefined;
-        state.game.player1.ready = false;
-        state.game.player2.ready = false;
         state.game.roundResult = result;
+        onRoundEnd();
     };
     const setReady = (playerId) => {
         const player = getPlayerById(playerId);
@@ -289,6 +309,9 @@ const gameEngine = () => {
         evaluate("player2");
         state.game.pick = undefined;
         state.game.nextAction = "discard";
+        if (state.game[player].points === 0) {
+            onZeroPoint(player);
+        }
     };
     const pickGreen = (playerId) => {
         const player = getPlayerById(playerId);
@@ -305,6 +328,9 @@ const gameEngine = () => {
         evaluate("player2");
         state.game.pick = undefined;
         state.game.nextAction = "discard";
+        if (state.game[player].points === 0) {
+            onZeroPoint(player);
+        }
     };
     const getUserGame = (playerId) => {
         const you = state.game.player1Id === playerId ? "player1" : "player2";
@@ -316,17 +342,20 @@ const gameEngine = () => {
         const getInfos = () => {
             if (state.game.roundResult) {
                 let line2 = "";
+                let line1 = "";
                 if (state.game.roundResult.reason === "knock_full") {
-                    line2 = `${state.game.roundResult.knocker === you ? "you" : "he"} knocked FULL and won ${state.game.roundResult.pointsWin}`;
+                    line1 = `${state.game.roundResult.knocker === you ? "you" : "he"} made FULL and won ${state.game.roundResult.pointsWin}`;
                 }
                 else if (state.game.roundResult.reason === "knock_win") {
+                    line1 = `${state.game.roundResult.knocker === you ? "you" : "scum"} Knocked with ${state.game[state.game.roundResult.knocker].points} points`;
                     line2 = `${state.game.roundResult.knocker === you ? "you" : "he"}  won ${state.game.roundResult.pointsWin}`;
                 }
                 else {
+                    line1 = `${state.game.roundResult.knocker === you ? "you" : "scum"} Knocked with ${state.game[state.game.roundResult.knocker].points} points`;
                     line2 = `${state.game.roundResult.knocker === you ? "scum" : "you"} counter knocked and won ${state.game.roundResult.pointsWin}`;
                 }
                 return {
-                    line1: `${state.game.roundResult.knocker === you ? "you" : "scum"} Knocked with ${state.game[state.game.roundResult.knocker].points} points`,
+                    line1,
                     line2
                 };
             }
