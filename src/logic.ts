@@ -44,7 +44,8 @@ export const capitulate = async () => {
 
 export const discard = async (x: number, y: number) => {
     const game = global.state.game!;
-    game.board[y][x].status.status = "lost";
+    game.board[y][x].status.status = "deck";
+    game.pick = { x, y };
     game.nextActionPlayer = game.nextActionPlayer === "player1" ? "player2" : "player1"
     render("game")
     apiCAll({ action: "play", play: "discard", x, y } as PlayDiscard)
