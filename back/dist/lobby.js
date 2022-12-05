@@ -95,6 +95,7 @@ const updateLobby = (userIds) => __awaiter(void 0, void 0, void 0, function* () 
             }
             else {
                 state_1.lobby[userId].status = user.inGame ? "inGame" : "online";
+                state_1.lobby[userId].elo = user.user.elo;
             }
         }
     }))()));

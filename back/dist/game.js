@@ -16,6 +16,13 @@ const engine_1 = require("./engine");
 const lobby_1 = require("./lobby");
 const users_1 = require("./users");
 exports.BOT_ID = "aaaaaaaaaaaaaaaaaaaaaaaa";
+const calculateElo = (myRating, opponentRating, myGameResult) => {
+    const getRatingDelta = (myRating, opponentRating, myGameResult) => {
+        var myChanceToWin = 1 / (1 + Math.pow(10, (opponentRating - myRating) / 400));
+        return Math.round(32 * (myGameResult - myChanceToWin));
+    };
+    return myRating + getRatingDelta(myRating, opponentRating, myGameResult);
+};
 const botPlay = (gameState) => __awaiter(void 0, void 0, void 0, function* () {
     const game = gameState.state.game;
     const func = gameState.funcs;
@@ -104,10 +111,37 @@ const play = (socket, param) => __awaiter(void 0, void 0, void 0, function* () {
     });
     if (game.state.game.player2Id !== exports.BOT_ID) {
         const op = ((yield (0, bdd_1.getUserState)(gameState.player1Id === param.userId ? gameState.player2Id : gameState.player1Id)));
+        let lobbyNeedUpdate = false;
+        if (game.state.game.gameResult) {
+            if (!game.state.game.misc.endGameProcessed) {
+                const res = game.state.game.gameResult;
+                const player1 = game.state.game.player1Id === user.user.id ? user : op;
+                const player2 = game.state.game.player1Id === user.user.id ? op : user;
+                if (res.winner === "player1") {
+                    player1.user.elo = calculateElo(player1.user.elo, player2.user.elo, 1);
+                    player2.user.elo = calculateElo(player2.user.elo, player1.user.elo, 0);
+                }
+                else if (res.winner === "player2") {
+                    player1.user.elo = calculateElo(player1.user.elo, player2.user.elo, 0);
+                    player2.user.elo = calculateElo(player2.user.elo, player1.user.elo, 1);
+                }
+                else if (res.winner === "draw") {
+                    player1.user.elo = calculateElo(player1.user.elo, player2.user.elo, 0.5);
+                    player2.user.elo = calculateElo(player2.user.elo, player1.user.elo, 0.5);
+                }
+                game.state.game.misc.player1.elo = player1.user.elo;
+                game.state.game.misc.player2.elo = player2.user.elo;
+                game.state.game.misc.endGameProcessed = true;
+                lobbyNeedUpdate = true;
+            }
+        }
         yield Promise.all([
             (0, bdd_1.updateGame)(game.state.game),
             ...[user, op].map((pState) => __awaiter(void 0, void 0, void 0, function* () { return updateUserGame(pState); }))
         ]);
+        if (lobbyNeedUpdate) {
+            (0, lobby_1.updateLobby)([user.user.id, op.user.id]);
+        }
     }
     else {
         if (!game.state.game.player2.ready) {

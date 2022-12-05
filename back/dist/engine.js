@@ -159,6 +159,7 @@ const gameEngine = () => {
             misc: {
                 player1: { elo: 0, name: "", roundWon: 0 },
                 player2: { elo: 0, name: "", roundWon: 0 },
+                endGameProcessed: false,
             }
         };
         distribute("player1");

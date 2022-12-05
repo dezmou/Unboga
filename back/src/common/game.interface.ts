@@ -67,6 +67,7 @@ export type Game = {
     misc: {
         player1: { name: string, elo: number, roundWon: number },
         player2: { name: string, elo: number, roundWon: number },
+        endGameProcessed: boolean,
     }
 }
 

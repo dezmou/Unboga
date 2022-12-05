@@ -1,6 +1,6 @@
 import { getUserState } from "./bdd";
 import { ApiCallBase, Challenge, PlayBot, ToastEvent } from "./common/api.interface";
-import { BOT_ID, newGame} from "./game";
+import { BOT_ID, newGame } from "./game";
 import { io, lobby, SSocket, userIdToSocket } from "./state";
 
 export const cancelChallenge = async (socket: SSocket, param: ApiCallBase) => {
@@ -80,6 +80,7 @@ export const updateLobby = async (userIds: string[]) => {
                 }
             } else {
                 lobby[userId].status = user.inGame ? "inGame" : "online"
+                lobby[userId].elo = user.user!.elo;
             }
         }
     })()));

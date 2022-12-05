@@ -38,6 +38,14 @@ const login = (socket, param) => __awaiter(void 0, void 0, void 0, function* () 
         }));
         return;
     }
+    if (param.name.length > 10) {
+        socket.emit("toast", JSON.stringify({
+            color: "red",
+            msg: "Username too long",
+            time: 4000,
+        }));
+        return;
+    }
     socket.emit("connected", JSON.stringify({ id: res._id, token: res.token }));
 });
 exports.login = login;

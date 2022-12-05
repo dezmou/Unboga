@@ -8,6 +8,15 @@ import { sendStateToUser } from "./users"
 
 export const BOT_ID = "aaaaaaaaaaaaaaaaaaaaaaaa";
 
+const calculateElo = (myRating: number, opponentRating: number, myGameResult: number) => {
+
+    const getRatingDelta = (myRating: number, opponentRating: number, myGameResult: number) => {
+        var myChanceToWin = 1 / (1 + Math.pow(10, (opponentRating - myRating) / 400));
+        return Math.round(32 * (myGameResult - myChanceToWin));
+    }
+    return myRating + getRatingDelta(myRating, opponentRating, myGameResult);
+}
+
 const botPlay = async (gameState: ReturnType<typeof gameEngine>) => {
     const game = gameState.state.game!;
     const func = gameState.funcs
@@ -91,12 +100,40 @@ export const play = async (socket: SSocket, param: Play) => {
         sendStateToUser(state!.user!.id, state!);
     }
 
+
     if (game.state.game!.player2Id !== BOT_ID) {
         const op = ((await getUserState(gameState.player1Id === param.userId! ? gameState.player2Id : gameState.player1Id)))!
+
+        let lobbyNeedUpdate = false;
+        if (game.state.game!.gameResult) {
+            if (!game.state.game!.misc.endGameProcessed) {
+                const res = game.state.game!.gameResult
+                const player1 = game.state.game!.player1Id === user.user!.id ? user : op;
+                const player2 = game.state.game!.player1Id === user.user!.id ? op : user;
+                if (res.winner === "player1") {
+                    player1.user!.elo = calculateElo(player1.user!.elo, player2.user!.elo, 1);
+                    player2.user!.elo = calculateElo(player2.user!.elo, player1.user!.elo, 0);
+                } else if (res.winner === "player2") {
+                    player1.user!.elo = calculateElo(player1.user!.elo, player2.user!.elo, 0);
+                    player2.user!.elo = calculateElo(player2.user!.elo, player1.user!.elo, 1);
+                } else if (res.winner === "draw") {
+                    player1.user!.elo = calculateElo(player1.user!.elo, player2.user!.elo, 0.5);
+                    player2.user!.elo = calculateElo(player2.user!.elo, player1.user!.elo, 0.5);
+                }
+                game.state.game!.misc.player1.elo = player1.user!.elo;
+                game.state.game!.misc.player2.elo = player2.user!.elo;
+                game.state.game!.misc.endGameProcessed = true;
+                lobbyNeedUpdate = true
+            }
+        }
+
         await Promise.all([
             updateGame(game.state.game!),
             ...[user, op].map(async pState => updateUserGame(pState))]
         )
+        if (lobbyNeedUpdate) {
+            updateLobby([user.user!.id, op.user!.id])
+        }
     } else {
         if (!game.state.game!.player2.ready) {
             game.funcs.setReady(BOT_ID);
