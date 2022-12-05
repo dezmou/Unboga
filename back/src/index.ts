@@ -1,6 +1,6 @@
 import { onReady } from "./bdd"
 import { ToastEvent } from "./common/api.interface"
-import { capitulate, play } from "./game"
+import { play } from "./game"
 import { acceptChallenge, cancelChallenge, challenge, playBot } from "./lobby"
 import { io, socketIdToUserId } from "./state"
 import { askState, createUser, disconnect, login } from "./users"
@@ -17,7 +17,6 @@ const handles = {
     "playBot": { func: playBot, toastIfFail: true, mustBeConnected: true, },
     "acceptChallenge": { func: acceptChallenge, toastIfFail: true, mustBeConnected: true, },
     "cancelChallenge": { func: cancelChallenge, toastIfFail: true, mustBeConnected: true, },
-    "capitulate": { func: capitulate, toastIfFail: true, mustBeConnected: true, },
     "play": { func: play, toastIfFail: true, mustBeConnected: true, },
 }
 

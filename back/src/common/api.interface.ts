@@ -17,11 +17,6 @@ export interface CreateUser extends ApiCallBase {
     password: string
 }
 
-export interface Capitulate extends ApiCallBase {
-    action: "capitulate";
-    gameId: string;
-}
-
 export interface Login extends ApiCallBase {
     action: "login";
     name: string;
@@ -57,7 +52,7 @@ export interface ToastEvent {
 
 export interface Play extends ApiCallBase {
     action: "play";
-    play: "selectPower" | "pickGreen" | "pickRandom" | "discard" | "knock" | "ready" | "exitLobby" | "revenge"
+    play: "selectPower" | "pickGreen" | "pickRandom" | "discard" | "knock" | "ready" | "exitLobby" | "revenge" | "capitulate"
     gameId: string;
 }
 
@@ -80,6 +75,10 @@ export interface PlayReady extends Play {
 
 export interface ExitLobby extends Play {
     play: "exitLobby"
+}
+
+export interface Capitulate extends Play {
+    play: "capitulate"
 }
 
 export interface Revenge extends Play {

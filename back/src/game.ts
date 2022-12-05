@@ -8,19 +8,6 @@ import { sendStateToUser } from "./users"
 
 export const BOT_ID = "aaaaaaaaaaaaaaaaaaaaaaaa";
 
-export const capitulate = async (socket: SSocket, param: Capitulate) => {
-    const game = await getGame(param.gameId);
-    await Promise.all([game.player1Id, game.player2Id].map(async (playerId) => {
-        const state = (await getUserState(playerId))!;
-        state.game = undefined;
-        state.inGame = undefined;
-        state.page = "lobby"
-        await updateUserState(playerId, state);
-        sendStateToUser(playerId, state);
-    }))
-    updateLobby([game.player1Id, game.player2Id]);
-}
-
 const botPlay = async (gameState: ReturnType<typeof gameEngine>) => {
     const game = gameState.state.game!;
     const func = gameState.funcs
@@ -71,6 +58,9 @@ export const play = async (socket: SSocket, param: Play) => {
     } else if (param.play === "ready") {
         const p = param as PlayKnock
         game.funcs.setReady(p.userId!);
+    } else if (param.play === "capitulate") {
+        const p = param as Capitulate
+        game.funcs.capitulate(p.userId!);
     } else if (param.play === "exitLobby") {
         user.inGame = undefined;
         user.game = undefined;

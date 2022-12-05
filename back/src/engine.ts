@@ -211,6 +211,15 @@ export const gameEngine = () => {
         }
     }
 
+    const capitulate = (playerId: string) => {
+        const player = getPlayerById(playerId);
+        state.game!.gameResult = {
+            winner: op[player],
+            revenge: { player1: "ask", player2: "ask" },
+            reason: "capitulate"
+        }
+    }
+
     const onRoundEnd = () => {
         state.game!.justPicked = undefined;
         state.game!.player1.ready = false;
@@ -512,7 +521,8 @@ export const gameEngine = () => {
             discard,
             knock,
             setReady,
-            getPlayerById
+            getPlayerById,
+            capitulate
         }
     }
 }
