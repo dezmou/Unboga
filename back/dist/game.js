@@ -9,26 +9,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.newGame = exports.play = exports.capitulate = exports.BOT_ID = void 0;
+exports.newGame = exports.play = exports.BOT_ID = void 0;
 const bson_1 = require("bson");
 const bdd_1 = require("./bdd");
 const engine_1 = require("./engine");
 const lobby_1 = require("./lobby");
 const users_1 = require("./users");
 exports.BOT_ID = "aaaaaaaaaaaaaaaaaaaaaaaa";
-const capitulate = (socket, param) => __awaiter(void 0, void 0, void 0, function* () {
-    const game = yield (0, bdd_1.getGame)(param.gameId);
-    yield Promise.all([game.player1Id, game.player2Id].map((playerId) => __awaiter(void 0, void 0, void 0, function* () {
-        const state = (yield (0, bdd_1.getUserState)(playerId));
-        state.game = undefined;
-        state.inGame = undefined;
-        state.page = "lobby";
-        yield (0, bdd_1.updateUserState)(playerId, state);
-        (0, users_1.sendStateToUser)(playerId, state);
-    })));
-    (0, lobby_1.updateLobby)([game.player1Id, game.player2Id]);
-});
-exports.capitulate = capitulate;
 const botPlay = (gameState) => __awaiter(void 0, void 0, void 0, function* () {
     const game = gameState.state.game;
     const func = gameState.funcs;
@@ -83,6 +70,10 @@ const play = (socket, param) => __awaiter(void 0, void 0, void 0, function* () {
     else if (param.play === "ready") {
         const p = param;
         game.funcs.setReady(p.userId);
+    }
+    else if (param.play === "capitulate") {
+        const p = param;
+        game.funcs.capitulate(p.userId);
     }
     else if (param.play === "exitLobby") {
         user.inGame = undefined;

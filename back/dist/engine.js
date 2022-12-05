@@ -186,6 +186,14 @@ const gameEngine = () => {
             state.game.nextAction = "pick";
         }
     };
+    const capitulate = (playerId) => {
+        const player = getPlayerById(playerId);
+        state.game.gameResult = {
+            winner: op[player],
+            revenge: { player1: "ask", player2: "ask" },
+            reason: "capitulate"
+        };
+    };
     const onRoundEnd = () => {
         state.game.justPicked = undefined;
         state.game.player1.ready = false;
@@ -460,7 +468,8 @@ const gameEngine = () => {
             discard,
             knock,
             setReady,
-            getPlayerById
+            getPlayerById,
+            capitulate
         }
     };
 };

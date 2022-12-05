@@ -25,7 +25,6 @@ const handles = {
     "playBot": { func: lobby_1.playBot, toastIfFail: true, mustBeConnected: true, },
     "acceptChallenge": { func: lobby_1.acceptChallenge, toastIfFail: true, mustBeConnected: true, },
     "cancelChallenge": { func: lobby_1.cancelChallenge, toastIfFail: true, mustBeConnected: true, },
-    "capitulate": { func: game_1.capitulate, toastIfFail: true, mustBeConnected: true, },
     "play": { func: game_1.play, toastIfFail: true, mustBeConnected: true, },
 };
 bdd_1.onReady.subscribe(() => {
