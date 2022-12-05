@@ -3,10 +3,10 @@ type Modify<T, R> = Omit<T, keyof R> & R;
 
 export const BOARD_SIZE = 8
 export const INITIAL_CARD_AMOUNT = 12
-export const MIN_TO_KNOCK = 30
+export const MIN_TO_KNOCK = 500
 export const FULL_POINTS = 30
 export const SANCTION_POINTS = 30
-export const START_GOLD = 150
+export const START_GOLD = 10
 
 export type CardStatus = "deck" | "player1" | "player2" | "lost"
 
@@ -63,7 +63,11 @@ export type Game = {
         player1: UserCard
         player2: UserCard
         basePoints: number
-    }[][]
+    }[][],
+    misc: {
+        player1: { name: string, elo: number, roundWon: number },
+        player2: { name: string, elo: number, roundWon: number },
+    }
 }
 
 export type UserGame = Modify<Game, {

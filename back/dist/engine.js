@@ -156,6 +156,10 @@ const gameEngine = () => {
             player2Id: player2,
             player1: { gold: game_interface_1.START_GOLD, powers: [], powerReady: false, points: 0, ready: true },
             player2: { gold: game_interface_1.START_GOLD, powers: [], powerReady: false, points: 0, ready: true },
+            misc: {
+                player1: { elo: 0, name: "", roundWon: 0 },
+                player2: { elo: 0, name: "", roundWon: 0 },
+            }
         };
         distribute("player1");
         distribute("player2");

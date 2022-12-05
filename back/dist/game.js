@@ -138,6 +138,8 @@ const newGame = (player1, player2) => __awaiter(void 0, void 0, void 0, function
     const game = (0, engine_1.gameEngine)();
     const id = new bson_1.ObjectID();
     game.funcs.newGame(id.toString(), player1, player2);
+    game.state.game.misc.player1 = { elo: p1State.user.elo, name: p1State.user.name, roundWon: 0 };
+    game.state.game.misc.player2 = { elo: p2State.user.elo, name: p2State.user.name, roundWon: 0 };
     yield Promise.all([
         (0, bdd_1.addGame)(game.state.game),
         ...(player2 !== exports.BOT_ID ? [p1State, p2State] : [p1State]).map((pState) => __awaiter(void 0, void 0, void 0, function* () {

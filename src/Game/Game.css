@@ -93,7 +93,7 @@
 .gold-bar {
     background: #ffe587;
     height: 100%;
-    transition : width 1s;
+    transition: width 1s;
 }
 
 .gold-bar-player1 {
@@ -131,8 +131,28 @@
 .game-top-buttons {
     /* border-bottom: 1px solid grey; */
     height: var(--top-min-height);
+    line-height: var(--top-min-height);
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
+}
+
+.game-top-button-player {
+    width: calc(var(--width) * 0.33);
+    color : white;
+}
+
+.game-top-button-player1 {
+    margin-left: calc(var(--width) * 0.02);
+    text-align: left;
+}
+
+.game-top-button-player2 {
+    margin-right: calc(var(--width) * 0.02);
+    text-align: right;
+}
+
+.game-top-button-option {
+    width: calc(var(--width) * 0.32);
 }
 
 .board-cont-grid {
@@ -259,15 +279,15 @@
 }
 
 .endGame-cont {
-    position : absolute;
-    width : var(--width);
+    position: absolute;
+    width: var(--width);
     height: calc(var(--width) * 0.2);
     text-align: center;
 }
 
 .endGame-popup {
-    background : white;
-    width: calc(var(--width) * 0.5);
+    background: white;
+    width: calc(var(--width) * 0.4);
     height: calc(var(--width) * 0.2);
     box-shadow: 1px 1px 4px 3px rgba(0, 0, 0, 0.77);
     border-radius: calc(var(--width) * 0.02);

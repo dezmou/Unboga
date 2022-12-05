@@ -117,7 +117,6 @@ export const play = async (socket: SSocket, param: Play) => {
             await Promise.all([updateUserGame(user), updateGame(game.state.game!)]);
         }
     }
-
 }
 
 export const newGame = async (player1: string, player2: string) => {
@@ -128,6 +127,8 @@ export const newGame = async (player1: string, player2: string) => {
     const game = gameEngine()
     const id = new ObjectID()
     game.funcs.newGame(id.toString(), player1, player2)
+    game.state.game!.misc.player1 = { elo: p1State!.user!.elo, name: p1State!.user!.name, roundWon: 0 }
+    game.state.game!.misc.player2 = { elo: p2State!.user!.elo, name: p2State!.user!.name, roundWon: 0 }
     await Promise.all([
         addGame(game.state.game!),
         ...(player2 !== BOT_ID ? [p1State, p2State] : [p1State]).map(async pState => {

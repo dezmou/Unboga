@@ -141,11 +141,28 @@ const GameContent = () => {
                 </div>}
                 <div className='game-top-cont'>
                     <div className='game-top-buttons'>
-                        <button style={{ height: "100%" }} onClick={() => {
-                            if (window.confirm("capitulate ??")) {
-                                capitulate()
-                            }
-                        }}>Capitulate</button>
+                        <div className='game-top-button-player game-top-button-player1'>
+                            {game.misc[you].name} ({game.misc[you].elo})
+                        </div>
+                        <div className='game-top-button-option'>
+                            {!game.gameResult && <>
+                                <Button style={{
+                                    backgroundColor: "#a60000",
+                                    width: "100%",
+                                    height: "calc(var(--top-min-height) * 0.8) ",
+                                }} className='login-button' variant='contained'
+                                    onClick={() => {
+                                        if (window.confirm("Capitulate ?")) {
+                                            capitulate()
+                                        }
+                                    }
+                                    }
+                                >CAPITULATE</Button>
+                            </>}
+                        </div>
+                        <div className='game-top-button-player game-top-button-player2'>
+                            ({game.misc[vilain].elo}) {game.misc[vilain].name}
+                        </div>
                     </div>
                 </div>
                 <div className='gold-cont'>

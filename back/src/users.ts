@@ -28,6 +28,14 @@ export const login = async (socket: SSocket, param: Login) => {
         } as ToastEvent))
         return;
     }
+    if (param.name.length > 10){
+        socket.emit("toast", JSON.stringify({
+            color: "red",
+            msg: "Username too long",
+            time: 4000,
+        } as ToastEvent))
+        return;
+    }
     socket.emit("connected", JSON.stringify({ id: res._id, token: res.token }))
 }
 
