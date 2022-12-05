@@ -133,7 +133,6 @@ export default () => {
                                         >Challenge</Button>
                                     </>}
                             </div>
-                            {/* {user.challenge && "CHALLENGE !"} */}
                         </div>)}
 
                     </div>

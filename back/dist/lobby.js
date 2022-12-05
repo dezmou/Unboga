@@ -39,10 +39,14 @@ const acceptChallenge = (socket, param) => __awaiter(void 0, void 0, void 0, fun
     yield (0, game_1.newGame)(state_1.lobby[param.user.id].challenge.player1, state_1.lobby[param.user.id].challenge.player2);
     const player1 = state_1.lobby[param.user.id].challenge.player1;
     const player2 = state_1.lobby[param.user.id].challenge.player2;
-    if (state_1.lobby[player1])
+    if (state_1.lobby[player1]) {
         state_1.lobby[player1].challenge = undefined;
-    if (state_1.lobby[player2])
+        state_1.lobby[player1].status = "inGame";
+    }
+    if (state_1.lobby[player2]) {
+        state_1.lobby[player2].status = "inGame";
         state_1.lobby[player2].challenge = undefined;
+    }
     (0, exports.updateLobby)([]);
 });
 exports.acceptChallenge = acceptChallenge;

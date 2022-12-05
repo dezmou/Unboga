@@ -28,8 +28,14 @@ export const acceptChallenge = async (socket: SSocket, param: ApiCallBase) => {
 
     const player1 = lobby[param.user!.id].challenge!.player1
     const player2 = lobby[param.user!.id].challenge!.player2
-    if (lobby[player1]) lobby[player1].challenge = undefined;
-    if (lobby[player2]) lobby[player2].challenge = undefined;
+    if (lobby[player1]) {
+        lobby[player1].challenge = undefined;
+        lobby[player1].status = "inGame"
+    }
+    if (lobby[player2]) {
+        lobby[player2].status = "inGame"
+        lobby[player2].challenge = undefined;
+    }
     updateLobby([])
 }
 
