@@ -52,6 +52,11 @@ const acceptChallenge = (socket, param) => __awaiter(void 0, void 0, void 0, fun
 exports.acceptChallenge = acceptChallenge;
 const playBot = (socket, param) => __awaiter(void 0, void 0, void 0, function* () {
     yield (0, game_1.newGame)(param.userId, game_1.BOT_ID);
+    if (state_1.lobby[param.userId]) {
+        state_1.lobby[param.userId].status = "inGame";
+        state_1.lobby[param.userId].challenge = undefined;
+    }
+    (0, exports.updateLobby)([]);
 });
 exports.playBot = playBot;
 const challenge = (socket, param) => __awaiter(void 0, void 0, void 0, function* () {

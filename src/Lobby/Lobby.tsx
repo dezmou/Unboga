@@ -78,25 +78,27 @@ export default () => {
                 opacity: global.state.page === "lobby" ? "1" : 0,
                 pointerEvents: global.state.page === "lobby" ? "initial" : "none",
             }}>
-                <button onClick={() => {
-                    playBot()
-                }}>play bot</button>
+
+                <div className="lobby-title-cont">
+                    <span style={{ color: "#4b0000" }}>Un</span>
+                    nammed <span style={{ color: "#4b0000" }}>Bo</span>ard <span style={{ color: "#4b0000" }}>Ga</span>me
+
+                </div>
+                <div className="lobby-playbot-cont grid">
+                    <div>
+                        <Button style={{
+                            backgroundColor: "#53ac62",
+                            width: "calc( var(--width) * 0.5)",
+                            height: "calc(var( --line-height) * 1)",
+                            fontSize: `calc(var(--fontSize) * 0.7)`,
+                        }} className='login-button' variant='contained'
+                            onClick={() => { playBot() }}
+                        >Play against computer</Button>
+                    </div>
+
+                </div>
 
                 <div className="lobby-tab-cont">
-                    {/* <div className="lobby-tab-header">
-                        <div className="header-name">
-                            CHIEN
-                        </div>
-                        <div className="header-elo">
-                            ELO
-                        </div>
-                        <div className="header-status">
-                            ONLINE
-                        </div>
-                        <div className="header-challenge">
-                            CHALLENGE
-                        </div>
-                    </div> */}
                     <div className="lobby-users-cont">
                         {Object.values(global.lobby).sort((a, b) => b.elo - a.elo).map((user, i) => <div className="lobby-user-line" style={{
                             backgroundColor: i % 2 === 0 ? "#f5f5f5" : "#ffffff",

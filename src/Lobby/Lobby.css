@@ -3,7 +3,7 @@
     --name-width: calc(var(--width) * 0.3);
     --status-width: calc(var(--width) * 0.25);
     --challenge-button-width: calc(var(--width) * 0.25);
-    --line-height : calc(var(--width) * 0.09);
+    --line-height: calc(var(--width) * 0.09);
 }
 
 .lobby-main-cont {
@@ -78,15 +78,15 @@
 
 .lobby-user-line {
     display: flex;
-    height : var(--line-height);
-    line-height : var(--line-height);
+    height: var(--line-height);
+    line-height: var(--line-height);
     text-align: center;
 }
 
 .lobby-line-name {
     text-align: left;
     width: var(--name-width);
-    display : flex;
+    display: flex;
 }
 
 .lobby-line-elo {
@@ -99,4 +99,18 @@
 
 .lobby-line-button {
     width: var(--challenge-button-width);
+}
+
+.lobby-title-cont {
+    text-align: center;
+    text-transform: uppercase;
+    font-family: impact;
+    color: #1b1b1b;
+    margin-top: calc(var(--width) * 0.01);
+    font-size: calc(var(--fontSize) * 1.5);
+}
+
+.lobby-playbot-cont {
+    margin-top: calc(var(--width) * 0.05);
+    margin-bottom: calc(var(--width) * 0.05);
 }

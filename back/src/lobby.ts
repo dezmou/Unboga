@@ -41,6 +41,11 @@ export const acceptChallenge = async (socket: SSocket, param: ApiCallBase) => {
 
 export const playBot = async (socket: SSocket, param: PlayBot) => {
     await newGame(param.userId!, BOT_ID);
+    if (lobby[param.userId!]) {
+        lobby[param.userId!].status = "inGame"
+        lobby[param.userId!].challenge = undefined;
+    }
+    updateLobby([])
 }
 
 export const challenge = async (socket: SSocket, param: Challenge) => {
