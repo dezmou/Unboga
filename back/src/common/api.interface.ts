@@ -57,7 +57,7 @@ export interface ToastEvent {
 
 export interface Play extends ApiCallBase {
     action: "play";
-    play: "selectPower" | "pickGreen" | "pickRandom" | "discard" | "knock" | "ready"
+    play: "selectPower" | "pickGreen" | "pickRandom" | "discard" | "knock" | "ready" | "exitLobby" | "revenge"
     gameId: string;
 }
 
@@ -76,6 +76,14 @@ export interface PlayPickRandom extends Play {
 
 export interface PlayReady extends Play {
     play: "ready"
+}
+
+export interface ExitLobby extends Play {
+    play: "exitLobby"
+}
+
+export interface Revenge extends Play {
+    play: "revenge"
 }
 
 export interface PlayKnock extends Play {

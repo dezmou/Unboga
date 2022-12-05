@@ -190,6 +190,31 @@ const gameEngine = () => {
         state.game.justPicked = undefined;
         state.game.player1.ready = false;
         state.game.player2.ready = false;
+        if (state.game.player1.gold <= 0 && state.game.player1.gold <= 0) {
+            state.game.player1.gold = 0;
+            state.game.player2.gold = 0;
+            state.game.gameResult = {
+                winner: "draw",
+                revenge: { player1: "ask", player2: "ask" },
+                reason: "win"
+            };
+        }
+        else if (state.game.player1.gold <= 0) {
+            state.game.player1.gold = 0;
+            state.game.gameResult = {
+                winner: "player2",
+                revenge: { player1: "ask", player2: "ask" },
+                reason: "win"
+            };
+        }
+        else if (state.game.player2.gold <= 0) {
+            state.game.player2.gold = 0;
+            state.game.gameResult = {
+                winner: "player1",
+                revenge: { player1: "ask", player2: "ask" },
+                reason: "win"
+            };
+        }
     };
     const onZeroPoint = (player) => {
         if (state.game[player].points !== 0)
@@ -434,7 +459,8 @@ const gameEngine = () => {
             pickRandom,
             discard,
             knock,
-            setReady
+            setReady,
+            getPlayerById
         }
     };
 };

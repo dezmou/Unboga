@@ -84,11 +84,31 @@ const play = (socket, param) => __awaiter(void 0, void 0, void 0, function* () {
         const p = param;
         game.funcs.setReady(p.userId);
     }
+    else if (param.play === "exitLobby") {
+        user.inGame = undefined;
+        user.game = undefined;
+        user.page = "lobby";
+        user.render = ["global"];
+        game.state.game.gameResult.revenge[game.funcs.getPlayerById(param.userId)] = "no";
+    }
+    else if (param.play === "revenge") {
+        game.state.game.gameResult.revenge[game.funcs.getPlayerById(param.userId)] = "yes";
+        if (game.state.game.gameResult.revenge.player1 === "yes"
+            && game.state.game.gameResult.revenge.player2 === "yes") {
+            yield (0, exports.newGame)(game.state.game.player1Id, game.state.game.player2Id);
+            return;
+        }
+    }
     const updateUserGame = (state) => __awaiter(void 0, void 0, void 0, function* () {
-        const userGame = game.funcs.getUserGame(state.user.id);
-        state.game = userGame;
-        state.render = ["game"];
+        if (state.inGame) {
+            const userGame = game.funcs.getUserGame(state.user.id);
+            state.game = userGame;
+            state.render = ["game"];
+        }
         yield (0, bdd_1.updateUserState)(state.user.id, state);
+        if (!state.inGame) {
+            (0, lobby_1.updateLobby)([state.user.id]);
+        }
         (0, users_1.sendStateToUser)(state.user.id, state);
     });
     if (game.state.game.player2Id !== exports.BOT_ID) {
@@ -105,10 +125,14 @@ const play = (socket, param) => __awaiter(void 0, void 0, void 0, function* () {
         if (!game.state.game.player2.powerReady) {
             game.funcs.selectPowers(exports.BOT_ID, []);
         }
+        if (game.state.game.gameResult) {
+            game.state.game.gameResult.revenge.player2 = "yes";
+        }
         yield Promise.all([updateUserGame(user), (0, bdd_1.updateGame)(game.state.game)]);
         while (game.state.game.nextActionPlayer === "player2"
             && game.state.game.player1.ready
-            && game.state.game.player1.powerReady) {
+            && game.state.game.player1.powerReady
+            && !game.state.game.gameResult) {
             yield botPlay(game);
             yield Promise.all([updateUserGame(user), (0, bdd_1.updateGame)(game.state.game)]);
         }

@@ -1,6 +1,6 @@
 import anime from 'animejs';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { capitulate, discard, knock, pickgreen, pickRandom, ready, selectPowers } from '../logic';
+import { capitulate, discard, exitLobby, knock, pickgreen, pickRandom, ready, revenge, selectPowers } from '../logic';
 import { powers } from "./powers"
 import { useRender, render } from '../render';
 import { global } from '../state';
@@ -111,6 +111,34 @@ const GameContent = () => {
             backgroundImage: "url(/velvet.jfif)"
         }}>
             <div className='board-main-layout'>
+                {game.gameResult && <div className='endGame-cont grid'>
+                    <div className='endGame-popup grid'>
+                        <div>
+                            <div className='endGame-title'>
+                                GAME OVER
+                            </div>
+                            <div className='endGame-result'>
+                                {(() => {
+                                    if (game.gameResult.winner === "draw") {
+                                        return <span style={{ color: "orange" }}>DRAW</span>
+                                    } else {
+                                        if (game.gameResult.winner === you && game.gameResult.reason === "win") {
+                                            return <span style={{ color: "green" }}>YOU WON</span>
+                                        } else if (game.gameResult.winner === you && game.gameResult.reason === "capitulate") {
+                                            return <span style={{ color: "green" }}>SCUM CAPITULATED</span>
+                                        } else if (game.gameResult.winner === vilain && game.gameResult.reason === "win") {
+                                            return <span style={{ color: "red" }}>YOU LOST</span>
+                                        } else if (game.gameResult.winner === vilain && game.gameResult.reason === "capitulate") {
+                                            return <span style={{ color: "red" }}>YOU CAPITULATED</span>
+                                        }
+                                    }
+                                    return <></>
+                                })()}
+                            </div>
+                        </div>
+
+                    </div>
+                </div>}
                 <div className='game-top-cont'>
                     <div className='game-top-buttons'>
                         <button style={{ height: "100%" }} onClick={() => {
@@ -180,7 +208,6 @@ const GameContent = () => {
                                         backgroundImage: getPiecePicture(card),
                                         // boxShadow: card.status.status === you ? `0px 0px 5px 0px #000000` : "none",
                                         cursor: isPieceClickable(card) ? "pointer" : "initial",
-                                        transform: isPieceClickable(card) ? "scale(1.1)" : "none"
                                     }}>
                                     </div>
                                 </div>
@@ -192,65 +219,96 @@ const GameContent = () => {
                     opacity: global.localState.hideButtons ? "0" : 1,
                     pointerEvents: global.localState.hideButtons ? "none" : "initial",
                 }}>
-                    {!game.roundResult && <>
-                        {game.nextAction === "selectHero" && !game.youStatus.powerReady && <div className='button-cont grid'>
-                            <Button style={{
-                                backgroundColor: "green",
-                            }} className='login-button' variant='contained'
-                                onClick={() => { selectPowers(selectedPowers) }}
-                            >Ready</Button>
-                        </div>}
-                        {game.nextActionPlayer === you && <>
-                            {game.nextAction === "pick" && <>
-                                <div className='pick-buttons'>
-                                    <div>
-                                        <Button style={{
-                                            backgroundColor: "green",
-                                            width: "calc(var(--width) * 0.5)",
-                                            height: "var(--button-zone-heigth)",
-                                        }} className='login-button' variant='contained'
-                                            onClick={() => { pickgreen() }}
-                                        >Pick green</Button>
-                                    </div>
-                                    <div>
-                                        <Button style={{
-                                            backgroundColor: "#a0641d",
-                                            width: "calc(var(--width) * 0.5)",
-                                            height: "var(--button-zone-heigth)",
-                                        }} className='login-button' variant='contained'
-                                            onClick={() => { pickRandom() }}
-                                        >Pick Random</Button>
-                                    </div>
-                                </div>
-                            </>}
-                            {game.canKnock && <>
-                                <div className='pick-knock'>
-                                    <div>
-                                        <Button style={{
-                                            backgroundColor: "green",
-                                            width: "calc(var(--width) * 0.5)",
-                                            height: "var(--button-zone-heigth)",
-                                        }} className='login-button' variant='contained'
-                                            onClick={() => { knock() }}
-                                        >Knock {game.youStatus.points}</Button>
-                                    </div>
-                                </div>
-                            </>}
-                        </>}
-                    </>}
-                    {game.roundResult && !game.youStatus.ready && <>
-                        <div className='pick-knock'>
-                            <div>
+                    {!game.gameResult && <>
+                        {!game.roundResult && <>
+                            {game.nextAction === "selectHero" && !game.youStatus.powerReady && <div className='button-cont grid'>
                                 <Button style={{
                                     backgroundColor: "green",
-                                    width: "calc(var(--width) * 0.5)",
-                                    height: "var(--button-zone-heigth)",
                                 }} className='login-button' variant='contained'
-                                    onClick={() => { ready() }}
-                                >Next round</Button>
+                                    onClick={() => { selectPowers(selectedPowers) }}
+                                >Ready</Button>
+                            </div>}
+                            {game.nextActionPlayer === you && <>
+                                {game.nextAction === "pick" && <>
+                                    <div className='pick-buttons'>
+                                        <div>
+                                            <Button style={{
+                                                backgroundColor: "green",
+                                                width: "calc(var(--width) * 0.5)",
+                                                height: "var(--button-zone-heigth)",
+                                            }} className='login-button' variant='contained'
+                                                onClick={() => { pickgreen() }}
+                                            >Pick green</Button>
+                                        </div>
+                                        <div>
+                                            <Button style={{
+                                                backgroundColor: "#a0641d",
+                                                width: "calc(var(--width) * 0.5)",
+                                                height: "var(--button-zone-heigth)",
+                                            }} className='login-button' variant='contained'
+                                                onClick={() => { pickRandom() }}
+                                            >Pick Random</Button>
+                                        </div>
+                                    </div>
+                                </>}
+                                {game.canKnock && <>
+                                    <div className='pick-knock'>
+                                        <div>
+                                            <Button style={{
+                                                backgroundColor: "green",
+                                                width: "calc(var(--width) * 0.5)",
+                                                height: "var(--button-zone-heigth)",
+                                            }} className='login-button' variant='contained'
+                                                onClick={() => { knock() }}
+                                            >Knock {game.youStatus.points}</Button>
+                                        </div>
+                                    </div>
+                                </>}
+                            </>}
+                        </>}
+                        {game.roundResult && !game.youStatus.ready && <>
+                            <div className='pick-knock'>
+                                <div>
+                                    <Button style={{
+                                        backgroundColor: "green",
+                                        width: "calc(var(--width) * 0.5)",
+                                        height: "var(--button-zone-heigth)",
+                                    }} className='login-button' variant='contained'
+                                        onClick={() => { ready() }}
+                                    >Next round</Button>
+                                </div>
                             </div>
-                        </div>
+                        </>}
                     </>}
+                    {game.gameResult && <>
+                        <>
+                            <div className='pick-buttons'>
+                                <div>
+                                    <Button style={{
+                                        backgroundColor: "red",
+                                        width: "calc(var(--width) * 0.5)",
+                                        height: "var(--button-zone-heigth)",
+                                    }} className='login-button' variant='contained'
+                                        onClick={() => { exitLobby() }}
+                                    >Exit to Lobby</Button>
+                                </div>
+                                <div>
+                                    {game.gameResult.revenge[vilain] !== "no" && <>
+                                        <Button style={{
+                                            backgroundColor: "green",
+                                            width: "calc(var(--width) * 0.5)",
+                                            height: "var(--button-zone-heigth)",
+                                            opacity: game.gameResult.revenge[you] === "yes" ? "0.5" : "1",
+                                            pointerEvents: game.gameResult.revenge[you] === "yes" ? "none" : "initial",
+                                        }} className='login-button' variant='contained'
+                                            onClick={() => { revenge() }}
+                                        >Revenge</Button>
+                                    </>}
+                                </div>
+                            </div>
+                        </>
+                    </>}
+
                 </div>
                 <div className='bottom-zone'>
                     <div className='power-select-cont'>

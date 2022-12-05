@@ -23,7 +23,7 @@ export type PlayerStatus = {
     powers: (keyof typeof powers)[]
     powerReady: boolean
     points: number
-    ready : boolean
+    ready: boolean
 }
 
 export type OpStatus = Modify<PlayerStatus, {
@@ -45,10 +45,15 @@ export type Game = {
     player1: PlayerStatus
     player2: PlayerStatus
     roundResult?: {
-        knocker : Player
+        knocker: Player
         winner: Player
         pointsWin: number
         reason: "knock_win" | "knock_lost" | "knock_full"
+    }
+    gameResult?: {
+        winner: Player | "draw"
+        reason: "win" | "capitulate"
+        revenge: { player1: "ask" | "yes" | "no", player2: "ask" | "yes" | "no" }
     }
     board: {
         id: string

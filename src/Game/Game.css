@@ -182,7 +182,7 @@
     background-repeat: no-repeat;
     background-position: center;
     background-size: 102%;
-    transition: height 0.35s, width 0.35s, transform 0.35s;
+    transition: height 0.35s, width 0.35s;
 }
 
 .board-case-background-effect {
@@ -256,4 +256,23 @@
 .pick-knock {
     display: flex;
     justify-content: center;
+}
+
+.endGame-cont {
+    position : absolute;
+    width : var(--width);
+    height: calc(var(--width) * 0.2);
+    text-align: center;
+}
+
+.endGame-popup {
+    background : white;
+    width: calc(var(--width) * 0.5);
+    height: calc(var(--width) * 0.2);
+    box-shadow: 1px 1px 4px 3px rgba(0, 0, 0, 0.77);
+    border-radius: calc(var(--width) * 0.02);
+}
+
+.endGame-result {
+    font-weight: bold;
 }

@@ -71,13 +71,33 @@ export const play = async (socket: SSocket, param: Play) => {
     } else if (param.play === "ready") {
         const p = param as PlayKnock
         game.funcs.setReady(p.userId!);
+    } else if (param.play === "exitLobby") {
+        user.inGame = undefined;
+        user.game = undefined;
+        user.page = "lobby";
+        user.render = ["global"];
+        game.state.game!.gameResult!.revenge[game.funcs.getPlayerById(param.userId!)] = "no"
+    } else if (param.play === "revenge") {
+        game.state.game!.gameResult!.revenge[game.funcs.getPlayerById(param.userId!)] = "yes"
+        if (
+            game.state.game!.gameResult!.revenge.player1 === "yes"
+            && game.state.game!.gameResult!.revenge.player2 === "yes"
+        ) {
+            await newGame(game.state.game!.player1Id, game.state.game!.player2Id);
+            return;
+        }
     }
 
     const updateUserGame = async (state: State) => {
-        const userGame = game.funcs.getUserGame(state!.user!.id);
-        state!.game = userGame;
-        state!.render = ["game"]
+        if (state.inGame) {
+            const userGame = game.funcs.getUserGame(state!.user!.id);
+            state!.game = userGame;
+            state!.render = ["game"]
+        }
         await updateUserState(state!.user!.id, state!);
+        if (!state.inGame) {
+            updateLobby([state.user!.id])
+        }
         sendStateToUser(state!.user!.id, state!);
     }
 
@@ -94,15 +114,20 @@ export const play = async (socket: SSocket, param: Play) => {
         if (!game.state.game!.player2.powerReady) {
             game.funcs.selectPowers(BOT_ID, [])
         }
+        if (game.state.game!.gameResult) {
+            game.state.game!.gameResult.revenge.player2 = "yes";
+        }
         await Promise.all([updateUserGame(user), updateGame(game.state.game!)]);
         while (game.state.game!.nextActionPlayer === "player2"
             && game.state.game!.player1.ready
             && game.state.game!.player1.powerReady
+            && !game.state.game!.gameResult
         ) {
             await botPlay(game);
             await Promise.all([updateUserGame(user), updateGame(game.state.game!)]);
         }
     }
+
 }
 
 export const newGame = async (player1: string, player2: string) => {
