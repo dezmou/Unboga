@@ -64,6 +64,11 @@ const GameContent = () => {
     }
 
     const getPiecePicture = (piece: UserGame["board"][number][number]) => {
+        if (game.pick) {
+            if (game.pick.x === piece.x && game.pick.y === piece.y) {
+                return "url(/target.png)"
+            }
+        }
         if (piece.status.status === you) {
             if (piece.status.inStreak) {
                 return "url(/blue_lined.png)"
@@ -78,11 +83,6 @@ const GameContent = () => {
             }
         } else if (piece.status.status === "lost") {
             return "url(/empty.png)"
-        }
-        if (game.pick) {
-            if (game.pick.x === piece.x && game.pick.y === piece.y) {
-                return "url(/target.png)"
-            }
         }
         return "none"
     }
