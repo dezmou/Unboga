@@ -1,4 +1,4 @@
-import { BOARD_SIZE, CardStatus, Game, INITIAL_CARD_AMOUNT, MIN_TO_KNOCK, Player, START_GOLD, UserCard, UserGame } from "./common/game.interface"
+import { BOARD_SIZE, CardStatus, FULL_POINTS, Game, INITIAL_CARD_AMOUNT, MIN_TO_KNOCK, Player, SANCTION_POINTS, START_GOLD, UserCard, UserGame } from "./common/game.interface"
 import { powers } from "./powers"
 
 const makeId = () => {
@@ -223,7 +223,7 @@ export const gameEngine = () => {
         const points = state.game![player].points;
         const pointsOp = state.game![op[player]].points;
         let result: Game["roundResult"] = {
-            pointsWin: 30,
+            pointsWin: FULL_POINTS,
             reason: "knock_full",
             winner: player,
             knocker: player
@@ -277,7 +277,7 @@ export const gameEngine = () => {
         if (points >= pointsOp) {
             result.reason = "knock_lost"
             result.winner = op[player];
-            result.pointsWin += 30;
+            result.pointsWin += SANCTION_POINTS;
         }
         result.pointsWin += Math.abs(diff);
         state.game![result.winner].gold += result.pointsWin;

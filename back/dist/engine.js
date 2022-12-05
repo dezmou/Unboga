@@ -439,3 +439,12 @@ const gameEngine = () => {
     };
 };
 exports.gameEngine = gameEngine;
+let total = 0;
+for (let i = 0; i < 10000; i++) {
+    const chien = (0, exports.gameEngine)();
+    chien.funcs.newGame("feref", "a", "b");
+    console.log(chien.state.game.player1.points);
+    total += chien.state.game.player1.points;
+}
+console.log();
+console.log(total / 10000);
