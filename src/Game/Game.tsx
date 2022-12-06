@@ -85,10 +85,13 @@ const GameContent = () => {
     }, [game])
 
     const getBoardColor = (piece: UserGame["board"][number][number]) => {
+        let points = piece.points;
+        if (game.youStatus.powers.includes("eye")) {
+            points = Math.floor(points / 2);
+        }
         if ((game.justPicked && game.justPicked.x === piece.x && game.justPicked.y === piece.y)) {
             return `#051aa099`;
         }
-        let points = piece.points;
         points = 14 - points;
         return `rgba(${points * 13},${points * 8},${points * 5},0.9)`;
     }

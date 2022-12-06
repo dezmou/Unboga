@@ -43,5 +43,12 @@ exports.powers = {
         description: "Vous pouvez knocker sans minimum de points",
         image: "final.jpg",
         cost: 35,
+    },
+    eye: {
+        id: "eye",
+        name: "Eye of the god",
+        description: "Vous voyez toute les piece de l'adversaire<br/>Vos points sont doublés",
+        image: "eye.png",
+        cost: 15,
     }
 };

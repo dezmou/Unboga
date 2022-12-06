@@ -64,6 +64,9 @@ const gameEngine = () => {
         }
     };
     const getCardValue = (card, player) => {
+        if (state.game[player].powers.includes("eye")) {
+            return card.basePoints * 2;
+        }
         if (state.game[player].powers.includes("mirror")) {
             return 14 - card.basePoints;
         }
@@ -419,7 +422,7 @@ const gameEngine = () => {
         const you = state.game.player1Id === playerId ? "player1" : "player2";
         const villain = state.game.player1Id === playerId ? "player2" : "player1";
         const getVillainStatus = () => {
-            return Object.assign(Object.assign({}, state.game[villain]), { points: state.game.roundResult ? state.game[villain].points : undefined, powers: state.game.nextAction === "selectHero" ? undefined : state.game[villain].powers });
+            return Object.assign(Object.assign({}, state.game[villain]), { points: (state.game.roundResult || state.game[you].powers.includes("eye")) ? state.game[villain].points : undefined, powers: state.game.nextAction === "selectHero" ? undefined : state.game[villain].powers });
         };
         const possibleKnock = canKnock(you);
         const getInfos = () => {
@@ -493,13 +496,14 @@ const gameEngine = () => {
         };
         const getUserCard = (card) => {
             let streak = false;
+            const iCanSeeOp = (state.game.roundResult || state.game[you].powers.includes("eye"));
             if (card.status === you && card[you].inStreak) {
                 streak = true;
             }
-            if (state.game.roundResult && card.status === villain && card[villain].inStreak) {
+            if (iCanSeeOp && card.status === villain && card[villain].inStreak) {
                 streak = true;
             }
-            const res = Object.assign(Object.assign({}, card), { player1: undefined, player2: undefined, status: Object.assign(Object.assign({}, card[you]), { status: state.game.roundResult ? card.status : card[you].status, inStreak: streak }), points: getCardValue(card, you) });
+            const res = Object.assign(Object.assign({}, card), { player1: undefined, player2: undefined, status: Object.assign(Object.assign({}, card[you]), { status: iCanSeeOp ? card.status : card[you].status, inStreak: streak }), points: getCardValue(card, you) });
             return res;
         };
         const userGame = Object.assign(Object.assign({}, state.game), { you,

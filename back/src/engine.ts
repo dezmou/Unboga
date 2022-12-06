@@ -68,6 +68,10 @@ export const gameEngine = () => {
     }
 
     const getCardValue = (card: Game["board"][number][number], player: Player) => {
+        if (state.game![player].powers.includes("eye")) {
+            return card.basePoints * 2;
+        }
+
         if (state.game![player].powers.includes("mirror")) {
             return 14 - card.basePoints;
         }
@@ -203,10 +207,10 @@ export const gameEngine = () => {
 
     const canKnock = (player: Player) => {
         if (state.game!.nextActionPlayer === player && state.game!.nextAction === "discard") {
-            if (state.game![player].powers.includes("watch") && state.game![player].points <= 40) { 
+            if (state.game![player].powers.includes("watch") && state.game![player].points <= 40) {
                 return true;
             }
-            if (state.game![player].powers.includes("final")) { 
+            if (state.game![player].powers.includes("final")) {
                 return true;
             }
             if (state.game![player].points <= MIN_TO_KNOCK) {
@@ -452,7 +456,7 @@ export const gameEngine = () => {
         const getVillainStatus = (): UserGame["opStatus"] => {
             return {
                 ...state.game![villain],
-                points: state.game!.roundResult ? state.game![villain].points : undefined,
+                points: (state.game!.roundResult || state.game![you].powers.includes("eye")) ? state.game![villain].points : undefined,
                 powers: state.game!.nextAction === "selectHero" ? undefined : state.game![villain].powers,
             }
         }
@@ -523,10 +527,12 @@ export const gameEngine = () => {
 
         const getUserCard = (card: Game["board"][number][number]) => {
             let streak = false;
+            const iCanSeeOp = (state.game!.roundResult || state.game![you].powers.includes("eye"))
+            
             if (card.status === you && card[you].inStreak) {
                 streak = true;
             }
-            if (state.game!.roundResult && card.status === villain && card[villain].inStreak) {
+            if (iCanSeeOp && card.status === villain && card[villain].inStreak) {
                 streak = true;
             }
 
@@ -536,7 +542,7 @@ export const gameEngine = () => {
                 player2: undefined,
                 status: {
                     ...card[you],
-                    status: state.game!.roundResult ? card.status : card[you].status,
+                    status: iCanSeeOp ? card.status : card[you].status,
                     inStreak: streak,
                 } as UserCard,
                 points: getCardValue(card, you),
