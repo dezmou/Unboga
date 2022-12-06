@@ -330,8 +330,8 @@ const GameContent = () => {
                 <div className='bottom-zone'>
                     <div className='power-select-cont'>
 
-                        {/* {Object.values(powers).map((power, i) => <div className='power-cont' style={{
-                            background: selectedPowers[power.id] ? "#dadada" : "white"
+                        {Object.values(powers).map((power, i) => <div className='power-cont grid' style={{
+                            // background: selectedPowers[power.id] ? "#dadada" : "white"
                         }} key={i} onClick={() => {
                             if (selectedPowers[power.id]) {
                                 delete selectedPowers[power.id];
@@ -342,12 +342,24 @@ const GameContent = () => {
                             }
                             rd();
                         }}>
-                            <div className='power-picture'>
-
+                            <div className='power-content'>
+                                <div className='power-picture grid' >
+                                    <div className='power-picture-content' style={{
+                                        backgroundImage: `url(https://board.modez.pro/heros/mirror.jpg)`
+                                    }}>
+                                    </div>
+                                </div>
+                                <div className='power-infos-content'>
+                                    <div className='power-infos-content-header'>
+                                        {power.name}
+                                    </div>
+                                    <div className='power-infos-desc-flex'>
+                                        <div className='power-infos-description' dangerouslySetInnerHTML={{ __html: power.description }}>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            {power.name}
-
-                        </div>)} */}
+                        </div>)}
 
                     </div>
                 </div>

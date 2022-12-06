@@ -20,15 +20,10 @@
     "preserveSymlinks": true,
     "noEmit": true,
     "jsx": "react-jsx",
-    "paths": {
-      "@common/*": [
-        "./common/*"
-      ]
-    }
+    "paths": {}
   },
   "include": [
     "src",
     "common",
-    "./back/src/common"
-  ]
+  ],
 }

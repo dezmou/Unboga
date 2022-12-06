@@ -4,22 +4,29 @@ exports.powers = void 0;
 exports.powers = {
     confidentForce: {
         id: "confidentForce",
-        name: "Confident force",
-        description: "Amplify your gain and lose by 40%",
+        name: "Confident forces",
+        description: "+30% sur vos gains et pertes en gold fiorh oir goir irh oirghoirghori groi roig iorg origjior jgiorj giorjgio rjgio jrio g",
         image: "confident.jpg",
         cost: 10,
     },
     deserterJack: {
         id: "deserterJack",
         name: "Deserter Jack",
-        description: "One of your piece disapear back to the pool",
+        description: "Au debut du round, une de vos pieces disparait <br/> chien <br/> rouge",
         image: "deserter.jpg",
         cost: 10,
     },
     mirror: {
         id: "mirror",
         name: "Mirror of Darkness",
-        description: "Points of your board are reversed",
+        description: "Les points sur le board sont inversé <br/> ( que pour vous)",
+        image: "mirror.jpg",
+        cost: 10,
+    },
+    chien: {
+        id: "mirror",
+        name: "Mirror of Darkness",
+        description: "Les points sur le board sont inversé ( que pour vous)",
         image: "mirror.jpg",
         cost: 10,
     }

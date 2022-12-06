@@ -9,6 +9,8 @@
     --gold-cont-height: calc(var(--width) * 0.06);
     --top-base-height: calc(var(--height) - (var(--board-size) + var(--info-cont-height) + var(--button-zone-heigth) + var(--points-cont-height) + var(--gold-cont-height)));
     --top-height: var(--top-base-height);
+    --power-card-width : calc(var(--width) * 0.95);
+    --power-card-height : calc(var(--width) * 0.2);
 }
 
 .bottom-zone {
@@ -260,13 +262,51 @@
 
 .power-cont {
     width: var(--width);
-    height: calc(var(--width) * 0.2);
+    height: var(--power-card-height);
     display: flex;
-    outline: 1px solid red;
+}
+
+.power-content {
+    width: var(--power-card-width);
+    border-radius: calc(var(--power-card-width) * 0.015);
+    height: calc(var(--power-card-height) * 0.9);
+    background : #0c305b;
+    color : white;
+    display : flex;
+    box-shadow: 1px 1px 4px 3px rgba(0, 0, 0, 0.77);
+}
+
+.power-infos-desc-flex {
+    display : flex;
+    justify-content: center;
+    flex-direction: column;
+    height: calc(var(--power-card-height) * 0.5);
+}
+
+.power-infos-content {
+    margin-left: calc(var(--power-card-width) * 0.018);
+    width: calc(var(--power-card-width) * 0.8) ;
+}
+
+.power-infos-description {
+    font-size : calc(var(--fontSize) * 0.8) ;
+}
+
+.power-infos-content-header {
+    margin-top: calc(var(--power-card-width) * 0.01);
+    font-weight: bold;
+
 }
 
 .power-picture {
     width: calc(var(--width) * 0.2);
+}
+
+.power-picture-content {
+    width: calc(var(--width) * 0.18);
+    height: calc(var(--power-card-height) * 0.75);
+    border-radius: calc(var(--power-card-width) * 0.01);
+    background-size: contain;
 }
 
 .pick-buttons {
