@@ -164,6 +164,19 @@ const GameContent = () => {
                             ({game.misc[vilain].elo}) {game.misc[vilain].name}
                         </div>
                     </div>
+                    <div className='top-power-cont'>
+                        <div className='top-power-flex'>
+                            <div className='top-powers'>
+
+                            </div>
+                            <div className='top-powers'>
+                                {Object.values(game.youStatus.powers).map((power, i) => <div key={i} className="power-circle" style={{
+                                    backgroundImage : 'url(https://board.modez.pro/heros/mirror.jpg)'
+                                }}>
+                                </div>)}
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div className='gold-cont'>
                     <div className='gold-value-cont'>
