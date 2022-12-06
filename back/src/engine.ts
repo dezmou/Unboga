@@ -68,14 +68,19 @@ export const gameEngine = () => {
     }
 
     const getCardValue = (card: Game["board"][number][number], player: Player) => {
+        let points = card.basePoints;
         if (state.game![player].powers.includes("eye")) {
-            return card.basePoints * 2;
+            points = card.basePoints * 2;
         }
 
         if (state.game![player].powers.includes("mirror")) {
-            return 14 - card.basePoints;
+            if (state.game![player].powers.includes("eye")) {
+                points = 28 - points;
+            } else {
+                points = 14 - points;
+            }
         }
-        return card.basePoints;
+        return points;
     }
 
     const evaluate = (player: Player) => {
@@ -274,16 +279,20 @@ export const gameEngine = () => {
 
         const result = state.game!.roundResult!;
 
-        state.game![result.winner].gold += result.pointsWin;
-        state.game![op[result.winner]].gold += -result.pointsWin;
+        const basePointsWin = result.pointsWin;
         for (let player of ["player1", "player2"] as Player[]) {
-            console.log(state.game![player].powers);
             for (let power of state.game![player].powers) {
                 state.game![player].gold += -powers[power as keyof typeof powers].cost;
             }
+            if (state.game![player].powers.includes("phone")) {
+                result.pointsWin += Math.floor(basePointsWin * 0.3)
+            }
         }
 
-        if (state.game!.player1.gold <= 0 && state.game!.player1.gold <= 0) {
+        state.game![result.winner].gold += result.pointsWin;
+        state.game![op[result.winner]].gold += -result.pointsWin;
+
+        if (state.game!.player1.gold <= 0 && state.game!.player2.gold <= 0) {
             state.game!.player1.gold = 0
             state.game!.player2.gold = 0
             state.game!.gameResult = {
@@ -528,7 +537,7 @@ export const gameEngine = () => {
         const getUserCard = (card: Game["board"][number][number]) => {
             let streak = false;
             const iCanSeeOp = (state.game!.roundResult || state.game![you].powers.includes("eye"))
-            
+
             if (card.status === you && card[you].inStreak) {
                 streak = true;
             }
