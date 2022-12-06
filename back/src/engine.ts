@@ -68,6 +68,9 @@ export const gameEngine = () => {
     }
 
     const getCardValue = (card: Game["board"][number][number], player: Player) => {
+        if (state.game![player].powers.includes("mirror")) {
+            return 14 - card.basePoints;
+        }
         return card.basePoints;
     }
 
@@ -505,6 +508,7 @@ export const gameEngine = () => {
             }
         }
 
+
         const getUserCard = (card: Game["board"][number][number]) => {
             let streak = false;
             if (card.status === you && card[you].inStreak) {
@@ -523,7 +527,7 @@ export const gameEngine = () => {
                     status: state.game!.roundResult ? card.status : card[you].status,
                     inStreak: streak,
                 } as UserCard,
-                points: card.basePoints
+                points: getCardValue(card, you),
             };
             return res;
         }

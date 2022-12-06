@@ -16,13 +16,13 @@ exports.powers = {
         image: "leave.jpg",
         cost: 10,
     },
-    // mirror: {
-    //     id: "mirror",
-    //     name: "Mirror of Darkness",
-    //     description: "Les points sur le board sont inversé <br/> ( que pour vous)",
-    //     image: "mirror.jpg",
-    //     cost: 10,
-    // },
+    mirror: {
+        id: "mirror",
+        name: "Mirror of Darkness",
+        description: "Les points sur le board sont inversé <br/> ( que pour vous)",
+        image: "mirror.jpg",
+        cost: 10,
+    },
     // chien: {
     //     id: "chien",
     //     name: "Mirror of Darkness",

@@ -64,6 +64,9 @@ const gameEngine = () => {
         }
     };
     const getCardValue = (card, player) => {
+        if (state.game[player].powers.includes("mirror")) {
+            return 14 - card.basePoints;
+        }
         return card.basePoints;
     };
     const evaluate = (player) => {
@@ -483,7 +486,7 @@ const gameEngine = () => {
             if (state.game.roundResult && card.status === villain && card[villain].inStreak) {
                 streak = true;
             }
-            const res = Object.assign(Object.assign({}, card), { player1: undefined, player2: undefined, status: Object.assign(Object.assign({}, card[you]), { status: state.game.roundResult ? card.status : card[you].status, inStreak: streak }), points: card.basePoints });
+            const res = Object.assign(Object.assign({}, card), { player1: undefined, player2: undefined, status: Object.assign(Object.assign({}, card[you]), { status: state.game.roundResult ? card.status : card[you].status, inStreak: streak }), points: getCardValue(card, you) });
             return res;
         };
         const userGame = Object.assign(Object.assign({}, state.game), { you,
