@@ -1,5 +1,5 @@
 import { Game, Player, UserGame } from "../../common/src/game.interface";
-import { powers } from "./powers";
+import { powers } from "../../common/src/powers";
 export declare const gameEngine: () => {
     state: {
         game: Game | undefined;

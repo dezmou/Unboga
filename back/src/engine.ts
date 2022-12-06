@@ -1,5 +1,5 @@
 import { BOARD_SIZE, CardStatus, FULL_POINTS, Game, INITIAL_CARD_AMOUNT, MIN_TO_KNOCK, Player, SANCTION_POINTS, START_GOLD, UserCard, UserGame } from "../../common/src/game.interface"
-import { powers } from "./powers"
+import { powers } from "../../common/src/powers"
 
 const makeId = () => {
     return Math.floor((1 + Math.random()) * 0x1000000000000000)
@@ -230,6 +230,17 @@ export const gameEngine = () => {
         state.game!.player1.ready = false;
         state.game!.player2.ready = false;
 
+        const result = state.game!.roundResult!;
+
+        state.game![result.winner].gold += result.pointsWin;
+        state.game![op[result.winner]].gold += -result.pointsWin;
+        for (let player of ["player1", "player2"] as Player[]) {
+            console.log(state.game![player].powers);
+            for (let power of state.game![player].powers) {
+                state.game![player].gold += -powers[power as keyof typeof powers].cost;
+            }
+        }
+
         if (state.game!.player1.gold <= 0 && state.game!.player1.gold <= 0) {
             state.game!.player1.gold = 0
             state.game!.player2.gold = 0
@@ -268,8 +279,6 @@ export const gameEngine = () => {
         };
         const diff = pointsOp - points;
         result.pointsWin += Math.abs(diff);
-        state.game![result.winner].gold += result.pointsWin;
-        state.game![op[result.winner]].gold += -result.pointsWin;
         state.game!.roundResult = result;
         onRoundEnd();
     }
@@ -318,8 +327,6 @@ export const gameEngine = () => {
             result.pointsWin += SANCTION_POINTS;
         }
         result.pointsWin += Math.abs(diff);
-        state.game![result.winner].gold += result.pointsWin;
-        state.game![op[result.winner]].gold += -result.pointsWin;
         state.game!.roundResult = result;
         onRoundEnd()
     }

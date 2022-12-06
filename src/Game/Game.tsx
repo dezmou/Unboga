@@ -196,7 +196,7 @@ const GameContent = () => {
                         <div className='top-power-flex'>
                             <div className='top-powers'>
                                 {game.opStatus.powers && <>
-                                    {Object.keys(game.opStatus.powers!).map((power, i) => <div
+                                    {game.opStatus.powers.map((power, i) => <div
                                         onMouseEnter={() => { setOverHero(power as keyof typeof powers) }}
                                         onMouseLeave={() => { setOverHero(undefined) }}
                                         key={i} className="power-circle" style={{
@@ -206,7 +206,7 @@ const GameContent = () => {
                                 </>}
                             </div>
                             <div className='top-powers'>
-                                {Object.keys(game.youStatus.powers).map((power, i) => <div
+                                {game.youStatus.powers!.map((power, i) => <div
                                     onMouseEnter={() => { setOverHero(power as keyof typeof powers) }}
                                     onMouseLeave={() => { setOverHero(undefined) }}
 
@@ -306,7 +306,7 @@ const GameContent = () => {
                                 <Button style={{
                                     backgroundColor: "green",
                                 }} className='login-button' variant='contained'
-                                    onClick={() => { selectPowers(selectedPowers) }}
+                                    onClick={() => { selectPowers(Object.keys(selectedPowers) as any) }}
                                 >Ready</Button>
                             </div>}
                             {game.nextActionPlayer === you && <>

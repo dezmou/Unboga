@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.gameEngine = void 0;
 const game_interface_1 = require("../../common/src/game.interface");
+const powers_1 = require("../../common/src/powers");
 const makeId = () => {
     return Math.floor((1 + Math.random()) * 0x1000000000000000)
         .toString(32);
@@ -203,6 +204,15 @@ const gameEngine = () => {
         state.game.justPicked = undefined;
         state.game.player1.ready = false;
         state.game.player2.ready = false;
+        const result = state.game.roundResult;
+        state.game[result.winner].gold += result.pointsWin;
+        state.game[op[result.winner]].gold += -result.pointsWin;
+        for (let player of ["player1", "player2"]) {
+            console.log(state.game[player].powers);
+            for (let power of state.game[player].powers) {
+                state.game[player].gold += -powers_1.powers[power].cost;
+            }
+        }
         if (state.game.player1.gold <= 0 && state.game.player1.gold <= 0) {
             state.game.player1.gold = 0;
             state.game.player2.gold = 0;
@@ -242,8 +252,6 @@ const gameEngine = () => {
         };
         const diff = pointsOp - points;
         result.pointsWin += Math.abs(diff);
-        state.game[result.winner].gold += result.pointsWin;
-        state.game[op[result.winner]].gold += -result.pointsWin;
         state.game.roundResult = result;
         onRoundEnd();
     };
@@ -292,8 +300,6 @@ const gameEngine = () => {
             result.pointsWin += game_interface_1.SANCTION_POINTS;
         }
         result.pointsWin += Math.abs(diff);
-        state.game[result.winner].gold += result.pointsWin;
-        state.game[op[result.winner]].gold += -result.pointsWin;
         state.game.roundResult = result;
         onRoundEnd();
     };
