@@ -1,4 +1,4 @@
-import { powers } from "../powers"
+import { powers } from "./powers"
 import { UserGame } from "./game.interface"
 
 export type Call = "login" | "askState"

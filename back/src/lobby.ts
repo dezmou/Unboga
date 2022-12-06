@@ -1,5 +1,5 @@
 import { getUserState } from "./bdd";
-import { ApiCallBase, Challenge, PlayBot, ToastEvent } from "./common/api.interface";
+import { ApiCallBase, Challenge, PlayBot, ToastEvent } from "../../common/src/api.interface";
 import { BOT_ID, newGame } from "./game";
 import { io, lobby, SSocket, userIdToSocket } from "./state";
 

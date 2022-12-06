@@ -1,4 +1,4 @@
-import { powers } from "../powers"
+import { powers } from "./powers"
 type Modify<T, R> = Omit<T, keyof R> & R;
 
 export const BOARD_SIZE = 8

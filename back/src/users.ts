@@ -1,5 +1,5 @@
 import { addUser, getUserState, getUserByName } from "./bdd";
-import { ApiCallBase, AskState, CreateUser, Login, State, ToastEvent } from "./common/api.interface";
+import { ApiCallBase, AskState, CreateUser, Login, State, ToastEvent } from "../../common/src/api.interface";
 import { updateLobby } from "./lobby";
 import { lobby, sendState, socketIdToUserId, SSocket, userIdToSocket } from "./state";
 

@@ -1,6 +1,6 @@
 import { ObjectID } from "bson"
 import { addGame, getGame, getUserState, updateGame, updateUserState } from "./bdd"
-import { Capitulate, Play, PlayDiscard, PlayKnock, PlayPickGreen, PlayPickRandom, PlaySelectPowers, State } from "./common/api.interface"
+import { Capitulate, Play, PlayDiscard, PlayKnock, PlayPickGreen, PlayPickRandom, PlaySelectPowers, State } from "../../common/src/api.interface"
 import { gameEngine } from "./engine"
 import { playBot, updateLobby } from "./lobby"
 import { SSocket } from "./state"

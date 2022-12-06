@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.gameEngine = void 0;
-const game_interface_1 = require("./common/game.interface");
+const game_interface_1 = require("../../common/src/game.interface");
 const makeId = () => {
     return Math.floor((1 + Math.random()) * 0x1000000000000000)
         .toString(32);

@@ -2,7 +2,7 @@ import express from "express";
 import http from "http";
 import { Server, Socket } from "socket.io";
 import { DefaultEventsMap } from "socket.io/dist/typed-events";
-import { LobbyEntry, State } from "./common/api.interface";
+import { LobbyEntry, State } from "../../common/src/api.interface";
 
 const app = express();
 const server = http.createServer(app);

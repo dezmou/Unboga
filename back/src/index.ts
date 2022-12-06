@@ -1,5 +1,5 @@
 import { onReady } from "./bdd"
-import { ToastEvent } from "./common/api.interface"
+import { ToastEvent } from "../../common/src/api.interface"
 import { play } from "./game"
 import { acceptChallenge, cancelChallenge, challenge, playBot } from "./lobby"
 import { io, socketIdToUserId } from "./state"

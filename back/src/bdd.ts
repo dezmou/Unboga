@@ -1,6 +1,6 @@
 import { MongoClient, ObjectId } from "mongodb"
-import { State } from "./common/api.interface";
-import { Game } from "./common/game.interface";
+import { State } from "../../common/src/api.interface";
+import { Game } from "../../common/src/game.interface";
 import { Subject } from "rxjs"
 import { BOT_ID } from "./game";
 
