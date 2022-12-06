@@ -461,7 +461,13 @@ const gameEngine = () => {
         const you = state.game.player1Id === playerId ? "player1" : "player2";
         const villain = state.game.player1Id === playerId ? "player2" : "player1";
         const getVillainStatus = () => {
-            return Object.assign(Object.assign({}, state.game[villain]), { points: (state.game.roundResult || state.game[you].powers.includes("eye")) ? state.game[villain].points : undefined, powers: state.game.nextAction === "selectHero" ? undefined : state.game[villain].powers });
+            const getVillainPowers = () => {
+                if (state.game[villain].powers.includes("fog")) {
+                    return state.game[villain].powers.filter(e => e === "fog");
+                }
+                return state.game[villain].powers;
+            };
+            return Object.assign(Object.assign({}, state.game[villain]), { points: (state.game.roundResult || state.game[you].powers.includes("eye")) ? state.game[villain].points : undefined, powers: state.game.nextAction === "selectHero" ? undefined : getVillainPowers() });
         };
         const possibleKnock = canKnock(you);
         const getInfos = () => {

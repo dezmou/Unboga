@@ -499,10 +499,17 @@ export const gameEngine = () => {
         const villain = state.game!.player1Id === playerId ? "player2" : "player1";
 
         const getVillainStatus = (): UserGame["opStatus"] => {
+            const getVillainPowers = () => {
+                if (state.game![villain].powers.includes("fog")) {
+                    return state.game![villain].powers.filter(e => e === "fog");
+                }
+                return state.game![villain].powers;
+            }
+
             return {
                 ...state.game![villain],
                 points: (state.game!.roundResult || state.game![you].powers.includes("eye")) ? state.game![villain].points : undefined,
-                powers: state.game!.nextAction === "selectHero" ? undefined : state.game![villain].powers,
+                powers: state.game!.nextAction === "selectHero" ? undefined : getVillainPowers(),
             }
         }
         const possibleKnock = canKnock(you);

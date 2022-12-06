@@ -55,6 +55,14 @@ export const powers = {
         cost: 8,
     },
 
+    fog: {
+        id: "fog",
+        name: "Fog of war",
+        description: "Votre adversaire ne connnait pas les autres pouvoirs que vous choisissez",
+        image: "fog.png",
+        cost: 13,
+    },
+
     final: {
         id: "final",
         name: "Let's do it",
