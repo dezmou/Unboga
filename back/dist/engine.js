@@ -181,6 +181,9 @@ const gameEngine = () => {
     };
     const canKnock = (player) => {
         if (state.game.nextActionPlayer === player && state.game.nextAction === "discard") {
+            if (state.game[player].powers.includes("watch") && state.game[player].points <= 40) {
+                return true;
+            }
             if (state.game[player].points <= game_interface_1.MIN_TO_KNOCK) {
                 return true;
             }

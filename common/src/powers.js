@@ -29,5 +29,12 @@ exports.powers = {
         description: "Vous commencez en premier",
         image: "first.png",
         cost: 11,
+    },
+    watch: {
+        id: "watch",
+        name: "Early Fang",
+        description: "Vous pouvez knocker avec 40 points maximum",
+        image: "watch.jpg",
+        cost: 8,
     }
 };
