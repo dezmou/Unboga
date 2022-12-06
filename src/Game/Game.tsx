@@ -1,12 +1,12 @@
 import anime from 'animejs';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { capitulate, discard, exitLobby, knock, pickgreen, pickRandom, ready, revenge, selectPowers } from '../logic';
-import { powers } from "./powers"
+import { powers } from "./../../common/src/powers"
 import { useRender, render } from '../render';
 import { global } from '../state';
 import "./Game.css";
 import { Button } from '@mui/material';
-import { Game, UserCard, UserGame } from '../../back/src/common/game.interface';
+import { Game, UserCard, UserGame } from '../../common/src/game.interface';
 
 const selectedPowers: any = {}
 

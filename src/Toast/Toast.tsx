@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useRender } from '../render';
 import "./Toast.css"
 import { global } from '../state';
-import { State } from '../../back/src/common/api.interface';
+import { State } from '../../common/src/api.interface';
 import anime from "animejs"
 
 export default () => {

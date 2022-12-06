@@ -1,6 +1,6 @@
 import { Button } from "@mui/material";
 import { useEffect, useRef } from 'react';
-import { LobbyEntry } from '../../back/src/common/api.interface';
+import { LobbyEntry } from '../../common/src/api.interface';
 import { acceptChallenge, cancelChallenge, challenge, playBot } from '../logic';
 import { useRender } from '../render';
 import { global } from '../state';

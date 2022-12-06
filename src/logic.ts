@@ -1,8 +1,8 @@
 import { io, connect } from "socket.io-client"
 import { render } from "./render";
 import { global } from "./state"
-import { ApiCAll, Call, Capitulate, ExitLobby, PlayDiscard, PlayKnock, PlayPickGreen, PlayPickRandom, PlayReady, PlaySelectPowers, Revenge, State, ToastEvent } from "../back/src/common/api.interface"
-import { powers } from "./Game/powers";
+import { ApiCAll, Call, Capitulate, ExitLobby, PlayDiscard, PlayKnock, PlayPickGreen, PlayPickRandom, PlayReady, PlaySelectPowers, Revenge, State, ToastEvent } from "../common/src/api.interface"
+import { powers } from "../common/src/powers";
 
 const socket = io(`${window.location.origin}`, {
     path: "/api",

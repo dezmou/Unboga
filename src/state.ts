@@ -1,4 +1,4 @@
-import { LobbyEntry, State } from "../back/src/common/api.interface"
+import { LobbyEntry, State } from "../common/src/api.interface"
 
 export const global = {
     localState: {
