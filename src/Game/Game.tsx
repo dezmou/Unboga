@@ -8,7 +8,7 @@ import "./Game.css";
 import { Button } from '@mui/material';
 import { Game, UserCard, UserGame } from '../../common/src/game.interface';
 
-const selectedPowers: any = {}
+let selectedPowers: any = {}
 
 const PowerCard = (p: { powerId: keyof typeof powers }) => {
     return <>
@@ -70,6 +70,8 @@ const GameContent = () => {
             setTimeout(() => {
                 root.style.setProperty('--board-size', `calc(var(--board-width) * 0.45)`);
                 root.style.setProperty('--top-height', `var(--top-min-height)`);
+                selectedPowers = {};
+                rd();
             }, 800)
         }
     }, [global.state.game!.roundId])
@@ -195,6 +197,16 @@ const GameContent = () => {
                     <div className='top-power-cont'>
                         <div className='top-power-flex'>
                             <div className='top-powers'>
+                                {game.youStatus.powers!.map((power, i) => <div
+                                    onMouseEnter={() => { setOverHero(power as keyof typeof powers) }}
+                                    onMouseLeave={() => { setOverHero(undefined) }}
+
+                                    key={i} className="power-circle" style={{
+                                        backgroundImage: `url(powers/${powers[power as keyof typeof powers].image})`
+                                    }}>
+                                </div>)}
+                            </div>
+                            <div className='top-powers'>
                                 {game.opStatus.powers && <>
                                     {game.opStatus.powers.map((power, i) => <div
                                         onMouseEnter={() => { setOverHero(power as keyof typeof powers) }}
@@ -204,16 +216,7 @@ const GameContent = () => {
                                         }}>
                                     </div>)}
                                 </>}
-                            </div>
-                            <div className='top-powers'>
-                                {game.youStatus.powers!.map((power, i) => <div
-                                    onMouseEnter={() => { setOverHero(power as keyof typeof powers) }}
-                                    onMouseLeave={() => { setOverHero(undefined) }}
 
-                                    key={i} className="power-circle" style={{
-                                        backgroundImage: `url(powers/${powers[power as keyof typeof powers].image})`
-                                    }}>
-                                </div>)}
                             </div>
                         </div>
                     </div>
@@ -394,7 +397,7 @@ const GameContent = () => {
                 <div className='bottom-zone'>
                     <div className='power-select-cont'>
 
-                        {(Object.values(powers)).map((power, i) => <div className='power-cont grid' style={{
+                        {(Object.values(powers)).sort((a, b) => a.cost - b.cost).map((power, i) => <div className='power-cont grid' style={{
                             // background: selectedPowers[power.id] ? "#dadada" : "white"
                         }} key={i} onClick={() => {
                             if (selectedPowers[power.id]) {

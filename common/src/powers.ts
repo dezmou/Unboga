@@ -37,5 +37,14 @@ export const powers = {
         description: "Vous pouvez knocker avec 40 points maximum",
         image: "watch.jpg",
         cost: 8,
+    },
+
+    final: {
+        id: "final",
+        name: "Let's do it",
+        description: "Vous pouvez knocker sans minimum de points",
+        image: "final.jpg",
+        cost: 35,
     }
+
 }

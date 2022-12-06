@@ -184,6 +184,9 @@ const gameEngine = () => {
             if (state.game[player].powers.includes("watch") && state.game[player].points <= 40) {
                 return true;
             }
+            if (state.game[player].powers.includes("final")) {
+                return true;
+            }
             if (state.game[player].points <= game_interface_1.MIN_TO_KNOCK) {
                 return true;
             }

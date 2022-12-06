@@ -34,5 +34,12 @@ export declare const powers: {
         image: string;
         cost: number;
     };
+    final: {
+        id: string;
+        name: string;
+        description: string;
+        image: string;
+        cost: number;
+    };
 };
 //# sourceMappingURL=powers.d.ts.map
