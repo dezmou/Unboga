@@ -342,7 +342,10 @@ const GameContent = () => {
                             }
                             rd();
                         }}>
-                            <div className='power-content'>
+                            <div className='power-content' style={{
+                                background: selectedPowers[power.id] ? "#259838" : "#0c305b",
+                                cursor: Object.keys(selectedPowers).length < 2 || selectedPowers[power.id] ? "pointer" : "initial",
+                            }}>
                                 <div className='power-picture grid' >
                                     <div className='power-picture-content' style={{
                                         backgroundImage: `url(https://board.modez.pro/heros/mirror.jpg)`
