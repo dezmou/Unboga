@@ -167,11 +167,16 @@ const GameContent = () => {
                     <div className='top-power-cont'>
                         <div className='top-power-flex'>
                             <div className='top-powers'>
-
+                                {game.opStatus.powers && <>
+                                    {Object.values(game.opStatus.powers!).map((power, i) => <div key={i} className="power-circle" style={{
+                                        backgroundImage: 'url(https://board.modez.pro/heros/mirror.jpg)'
+                                    }}>
+                                    </div>)}
+                                </>}
                             </div>
                             <div className='top-powers'>
                                 {Object.values(game.youStatus.powers).map((power, i) => <div key={i} className="power-circle" style={{
-                                    backgroundImage : 'url(https://board.modez.pro/heros/mirror.jpg)'
+                                    backgroundImage: 'url(https://board.modez.pro/heros/mirror.jpg)'
                                 }}>
                                 </div>)}
                             </div>
