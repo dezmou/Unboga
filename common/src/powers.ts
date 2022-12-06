@@ -28,6 +28,6 @@ export const powers = {
         name: "Mirror of Darkness",
         description: "Les points sur le board sont inversé ( que pour vous)",
         image: "mirror.jpg",
-        cost: 100,
+        cost: 95,
     }
 }
