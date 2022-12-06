@@ -14,7 +14,7 @@ const PowerCard = (p: { powerId: keyof typeof powers }) => {
     return <>
         <div className='power-picture grid' >
             <div className='power-picture-content' style={{
-                backgroundImage: `url(https://board.modez.pro/heros/mirror.jpg)`
+                backgroundImage: `url(powers/${powers[p.powerId].image})`
             }}>
             </div>
         </div>
@@ -43,6 +43,8 @@ const GameContent = () => {
     const you = useMemo(() => global.state.game!.you, [global.state.game])
     const vilain = useMemo(() => global.state.game!.villain, [global.state.game])
     const game = useMemo(() => global.state.game!, [global.state.game])
+
+    const [overHero, setOverHero] = useState<undefined | keyof typeof powers>()
 
     useEffect(() => {
         const root = document.documentElement
@@ -194,16 +196,23 @@ const GameContent = () => {
                         <div className='top-power-flex'>
                             <div className='top-powers'>
                                 {game.opStatus.powers && <>
-                                    {Object.values(game.opStatus.powers!).map((power, i) => <div key={i} className="power-circle" style={{
-                                        backgroundImage: 'url(https://board.modez.pro/heros/mirror.jpg)'
-                                    }}>
+                                    {Object.keys(game.opStatus.powers!).map((power, i) => <div
+                                        onMouseEnter={() => { setOverHero(power as keyof typeof powers) }}
+                                        onMouseLeave={() => { setOverHero(undefined) }}
+                                        key={i} className="power-circle" style={{
+                                            backgroundImage: `url(powers/${powers[power as keyof typeof powers].image})`
+                                        }}>
                                     </div>)}
                                 </>}
                             </div>
                             <div className='top-powers'>
-                                {Object.values(game.youStatus.powers).map((power, i) => <div key={i} className="power-circle" style={{
-                                    backgroundImage: 'url(https://board.modez.pro/heros/mirror.jpg)'
-                                }}>
+                                {Object.keys(game.youStatus.powers).map((power, i) => <div
+                                    onMouseEnter={() => { setOverHero(power as keyof typeof powers) }}
+                                    onMouseLeave={() => { setOverHero(undefined) }}
+
+                                    key={i} className="power-circle" style={{
+                                        backgroundImage: `url(powers/${powers[power as keyof typeof powers].image})`
+                                    }}>
                                 </div>)}
                             </div>
                         </div>
@@ -231,8 +240,19 @@ const GameContent = () => {
                             <div className='gold-value'>{game.opStatus.gold}</div>
                         </div>
                     </div>
-
                 </div>
+
+                {overHero && <>
+                    <div className='over-power-cont'>
+                        <div className='power-content' style={{
+                            // background: selectedPowers[power.id] ? "#259838" : "#0c305b",
+                            // cursor: Object.keys(selectedPowers).length < 2 || selectedPowers[power.id] ? "pointer" : "initial",
+                        }}>
+                            <PowerCard powerId={overHero}></PowerCard>
+                        </div>
+                    </div>
+                </>}
+
                 <div className='points-cont'>
                     <div className='point-value'>
                         {game.youStatus.points} points

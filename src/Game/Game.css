@@ -41,6 +41,14 @@
     display: flex;
 }
 
+.over-power-cont {
+    width : var(--width);
+    display : flex;
+    justify-content: center;
+    position : absolute;
+    z-index: 3;
+}
+
 .power-circle {
     width: calc(var(--top-power-cirlce-size) * 0.9) ;
     height: calc(var(--top-power-cirlce-size) * 0.9);
@@ -342,7 +350,9 @@
     width: calc(var(--width) * 0.18);
     height: calc(var(--power-card-height) * 0.75);
     border-radius: calc(var(--power-card-width) * 0.01);
-    background-size: contain;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
 }
 
 .pick-buttons {
