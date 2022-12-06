@@ -16,6 +16,13 @@ exports.powers = {
         image: "leave.jpg",
         cost: 10,
     },
+    monkeys: {
+        id: "monkeys",
+        name: "Smart monkeys",
+        description: "Vos deux pieces avec le moins de points disparaissent",
+        image: "monkeys.png",
+        cost: 17,
+    },
     mirror: {
         id: "mirror",
         name: "Mirror of Darkness",
@@ -35,7 +42,7 @@ exports.powers = {
         name: "Hurry Roulio",
         description: "Vous commencez en premier",
         image: "first2.png",
-        cost: 16,
+        cost: 11,
     },
     watch: {
         id: "watch",
@@ -50,6 +57,13 @@ exports.powers = {
         description: "Vous pouvez knocker sans minimum de points",
         image: "final.jpg",
         cost: 35,
+    },
+    karen: {
+        id: "karen",
+        name: "Karen",
+        description: "Les pieces sont redistribués, pour tout le monde",
+        image: "karen.jpg",
+        cost: 27,
     },
     eye: {
         id: "eye",

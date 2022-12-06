@@ -1,4 +1,4 @@
-import { BOARD_SIZE, CardStatus, FULL_POINTS, Game, INITIAL_CARD_AMOUNT, MIN_TO_KNOCK, Player, SANCTION_POINTS, START_GOLD, UserCard, UserGame } from "../../common/src/game.interface"
+import { BOARD_SIZE, CardStatus, FULL_POINTS, Game, INITIAL_CARD_AMOUNT, MAX_POWER_NUMBER, MIN_TO_KNOCK, Player, SANCTION_POINTS, START_GOLD, UserCard, UserGame } from "../../common/src/game.interface"
 import { powers } from "../../common/src/powers"
 
 const makeId = () => {
@@ -225,10 +225,30 @@ export const gameEngine = () => {
         return false
     }
 
+    const getAllCard = () => {
+        const final = [];
+        for (let line of state.game!.board) {
+            for (let card of line) {
+                final.push(card);
+            }
+        }
+        return final;
+    }
+
     const applyHeros = () => {
         const game = state.game!
         const baseFirstPlayer = game.nextActionPlayer;
         const hurrys = { player1: 0, player2: 0 }
+        if (game.player1.powers.includes("karen") || game.player2.powers.includes("karen")) {
+            game.board = getNewBoard()
+            distribute("player1");
+            distribute("player2");
+            evaluate("player1")
+            evaluate("player2")
+            const pick = getRandomFromDeck();
+            game.pick = { x: pick.x, y: pick.y }
+        }
+
         for (let player of ["player1", "player2"] as Player[]) {
             for (let powerStr of state.game![player].powers) {
                 if (powerStr === "deserterJack") {
@@ -243,8 +263,21 @@ export const gameEngine = () => {
                         }
                     })()
                 }
+
                 if (powerStr === "roulio" || powerStr === "steve") {
                     hurrys[player] += 1;
+                }
+
+                if (powerStr === "monkeys") {
+                    for (let i = 0; i < 2; i++) {
+                        const cards = getAllCard()
+                            .filter(c => c.status === player)
+                            .sort((a, b) => getCardValue(a, player) - getCardValue(b, player))
+                        const minCards = cards.filter(c => getCardValue(c, player) === getCardValue(cards[0], player))
+                        const target = minCards[Math.floor(Math.random() * minCards.length)];
+                        target.status = "deck";
+                        target[player].status = "deck"
+                    }
                 }
             }
         }
@@ -495,7 +528,7 @@ export const gameEngine = () => {
                 if (state.game!.nextAction === "selectHero") {
                     if (!state.game![you].powerReady) {
                         return {
-                            line1: "Choose powers (2 max)",
+                            line1: `Choose powers (${MAX_POWER_NUMBER} max)`,
                             line2: `You will play ${state.game!.nextActionPlayer === you ? "first" : "second"}`,
                         }
                     } else {

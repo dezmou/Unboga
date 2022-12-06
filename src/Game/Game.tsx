@@ -6,7 +6,7 @@ import { useRender, render } from '../render';
 import { global } from '../state';
 import "./Game.css";
 import { Button } from '@mui/material';
-import { Game, UserCard, UserGame } from '../../common/src/game.interface';
+import { Game, MAX_POWER_NUMBER, UserCard, UserGame } from '../../common/src/game.interface';
 
 let selectedPowers: any = {}
 
@@ -406,7 +406,7 @@ const GameContent = () => {
                             if (selectedPowers[power.id]) {
                                 delete selectedPowers[power.id];
                             } else {
-                                if (Object.keys(selectedPowers).length < 2) {
+                                if (Object.keys(selectedPowers).length < MAX_POWER_NUMBER) {
                                     selectedPowers[power.id] = true;
                                 }
                             }
@@ -414,7 +414,7 @@ const GameContent = () => {
                         }}>
                             <div className='power-content' style={{
                                 background: selectedPowers[power.id] ? "#259838" : "#0c305b",
-                                cursor: Object.keys(selectedPowers).length < 2 || selectedPowers[power.id] ? "pointer" : "initial",
+                                cursor: Object.keys(selectedPowers).length < MAX_POWER_NUMBER || selectedPowers[power.id] ? "pointer" : "initial",
                             }}>
                                 <PowerCard powerId={power.id as keyof typeof powers}></PowerCard>
                             </div>

@@ -13,6 +13,13 @@ export declare const powers: {
         image: string;
         cost: number;
     };
+    monkeys: {
+        id: string;
+        name: string;
+        description: string;
+        image: string;
+        cost: number;
+    };
     mirror: {
         id: string;
         name: string;
@@ -42,6 +49,13 @@ export declare const powers: {
         cost: number;
     };
     final: {
+        id: string;
+        name: string;
+        description: string;
+        image: string;
+        cost: number;
+    };
+    karen: {
         id: string;
         name: string;
         description: string;

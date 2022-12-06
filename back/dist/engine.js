@@ -202,10 +202,28 @@ const gameEngine = () => {
         }
         return false;
     };
+    const getAllCard = () => {
+        const final = [];
+        for (let line of state.game.board) {
+            for (let card of line) {
+                final.push(card);
+            }
+        }
+        return final;
+    };
     const applyHeros = () => {
         const game = state.game;
         const baseFirstPlayer = game.nextActionPlayer;
         const hurrys = { player1: 0, player2: 0 };
+        if (game.player1.powers.includes("karen") || game.player2.powers.includes("karen")) {
+            game.board = getNewBoard();
+            distribute("player1");
+            distribute("player2");
+            evaluate("player1");
+            evaluate("player2");
+            const pick = getRandomFromDeck();
+            game.pick = { x: pick.x, y: pick.y };
+        }
         for (let player of ["player1", "player2"]) {
             for (let powerStr of state.game[player].powers) {
                 if (powerStr === "deserterJack") {
@@ -224,10 +242,20 @@ const gameEngine = () => {
                 if (powerStr === "roulio" || powerStr === "steve") {
                     hurrys[player] += 1;
                 }
+                if (powerStr === "monkeys") {
+                    for (let i = 0; i < 2; i++) {
+                        const cards = getAllCard()
+                            .filter(c => c.status === player)
+                            .sort((a, b) => getCardValue(a, player) - getCardValue(b, player));
+                        const minCards = cards.filter(c => getCardValue(c, player) === getCardValue(cards[0], player));
+                        const target = minCards[Math.floor(Math.random() * minCards.length)];
+                        target.status = "deck";
+                        target[player].status = "deck";
+                    }
+                }
             }
         }
         if (hurrys.player1 !== hurrys.player2) {
-            console.log(hurrys);
             state.game.nextActionPlayer = hurrys.player1 > hurrys.player2 ? "player1" : "player2";
         }
     };
@@ -460,7 +488,7 @@ const gameEngine = () => {
                 if (state.game.nextAction === "selectHero") {
                     if (!state.game[you].powerReady) {
                         return {
-                            line1: "Choose powers (2 max)",
+                            line1: `Choose powers (${game_interface_1.MAX_POWER_NUMBER} max)`,
                             line2: `You will play ${state.game.nextActionPlayer === you ? "first" : "second"}`,
                         };
                     }

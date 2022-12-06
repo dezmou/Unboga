@@ -12,7 +12,7 @@
     --top-power-height: calc(var(--top-base-height) - var(--top-min-height));
     --power-card-width: calc(var(--width) * 0.95);
     --power-card-height: calc(var(--width) * 0.2);
-    --top-power-cirlce-size: min(var(--top-power-height), calc(var(--width) * 0.2))
+    --top-power-cirlce-size: min(calc(var(--top-power-height) * 0.8) , calc(var(--width) * 0.14))
 }
 
 .bottom-zone {

@@ -6,6 +6,7 @@ export declare const MIN_TO_KNOCK = 30;
 export declare const FULL_POINTS = 30;
 export declare const SANCTION_POINTS = 30;
 export declare const START_GOLD = 150;
+export declare const MAX_POWER_NUMBER = 3;
 export declare type CardStatus = "deck" | "player1" | "player2" | "lost";
 export declare type UserCard = {
     status: CardStatus;
