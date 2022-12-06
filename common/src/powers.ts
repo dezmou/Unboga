@@ -10,7 +10,7 @@ export const powers = {
     deserterJack: {
         id: "deserterJack",
         name: "Deserter Jack",
-        description: "Vous debutez avec une piece aléatoire en moin",
+        description: "Vous debutez avec une piece aléatoire en moins",
         image: "leave.jpg",
         cost: 10,
     },
@@ -29,6 +29,14 @@ export const powers = {
         description: "Vous commencez en premier",
         image: "first.png",
         cost: 11,
+    },
+
+    roulio: {
+        id: "roulio",
+        name: "Hurry Roulio",
+        description: "Vous commencez en premier",
+        image: "first2.png",
+        cost: 16,
     },
 
     watch: {

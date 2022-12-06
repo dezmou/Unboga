@@ -27,6 +27,13 @@ export declare const powers: {
         image: string;
         cost: number;
     };
+    roulio: {
+        id: string;
+        name: string;
+        description: string;
+        image: string;
+        cost: number;
+    };
     watch: {
         id: string;
         name: string;

@@ -205,13 +205,14 @@ const gameEngine = () => {
     const applyHeros = () => {
         const game = state.game;
         const baseFirstPlayer = game.nextActionPlayer;
+        const hurrys = { player1: 0, player2: 0 };
         for (let player of ["player1", "player2"]) {
             for (let powerStr of state.game[player].powers) {
                 if (powerStr === "deserterJack") {
                     ;
                     (() => {
                         while (true) {
-                            const card = game.board[Math.floor(Math.random() * 8)][Math.floor(Math.random() * 8)];
+                            const card = game.board[Math.floor(Math.random() * game_interface_1.BOARD_SIZE)][Math.floor(Math.random() * game_interface_1.BOARD_SIZE)];
                             if (card.status === player) {
                                 card.status = "deck";
                                 card[player].status = "deck";
@@ -220,13 +221,14 @@ const gameEngine = () => {
                         }
                     })();
                 }
-                else if (powerStr === "steve") {
-                    game.nextActionPlayer = player;
+                if (powerStr === "roulio" || powerStr === "steve") {
+                    hurrys[player] += 1;
                 }
             }
         }
-        if (state.game.player1.powers.includes("steve") && state.game.player2.powers.includes("steve")) {
-            game.nextActionPlayer = baseFirstPlayer;
+        if (hurrys.player1 !== hurrys.player2) {
+            console.log(hurrys);
+            state.game.nextActionPlayer = hurrys.player1 > hurrys.player2 ? "player1" : "player2";
         }
     };
     const selectPowers = (playerId, selectedPowers) => {
