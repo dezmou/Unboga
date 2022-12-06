@@ -354,7 +354,12 @@ const GameContent = () => {
                                 </div>
                                 <div className='power-infos-content'>
                                     <div className='power-infos-content-header'>
-                                        {power.name}
+                                        <div>
+                                            {power.name}
+                                        </div>
+                                        <div className='power-infos-gold'>
+                                            {power.cost}
+                                        </div>
                                     </div>
                                     <div className='power-infos-desc-flex'>
                                         <div className='power-infos-description' dangerouslySetInnerHTML={{ __html: power.description }}>

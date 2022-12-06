@@ -295,7 +295,13 @@
 .power-infos-content-header {
     margin-top: calc(var(--power-card-width) * 0.01);
     font-weight: bold;
+    display : flex;
+    justify-content: space-between;
+}
 
+.power-infos-gold {
+    margin-right: calc(var(--power-card-width) * 0.02);
+    color : #ffe587;
 }
 
 .power-picture {
