@@ -7,13 +7,13 @@ export const powers = {
         cost: 7,
     },
 
-    // deserterJack: {
-    //     id: "deserterJack",
-    //     name: "Deserter Jack",
-    //     description: "Au debut du round, une de vos pieces disparait <br/> chien <br/> rouge",
-    //     image: "deserter.jpg",
-    //     cost: 10,
-    // },
+    deserterJack: {
+        id: "deserterJack",
+        name: "Deserter Jack",
+        description: "Vous debutez avec une piece aléatoire en moin",
+        image: "leave.jpg",
+        cost: 10,
+    },
 
     // mirror: {
     //     id: "mirror",

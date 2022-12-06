@@ -207,13 +207,36 @@ export const gameEngine = () => {
         return false
     }
 
+    const applyHeros = () => {
+        const game = state.game!
+        for (let player of ["player1", "player2"] as Player[]) {
+            for (let powerStr of state.game![player].powers) {
+                if (powerStr === "deserterJack") {
+                    ; (() => {
+                        while (true) {
+                            const card = game.board[Math.floor(Math.random() * 8)][Math.floor(Math.random() * 8)];
+                            if (card.status === player) {
+                                card.status = "deck";
+                                card[player].status = "deck"
+                                return;
+                            }
+                        }
+                    })()
+                }
+            }
+        }
+    }
+
     const selectPowers = (playerId: string, selectedPowers: (keyof typeof powers)[]) => {
         const player = getPlayerById(playerId);
         state.game![player].powers = selectedPowers;
         state.game![player].powerReady = true;
         if (state.game![op[player]].powerReady) {
+            applyHeros()
             state.game!.nextAction = "pick"
         }
+        evaluate("player1")
+        evaluate("player2")
     }
 
     const capitulate = (playerId: string) => {
