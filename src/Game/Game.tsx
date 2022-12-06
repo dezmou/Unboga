@@ -10,6 +10,32 @@ import { Game, UserCard, UserGame } from '../../common/src/game.interface';
 
 const selectedPowers: any = {}
 
+const PowerCard = (p: { powerId: keyof typeof powers }) => {
+    return <>
+        <div className='power-picture grid' >
+            <div className='power-picture-content' style={{
+                backgroundImage: `url(https://board.modez.pro/heros/mirror.jpg)`
+            }}>
+            </div>
+        </div>
+        <div className='power-infos-content'>
+            <div className='power-infos-content-header'>
+                <div>
+                    {powers[p.powerId].name}
+                </div>
+                <div className='power-infos-gold'>
+                    {powers[p.powerId].cost}
+                </div>
+            </div>
+            <div className='power-infos-desc-flex'>
+                <div className='power-infos-description' dangerouslySetInnerHTML={{ __html: powers[p.powerId].description }}>
+                </div>
+            </div>
+        </div>
+    </>
+
+}
+
 const GameContent = () => {
     const rd = useRender();
 
@@ -348,7 +374,7 @@ const GameContent = () => {
                 <div className='bottom-zone'>
                     <div className='power-select-cont'>
 
-                        {Object.values(powers).map((power, i) => <div className='power-cont grid' style={{
+                        {(Object.values(powers)).map((power, i) => <div className='power-cont grid' style={{
                             // background: selectedPowers[power.id] ? "#dadada" : "white"
                         }} key={i} onClick={() => {
                             if (selectedPowers[power.id]) {
@@ -364,26 +390,7 @@ const GameContent = () => {
                                 background: selectedPowers[power.id] ? "#259838" : "#0c305b",
                                 cursor: Object.keys(selectedPowers).length < 2 || selectedPowers[power.id] ? "pointer" : "initial",
                             }}>
-                                <div className='power-picture grid' >
-                                    <div className='power-picture-content' style={{
-                                        backgroundImage: `url(https://board.modez.pro/heros/mirror.jpg)`
-                                    }}>
-                                    </div>
-                                </div>
-                                <div className='power-infos-content'>
-                                    <div className='power-infos-content-header'>
-                                        <div>
-                                            {power.name}
-                                        </div>
-                                        <div className='power-infos-gold'>
-                                            {power.cost}
-                                        </div>
-                                    </div>
-                                    <div className='power-infos-desc-flex'>
-                                        <div className='power-infos-description' dangerouslySetInnerHTML={{ __html: power.description }}>
-                                        </div>
-                                    </div>
-                                </div>
+                                <PowerCard powerId={power.id as keyof typeof powers}></PowerCard>
                             </div>
                         </div>)}
 
