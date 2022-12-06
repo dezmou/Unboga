@@ -212,6 +212,7 @@ export const gameEngine = () => {
 
     const applyHeros = () => {
         const game = state.game!
+        const baseFirstPlayer = game.nextActionPlayer;
         for (let player of ["player1", "player2"] as Player[]) {
             for (let powerStr of state.game![player].powers) {
                 if (powerStr === "deserterJack") {
@@ -225,8 +226,13 @@ export const gameEngine = () => {
                             }
                         }
                     })()
+                } else if (powerStr === "steve") {
+                    game.nextActionPlayer = player;
                 }
             }
+        }
+        if (state.game!.player1.powers.includes("steve") && state.game!.player2.powers.includes("steve")) {
+            game.nextActionPlayer = baseFirstPlayer;
         }
     }
 
