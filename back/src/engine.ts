@@ -168,6 +168,7 @@ export const gameEngine = () => {
             player2: { gold: state.game!.player2.gold, powers: [], powerReady: false, points: 0, ready: true },
             choose: [],
             chooseIndex: 0,
+            pickHeroTurn: 0,
         }
         distribute("player1");
         distribute("player2");
@@ -197,6 +198,7 @@ export const gameEngine = () => {
             },
             choose: [],
             chooseIndex: 0,
+            pickHeroTurn: 0,
         }
         distribute("player1");
         distribute("player2");
@@ -299,26 +301,34 @@ export const gameEngine = () => {
 
     }
 
-    const selectPowers = (playerId: string, selectedPowers: (keyof typeof powers)[]) => {
+    const pickPower = (playerId: string, selectedPower: (keyof typeof powers)) => {
         const player = getPlayerById(playerId);
-        state.game![player].powers = selectedPowers;
+        state.game![player].powers.push(selectedPower);
         state.game![player].powerReady = true;
         if (state.game![op[player]].powerReady) {
-            applyHeros()
-            const nbrChoose = state.game!.player1.powers.filter(e => e === "pact").length + state.game!.player2.powers.filter(e => e === "pact").length;
-            console.log(state.game!.player1.powers, state.game!.player2.powers);
-            console.log("NBR CHOOSE", nbrChoose);
-            if (nbrChoose > 0) {
-                state.game!.choose = Array.from({ length: nbrChoose }).map(() => ({
-                    done: false,
-                    player1: { choosed: false, x: 0, y: 0 },
-                    player2: { choosed: false, x: 0, y: 0 },
-                }))
-                console.log(state.game!.choose);
-                state.game!.nextAction = "choose"
+            state.game!.pickHeroTurn += 1;
+            if (state.game!.pickHeroTurn === 3) {
+                onPowersSelected();
             } else {
-                state.game!.nextAction = "pick"
+                state.game!.player1.powerReady = false;
+                state.game!.player2.powerReady = false;
             }
+        }
+    }
+
+    const onPowersSelected = () => {
+        applyHeros()
+        const nbrChoose = state.game!.player1.powers.filter(e => e === "pact").length + state.game!.player2.powers.filter(e => e === "pact").length;
+        if (nbrChoose > 0) {
+            state.game!.choose = Array.from({ length: nbrChoose }).map(() => ({
+                done: false,
+                player1: { choosed: false, x: 0, y: 0 },
+                player2: { choosed: false, x: 0, y: 0 },
+            }))
+            console.log(state.game!.choose);
+            state.game!.nextAction = "choose"
+        } else {
+            state.game!.nextAction = "pick"
         }
         evaluate("player1")
         evaluate("player2")
@@ -555,6 +565,10 @@ export const gameEngine = () => {
 
         const getVillainStatus = (): UserGame["opStatus"] => {
             const getVillainPowers = () => {
+                if (state.game!.nextAction === "selectHero") {
+                    return state.game![villain].powers.filter((e, i) => i < state.game!.pickHeroTurn);
+                }
+
                 if (state.game![villain].powers.includes("fog") && !state.game!.roundResult) {
                     return state.game![villain].powers.filter(e => e === "fog");
                 }
@@ -564,7 +578,7 @@ export const gameEngine = () => {
             return {
                 ...state.game![villain],
                 points: (state.game!.roundResult || state.game![you].powers.includes("eye")) ? state.game![villain].points : undefined,
-                powers: state.game!.nextAction === "selectHero" ? undefined : getVillainPowers(),
+                powers: getVillainPowers(),
             }
         }
         const possibleKnock = canKnock(you);
@@ -686,7 +700,7 @@ export const gameEngine = () => {
             newGame,
             loadGame,
             getUserGame,
-            selectPowers,
+            pickPower,
             pickGreen,
             pickRandom,
             discard,

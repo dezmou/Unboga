@@ -52,13 +52,13 @@ export interface ToastEvent {
 
 export interface Play extends ApiCallBase {
     action: "play";
-    play: "selectPower" | "pickGreen" | "pickRandom" | "discard" | "knock" | "ready" | "exitLobby" | "revenge" | "capitulate" | "choose"
+    play: "pickPower" | "pickGreen" | "pickRandom" | "discard" | "knock" | "ready" | "exitLobby" | "revenge" | "capitulate" | "choose"
     gameId: string;
 }
 
-export interface PlaySelectPowers extends Play {
-    play: "selectPower"
-    powers: (keyof typeof powers)[]
+export interface PlayPickPower extends Play {
+    play: "pickPower"
+    powers: (keyof typeof powers)
 }
 
 export interface PlayPickGreen extends Play {

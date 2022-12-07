@@ -76,6 +76,7 @@ export type Game = {
         player2: { name: string, elo: number, roundWon: number },
         endGameProcessed: boolean,
     }
+    pickHeroTurn : number
 }
 
 export type UserGame = Modify<Game, {

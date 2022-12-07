@@ -1,6 +1,6 @@
 import anime from 'animejs';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { capitulate, choose, discard, exitLobby, knock, pickgreen, pickRandom, ready, revenge, selectPowers } from '../logic';
+import { capitulate, choose, discard, exitLobby, knock, pickgreen, pickRandom, ready, revenge, pickPower } from '../logic';
 import { powers } from "./../../common/src/powers"
 import { useRender, render } from '../render';
 import { global } from '../state';
@@ -78,7 +78,7 @@ const GameContent = () => {
 
     useEffect(() => {
         const root = document.documentElement
-        if (game.youStatus.powerReady) {
+        if (game.nextAction !== "selectHero") {
             root.style.setProperty('--board-size', `var(--board-width)`);
             root.style.setProperty('--top-height', `var(--top-base-height)`);
         }
@@ -327,13 +327,13 @@ const GameContent = () => {
                 }}>
                     {!game.gameResult && <>
                         {!game.roundResult && <>
-                            {game.nextAction === "selectHero" && !game.youStatus.powerReady && <div className='button-cont grid'>
+                            {/* {game.nextAction === "selectHero" && !game.youStatus.powerReady && <div className='button-cont grid'>
                                 <Button style={{
                                     backgroundColor: "green",
                                 }} className='login-button' variant='contained'
                                     onClick={() => { selectPowers(Object.keys(selectedPowers) as any) }}
                                 >Ready</Button>
-                            </div>}
+                            </div>} */}
                             {game.nextActionPlayer === you && <>
                                 {game.nextAction === "pick" && <>
                                     <div className='pick-buttons'>
@@ -422,14 +422,15 @@ const GameContent = () => {
                         {(Object.values(powers)).sort((a, b) => a.cost - b.cost).map((power, i) => <div className='power-cont grid' style={{
                             // background: selectedPowers[power.id] ? "#dadada" : "white"
                         }} key={i} onClick={() => {
-                            if (selectedPowers[power.id]) {
-                                delete selectedPowers[power.id];
-                            } else {
-                                if (Object.keys(selectedPowers).length < MAX_POWER_NUMBER) {
-                                    selectedPowers[power.id] = true;
-                                }
-                            }
-                            rd();
+                            pickPower(power.id as keyof typeof powers)
+                            // if (selectedPowers[power.id]) {
+                            //     delete selectedPowers[power.id];
+                            // } else {
+                            //     if (Object.keys(selectedPowers).length < MAX_POWER_NUMBER) {
+                            //         selectedPowers[power.id] = true;
+                            //     }
+                            // }
+                            // rd();
                         }}>
                             <div className='power-content' style={{
                                 background: selectedPowers[power.id] ? "#259838" : "#0c305b",

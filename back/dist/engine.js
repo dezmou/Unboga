@@ -148,7 +148,7 @@ const gameEngine = () => {
     };
     // TODO no duplicate code
     const newRound = () => {
-        state.game = Object.assign(Object.assign({}, state.game), { roundId: makeId(), board: getNewBoard(), nextAction: "selectHero", nextActionPlayer: ["player1", "player2"][Math.floor(Math.random() * 2)], player1: { gold: state.game.player1.gold, powers: [], powerReady: false, points: 0, ready: true }, player2: { gold: state.game.player2.gold, powers: [], powerReady: false, points: 0, ready: true }, choose: [], chooseIndex: 0 });
+        state.game = Object.assign(Object.assign({}, state.game), { roundId: makeId(), board: getNewBoard(), nextAction: "selectHero", nextActionPlayer: ["player1", "player2"][Math.floor(Math.random() * 2)], player1: { gold: state.game.player1.gold, powers: [], powerReady: false, points: 0, ready: true }, player2: { gold: state.game.player2.gold, powers: [], powerReady: false, points: 0, ready: true }, choose: [], chooseIndex: 0, pickHeroTurn: 0 });
         distribute("player1");
         distribute("player2");
         evaluate("player1");
@@ -176,6 +176,7 @@ const gameEngine = () => {
             },
             choose: [],
             chooseIndex: 0,
+            pickHeroTurn: 0,
         };
         distribute("player1");
         distribute("player2");
@@ -268,27 +269,35 @@ const gameEngine = () => {
             state.game.nextActionPlayer = hurrys.player1 > hurrys.player2 ? "player1" : "player2";
         }
     };
-    const selectPowers = (playerId, selectedPowers) => {
+    const pickPower = (playerId, selectedPower) => {
         const player = getPlayerById(playerId);
-        state.game[player].powers = selectedPowers;
+        state.game[player].powers.push(selectedPower);
         state.game[player].powerReady = true;
         if (state.game[op[player]].powerReady) {
-            applyHeros();
-            const nbrChoose = state.game.player1.powers.filter(e => e === "pact").length + state.game.player2.powers.filter(e => e === "pact").length;
-            console.log(state.game.player1.powers, state.game.player2.powers);
-            console.log("NBR CHOOSE", nbrChoose);
-            if (nbrChoose > 0) {
-                state.game.choose = Array.from({ length: nbrChoose }).map(() => ({
-                    done: false,
-                    player1: { choosed: false, x: 0, y: 0 },
-                    player2: { choosed: false, x: 0, y: 0 },
-                }));
-                console.log(state.game.choose);
-                state.game.nextAction = "choose";
+            state.game.pickHeroTurn += 1;
+            if (state.game.pickHeroTurn === 3) {
+                onPowersSelected();
             }
             else {
-                state.game.nextAction = "pick";
+                state.game.player1.powerReady = false;
+                state.game.player2.powerReady = false;
             }
+        }
+    };
+    const onPowersSelected = () => {
+        applyHeros();
+        const nbrChoose = state.game.player1.powers.filter(e => e === "pact").length + state.game.player2.powers.filter(e => e === "pact").length;
+        if (nbrChoose > 0) {
+            state.game.choose = Array.from({ length: nbrChoose }).map(() => ({
+                done: false,
+                player1: { choosed: false, x: 0, y: 0 },
+                player2: { choosed: false, x: 0, y: 0 },
+            }));
+            console.log(state.game.choose);
+            state.game.nextAction = "choose";
+        }
+        else {
+            state.game.nextAction = "pick";
         }
         evaluate("player1");
         evaluate("player2");
@@ -514,12 +523,15 @@ const gameEngine = () => {
         const villain = state.game.player1Id === playerId ? "player2" : "player1";
         const getVillainStatus = () => {
             const getVillainPowers = () => {
+                if (state.game.nextAction === "selectHero") {
+                    return state.game[villain].powers.filter((e, i) => i < state.game.pickHeroTurn);
+                }
                 if (state.game[villain].powers.includes("fog") && !state.game.roundResult) {
                     return state.game[villain].powers.filter(e => e === "fog");
                 }
                 return state.game[villain].powers;
             };
-            return Object.assign(Object.assign({}, state.game[villain]), { points: (state.game.roundResult || state.game[you].powers.includes("eye")) ? state.game[villain].points : undefined, powers: state.game.nextAction === "selectHero" ? undefined : getVillainPowers() });
+            return Object.assign(Object.assign({}, state.game[villain]), { points: (state.game.roundResult || state.game[you].powers.includes("eye")) ? state.game[villain].points : undefined, powers: getVillainPowers() });
         };
         const possibleKnock = canKnock(you);
         const getInfos = () => {
@@ -622,7 +634,7 @@ const gameEngine = () => {
             newGame,
             loadGame,
             getUserGame,
-            selectPowers,
+            pickPower,
             pickGreen,
             pickRandom,
             discard,

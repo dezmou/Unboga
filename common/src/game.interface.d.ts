@@ -95,6 +95,7 @@ export declare type Game = {
         };
         endGameProcessed: boolean;
     };
+    pickHeroTurn: number;
 };
 export declare type UserGame = Modify<Game, {
     you: Player;

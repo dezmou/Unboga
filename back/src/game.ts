@@ -1,6 +1,6 @@
 import { ObjectID } from "bson"
 import { addGame, getGame, getUserState, updateGame, updateUserState } from "./bdd"
-import { Capitulate, Play, PlayChosse, PlayDiscard, PlayKnock, PlayPickGreen, PlayPickRandom, PlaySelectPowers, State } from "../../common/src/api.interface"
+import { Capitulate, Play, PlayChosse, PlayDiscard, PlayKnock, PlayPickGreen, PlayPickRandom, PlayPickPower, State } from "../../common/src/api.interface"
 import { gameEngine } from "./engine"
 import { playBot, updateLobby } from "./lobby"
 import { SSocket } from "./state"
@@ -60,9 +60,9 @@ export const play = async (socket: SSocket, param: Play) => {
     const game = gameEngine()
     game.funcs.loadGame(gameState);
 
-    if (param.play === "selectPower") {
-        const p = param as PlaySelectPowers
-        game.funcs.selectPowers(p.userId!, p.powers);
+    if (param.play === "pickPower") {
+        const p = param as PlayPickPower
+        game.funcs.pickPower(p.userId!, p.powers);
     } else if (param.play === "pickGreen") {
         const p = param as PlayPickGreen
         game.funcs.pickGreen(p.userId!)
@@ -153,7 +153,7 @@ export const play = async (socket: SSocket, param: Play) => {
             game.funcs.setReady(BOT_ID);
         }
         if (!game.state.game!.player2.powerReady) {
-            game.funcs.selectPowers(BOT_ID, [])
+            game.funcs.pickPower(BOT_ID, "pact")
         }
         if (game.state.game!.gameResult) {
             game.state.game!.gameResult.revenge.player2 = "yes";

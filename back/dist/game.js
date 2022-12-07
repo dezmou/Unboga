@@ -65,9 +65,9 @@ const play = (socket, param) => __awaiter(void 0, void 0, void 0, function* () {
     const gameState = (yield (0, bdd_1.getGame)(user.game.id));
     const game = (0, engine_1.gameEngine)();
     game.funcs.loadGame(gameState);
-    if (param.play === "selectPower") {
+    if (param.play === "pickPower") {
         const p = param;
-        game.funcs.selectPowers(p.userId, p.powers);
+        game.funcs.pickPower(p.userId, p.powers);
     }
     else if (param.play === "pickGreen") {
         const p = param;
@@ -163,7 +163,7 @@ const play = (socket, param) => __awaiter(void 0, void 0, void 0, function* () {
             game.funcs.setReady(exports.BOT_ID);
         }
         if (!game.state.game.player2.powerReady) {
-            game.funcs.selectPowers(exports.BOT_ID, []);
+            game.funcs.pickPower(exports.BOT_ID, "pact");
         }
         if (game.state.game.gameResult) {
             game.state.game.gameResult.revenge.player2 = "yes";
