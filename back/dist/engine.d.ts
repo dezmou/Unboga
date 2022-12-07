@@ -1,4 +1,4 @@
-import { Game, Player, UserGame } from "../../common/src/game.interface";
+import { CardStatus, Game, Player, UserCard, UserGame } from "../../common/src/game.interface";
 import { powers } from "../../common/src/powers";
 export declare const gameEngine: () => {
     state: {
@@ -16,5 +16,15 @@ export declare const gameEngine: () => {
         setReady: (playerId: string) => void;
         getPlayerById: (playerId: string) => Player;
         capitulate: (playerId: string) => void;
+        getAllCard: () => {
+            id: string;
+            x: number;
+            y: number;
+            status: CardStatus;
+            player1: UserCard;
+            player2: UserCard;
+            basePoints: number;
+        }[];
+        choose: (playerId: string, x: number, y: number) => void;
     };
 };

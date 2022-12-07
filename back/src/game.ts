@@ -1,6 +1,6 @@
 import { ObjectID } from "bson"
 import { addGame, getGame, getUserState, updateGame, updateUserState } from "./bdd"
-import { Capitulate, Play, PlayDiscard, PlayKnock, PlayPickGreen, PlayPickRandom, PlaySelectPowers, State } from "../../common/src/api.interface"
+import { Capitulate, Play, PlayChosse, PlayDiscard, PlayKnock, PlayPickGreen, PlayPickRandom, PlaySelectPowers, State } from "../../common/src/api.interface"
 import { gameEngine } from "./engine"
 import { playBot, updateLobby } from "./lobby"
 import { SSocket } from "./state"
@@ -20,25 +20,32 @@ const calculateElo = (myRating: number, opponentRating: number, myGameResult: nu
 const botPlay = async (gameState: ReturnType<typeof gameEngine>) => {
     const game = gameState.state.game!;
     const func = gameState.funcs
-    await new Promise(r => setTimeout(r, Math.floor(Math.random() * 500)))
+    // await new Promise(r => setTimeout(r, Math.floor(Math.random() * 500)))
 
     if (game.nextAction === "pick") {
-        if (Math.random() > 0.33) {
-            func.pickRandom("bot");
+        const fork = gameEngine()
+        fork.funcs.loadGame(JSON.parse(JSON.stringify(game)));
+        fork.funcs.pickGreen(BOT_ID)
+        const cards = func.getAllCard();
+        const forkCards = fork.funcs.getAllCard();
+        if (forkCards.filter(c => c.player2.inStreak).length > cards.filter(c => c.player2.inStreak).length) {
+            func.pickGreen(BOT_ID);
         } else {
-            func.pickGreen("bot");
+            func.pickRandom(BOT_ID);
         }
     } else {
         const card = (() => {
             while (true) {
                 const x = Math.floor(Math.random() * 8);
                 const y = Math.floor(Math.random() * 8);
-                if (game.board[y][x].status === "player2") {
+                if (game.board[y][x].status === "player2"
+                    && !game.board[y][x].player2.inStreak
+                ) {
                     return game.board[y][x];
                 }
             }
         })()
-        func.discard("bot", card.x, card.y)
+        func.discard(BOT_ID, card.x, card.y)
     }
     return true;
 }
@@ -55,6 +62,9 @@ export const play = async (socket: SSocket, param: Play) => {
     } else if (param.play === "pickGreen") {
         const p = param as PlayPickGreen
         game.funcs.pickGreen(p.userId!)
+    } else if (param.play === "choose") {
+        const p = param as PlayChosse
+        game.funcs.choose(p.userId!, p.x, p.y!)
     } else if (param.play === "pickRandom") {
         const p = param as PlayPickRandom
         game.funcs.pickRandom(p.userId!)

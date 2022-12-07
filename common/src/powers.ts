@@ -39,6 +39,14 @@ export const powers = {
         cost: 11,
     },
 
+    pact: {
+        id: "pact",
+        name: "War pact",
+        description: "Au debut du round, vous et votre adversaire ajoutez une piece de votre choix sur le board",
+        image: "pact.png",
+        cost: 11,
+    },
+
     roulio: {
         id: "roulio",
         name: "Hurry Roulio",
@@ -60,7 +68,7 @@ export const powers = {
         name: "Fog of war",
         description: "Votre adversaire ne connnait pas les autres pouvoirs que vous choisissez",
         image: "fog.png",
-        cost: 13,
+        cost: 18,
     },
 
     final: {
@@ -76,7 +84,7 @@ export const powers = {
         name: "Karen",
         description: "Les pieces sont redistribués, pour tout le monde",
         image: "karen.jpg",
-        cost: 27,
+        cost: 32,
     },
 
     eye: {

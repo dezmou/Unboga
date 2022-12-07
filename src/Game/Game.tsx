@@ -1,6 +1,6 @@
 import anime from 'animejs';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { capitulate, discard, exitLobby, knock, pickgreen, pickRandom, ready, revenge, selectPowers } from '../logic';
+import { capitulate, choose, discard, exitLobby, knock, pickgreen, pickRandom, ready, revenge, selectPowers } from '../logic';
 import { powers } from "./../../common/src/powers"
 import { useRender, render } from '../render';
 import { global } from '../state';
@@ -122,11 +122,23 @@ const GameContent = () => {
 
     const clickPiece = (piece: UserGame["board"][number][number]) => {
         if (isPieceClickable(piece)) {
-            discard(piece.x, piece.y)
+            if (game.nextAction === "choose") {
+                choose(piece.x, piece.y)
+            } else {
+                discard(piece.x, piece.y)
+            }
         }
     }
 
     const isPieceClickable = (piece: UserGame["board"][number][number]) => {
+        if (game.nextAction === "choose" && game.nextActionPlayer === you) {
+            if (piece.status.status === "deck"
+                && game.pick!.x !== piece.x
+                && game.pick!.y !== piece.y) {
+                return true;
+            }
+            return false;
+        }
         if (game.nextActionPlayer === you
             && game.nextAction === "discard"
             && !game.roundResult
@@ -276,6 +288,11 @@ const GameContent = () => {
                                 onClick={() => {
                                     clickPiece(card)
                                 }}
+                            // style={{
+                            //     opacity : game.nextAction === "choose" ? (
+                            //         card.status.status === "deck" ? "1" : "0.5"
+                            //     ) : "1"
+                            // }}
                             >
 
                                 <div className='board-case-background-effect' style={{
@@ -295,6 +312,10 @@ const GameContent = () => {
                                         backgroundImage: getPiecePicture(card),
                                         // boxShadow: card.status.status === you ? `0px 0px 5px 0px #000000` : "none",
                                         cursor: isPieceClickable(card) ? "pointer" : "initial",
+                                        boxShadow: (
+                                            game.nextAction === "choose" &&
+                                            game.nextActionPlayer === you &&
+                                            card.status.status === "deck") ? "0px 0px 5px 0px #000000" : "none"
                                     }}>
                                     </div>
                                 </div>

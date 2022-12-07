@@ -26,13 +26,18 @@ const calculateElo = (myRating, opponentRating, myGameResult) => {
 const botPlay = (gameState) => __awaiter(void 0, void 0, void 0, function* () {
     const game = gameState.state.game;
     const func = gameState.funcs;
-    yield new Promise(r => setTimeout(r, Math.floor(Math.random() * 500)));
+    // await new Promise(r => setTimeout(r, Math.floor(Math.random() * 500)))
     if (game.nextAction === "pick") {
-        if (Math.random() > 0.33) {
-            func.pickRandom("bot");
+        const fork = (0, engine_1.gameEngine)();
+        fork.funcs.loadGame(JSON.parse(JSON.stringify(game)));
+        fork.funcs.pickGreen(exports.BOT_ID);
+        const cards = func.getAllCard();
+        const forkCards = fork.funcs.getAllCard();
+        if (forkCards.filter(c => c.player2.inStreak).length > cards.filter(c => c.player2.inStreak).length) {
+            func.pickGreen(exports.BOT_ID);
         }
         else {
-            func.pickGreen("bot");
+            func.pickRandom(exports.BOT_ID);
         }
     }
     else {
@@ -40,12 +45,13 @@ const botPlay = (gameState) => __awaiter(void 0, void 0, void 0, function* () {
             while (true) {
                 const x = Math.floor(Math.random() * 8);
                 const y = Math.floor(Math.random() * 8);
-                if (game.board[y][x].status === "player2") {
+                if (game.board[y][x].status === "player2"
+                    && !game.board[y][x].player2.inStreak) {
                     return game.board[y][x];
                 }
             }
         })();
-        func.discard("bot", card.x, card.y);
+        func.discard(exports.BOT_ID, card.x, card.y);
     }
     return true;
 });
@@ -61,6 +67,10 @@ const play = (socket, param) => __awaiter(void 0, void 0, void 0, function* () {
     else if (param.play === "pickGreen") {
         const p = param;
         game.funcs.pickGreen(p.userId);
+    }
+    else if (param.play === "choose") {
+        const p = param;
+        game.funcs.choose(p.userId, p.x, p.y);
     }
     else if (param.play === "pickRandom") {
         const p = param;

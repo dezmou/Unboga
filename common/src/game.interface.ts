@@ -39,12 +39,18 @@ export type Game = {
     roundId: string
     player1Id: string;
     player2Id: string;
-    nextAction: "selectHero" | "pick" | "discard"
+    nextAction: "selectHero" | "pick" | "discard" | "choose"
     nextActionPlayer: Player
     pick?: { x: number, y: number }
     justPicked?: { x: number, y: number }
     player1: PlayerStatus
     player2: PlayerStatus
+    choose: {
+        player1: { choosed: boolean, x: number, y: number },
+        player2: { choosed: boolean, x: number, y: number },
+        done: boolean,
+    }[]
+    chooseIndex : number
     roundResult?: {
         knocker: Player
         winner: Player

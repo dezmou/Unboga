@@ -92,9 +92,7 @@ export const addGame = async (game: Game) => {
 }
 
 export const getGame = async (gameId: string) => {
-    console.log(1);
     const res = (await db.collection("games").findOne({ _id: new ObjectId(gameId) }));
-    console.log(2);
     return res as any as Game;
 }
 

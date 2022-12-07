@@ -1,7 +1,7 @@
 import { io, connect } from "socket.io-client"
 import { render } from "./render";
 import { global } from "./state"
-import { ApiCAll, Call, Capitulate, ExitLobby, PlayDiscard, PlayKnock, PlayPickGreen, PlayPickRandom, PlayReady, PlaySelectPowers, Revenge, State, ToastEvent } from "../common/src/api.interface"
+import { ApiCAll, Call, Capitulate, ExitLobby, PlayChosse, PlayDiscard, PlayKnock, PlayPickGreen, PlayPickRandom, PlayReady, PlaySelectPowers, Revenge, State, ToastEvent } from "../common/src/api.interface"
 import { powers } from "../common/src/powers";
 
 const socket = io(`${window.location.origin}`, {
@@ -41,6 +41,14 @@ export const capitulate = async () => {
     apiCAll({ action: "play", play: "capitulate", } as Capitulate)
 }
 
+export const choose = async (x: number, y: number) => {
+    // const game = global.state.game!;
+    // game.board[y][x].status.status = "deck";
+    // game.pick = { x, y };
+    // game.nextActionPlayer = game.nextActionPlayer === "player1" ? "player2" : "player1"
+    // render("game")
+    apiCAll({ action: "play", play: "choose", x, y } as PlayChosse)
+}
 
 export const discard = async (x: number, y: number) => {
     const game = global.state.game!;

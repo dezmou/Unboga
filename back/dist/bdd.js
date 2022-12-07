@@ -84,9 +84,7 @@ const addGame = (game) => __awaiter(void 0, void 0, void 0, function* () {
 });
 exports.addGame = addGame;
 const getGame = (gameId) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log(1);
     const res = (yield db.collection("games").findOne({ _id: new mongodb_1.ObjectId(gameId) }));
-    console.log(2);
     return res;
 });
 exports.getGame = getGame;

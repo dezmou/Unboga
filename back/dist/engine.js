@@ -173,7 +173,9 @@ const gameEngine = () => {
                 player1: { elo: 0, name: "", roundWon: 0 },
                 player2: { elo: 0, name: "", roundWon: 0 },
                 endGameProcessed: false,
-            }
+            },
+            choose: [],
+            chooseIndex: 0,
         };
         distribute("player1");
         distribute("player2");
@@ -242,6 +244,13 @@ const gameEngine = () => {
                 if (powerStr === "roulio" || powerStr === "steve") {
                     hurrys[player] += 1;
                 }
+                if (powerStr === "pact") {
+                    game.choose.push({
+                        player1: { choosed: false, x: 0, y: 0 },
+                        player2: { choosed: false, x: 0, y: 0 },
+                        done: false,
+                    });
+                }
                 if (powerStr === "monkeys") {
                     for (let i = 0; i < 2; i++) {
                         const cards = getAllCard()
@@ -265,7 +274,21 @@ const gameEngine = () => {
         state.game[player].powerReady = true;
         if (state.game[op[player]].powerReady) {
             applyHeros();
-            state.game.nextAction = "pick";
+            const nbrChoose = state.game.player1.powers.filter(e => e === "pact").length + state.game.player2.powers.filter(e => e === "pact").length;
+            console.log(state.game.player1.powers, state.game.player2.powers);
+            console.log("NBR CHOOSE", nbrChoose);
+            if (nbrChoose > 0) {
+                state.game.choose = Array.from({ length: nbrChoose }).map(() => ({
+                    done: false,
+                    player1: { choosed: false, x: 0, y: 0 },
+                    player2: { choosed: false, x: 0, y: 0 },
+                }));
+                console.log(state.game.choose);
+                state.game.nextAction = "choose";
+            }
+            else {
+                state.game.nextAction = "pick";
+            }
         }
         evaluate("player1");
         evaluate("player2");
@@ -438,6 +461,35 @@ const gameEngine = () => {
             onZeroPoint(player);
         }
     };
+    const choose = (playerId, x, y) => {
+        const player = getPlayerById(playerId);
+        if (state.game.nextAction !== "choose")
+            throw "not choose time";
+        if (state.game.nextActionPlayer !== player)
+            throw "not you to play";
+        const cho = state.game.choose[state.game.chooseIndex];
+        cho[player].choosed = true;
+        cho[player].x = x;
+        cho[player].y = y;
+        const piece = state.game.board[y][x];
+        if (piece.status === op[player]) {
+            piece[op[player]].status = player;
+        }
+        piece.status = player;
+        piece[player].status = player;
+        cho[player].choosed = true;
+        if (cho.player1.choosed && cho.player2.choosed) {
+            state.game.chooseIndex += 1;
+            cho.done = true;
+        }
+        console.log(`choose index ${state.game.chooseIndex} length : ${state.game.choose.length}`);
+        if (state.game.chooseIndex > state.game.choose.length - 1) {
+            state.game.nextAction = "pick";
+        }
+        state.game.nextActionPlayer = op[player];
+        evaluate("player1");
+        evaluate("player2");
+    };
     const pickGreen = (playerId) => {
         const player = getPlayerById(playerId);
         if (state.game.nextActionPlayer !== player)
@@ -462,7 +514,7 @@ const gameEngine = () => {
         const villain = state.game.player1Id === playerId ? "player2" : "player1";
         const getVillainStatus = () => {
             const getVillainPowers = () => {
-                if (state.game[villain].powers.includes("fog")) {
+                if (state.game[villain].powers.includes("fog") && !state.game.roundResult) {
                     return state.game[villain].powers.filter(e => e === "fog");
                 }
                 return state.game[villain].powers;
@@ -491,7 +543,13 @@ const gameEngine = () => {
                 };
             }
             else {
-                if (state.game.nextAction === "selectHero") {
+                if (state.game.nextAction === "choose") {
+                    return {
+                        line1: `War Pact`,
+                        line2: `Choose a case to add a blue piece`,
+                    };
+                }
+                else if (state.game.nextAction === "selectHero") {
                     if (!state.game[you].powerReady) {
                         return {
                             line1: `Choose powers (${game_interface_1.MAX_POWER_NUMBER} max)`,
@@ -540,8 +598,9 @@ const gameEngine = () => {
             };
         };
         const getUserCard = (card) => {
+            var _a;
             let streak = false;
-            const iCanSeeOp = (state.game.roundResult || state.game[you].powers.includes("eye"));
+            const iCanSeeOp = (state.game.roundResult || state.game[you].powers.includes("eye")) && ((_a = state.game) === null || _a === void 0 ? void 0 : _a.nextAction) !== "selectHero";
             if (card.status === you && card[you].inStreak) {
                 streak = true;
             }
@@ -568,7 +627,9 @@ const gameEngine = () => {
             knock,
             setReady,
             getPlayerById,
-            capitulate
+            capitulate,
+            getAllCard,
+            choose,
         }
     };
 };
