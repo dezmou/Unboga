@@ -132,9 +132,7 @@ const GameContent = () => {
 
     const isPieceClickable = (piece: UserGame["board"][number][number]) => {
         if (game.nextAction === "choose" && game.nextActionPlayer === you) {
-            if (piece.status.status === "deck"
-                && game.pick!.x !== piece.x
-                && game.pick!.y !== piece.y) {
+            if (piece.status.status === "deck" && !(game.pick!.x === piece.x && game.pick!.y === piece.y)) {
                 return true;
             }
             return false;

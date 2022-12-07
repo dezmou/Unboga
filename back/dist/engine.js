@@ -148,7 +148,7 @@ const gameEngine = () => {
     };
     // TODO no duplicate code
     const newRound = () => {
-        state.game = Object.assign(Object.assign({}, state.game), { roundId: makeId(), board: getNewBoard(), nextAction: "selectHero", nextActionPlayer: ["player1", "player2"][Math.floor(Math.random() * 2)], player1: { gold: state.game.player1.gold, powers: [], powerReady: false, points: 0, ready: true }, player2: { gold: state.game.player2.gold, powers: [], powerReady: false, points: 0, ready: true } });
+        state.game = Object.assign(Object.assign({}, state.game), { roundId: makeId(), board: getNewBoard(), nextAction: "selectHero", nextActionPlayer: ["player1", "player2"][Math.floor(Math.random() * 2)], player1: { gold: state.game.player1.gold, powers: [], powerReady: false, points: 0, ready: true }, player2: { gold: state.game.player2.gold, powers: [], powerReady: false, points: 0, ready: true }, choose: [], chooseIndex: 0 });
         distribute("player1");
         distribute("player2");
         evaluate("player1");
@@ -545,8 +545,8 @@ const gameEngine = () => {
             else {
                 if (state.game.nextAction === "choose") {
                     return {
-                        line1: `War Pact`,
-                        line2: `Choose a case to add a blue piece`,
+                        line1: `War Pact ${state.game.chooseIndex + 1} / ${state.game.choose.length}`,
+                        line2: state.game.nextActionPlayer === you ? `Choose a case to add a blue piece` : "it is scum turn to choose a piece",
                     };
                 }
                 else if (state.game.nextAction === "selectHero") {
@@ -598,9 +598,11 @@ const gameEngine = () => {
             };
         };
         const getUserCard = (card) => {
-            var _a;
+            var _a, _b;
             let streak = false;
-            const iCanSeeOp = (state.game.roundResult || state.game[you].powers.includes("eye")) && ((_a = state.game) === null || _a === void 0 ? void 0 : _a.nextAction) !== "selectHero";
+            const iCanSeeOp = (state.game.roundResult || state.game[you].powers.includes("eye"))
+                && ((_a = state.game) === null || _a === void 0 ? void 0 : _a.nextAction) !== "selectHero"
+                && ((_b = state.game) === null || _b === void 0 ? void 0 : _b.nextAction) !== "choose";
             if (card.status === you && card[you].inStreak) {
                 streak = true;
             }

@@ -90,7 +90,7 @@ export const powers = {
     eye: {
         id: "eye",
         name: "Eye of the god",
-        description: "Vous voyez toute les piece de l'adversaire<br/>Vos points sont doublés",
+        description: "Vous voyez toute les piece de l'adversaire (apres war pact) <br/>Vos points sont doublés",
         image: "eye.png",
         cost: 15,
     }

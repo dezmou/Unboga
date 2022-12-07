@@ -33,7 +33,7 @@ const botPlay = async (gameState: ReturnType<typeof gameEngine>) => {
         } else {
             func.pickRandom(BOT_ID);
         }
-    } else {
+    } else if (game.nextAction === "discard") {
         const card = (() => {
             while (true) {
                 const x = Math.floor(Math.random() * 8);
@@ -46,6 +46,10 @@ const botPlay = async (gameState: ReturnType<typeof gameEngine>) => {
             }
         })()
         func.discard(BOT_ID, card.x, card.y)
+    } else if (game.nextAction === "choose") {
+        const choices = func.getAllCard().filter(c => c.player2.status === "deck")
+        const choice = choices[Math.floor(Math.random() * choices.length)];
+        func.choose("player2", choice.x, choice.y)
     }
     return true;
 }

@@ -166,6 +166,8 @@ export const gameEngine = () => {
             nextActionPlayer: ["player1" as Player, "player2" as Player][Math.floor(Math.random() * 2)],
             player1: { gold: state.game!.player1.gold, powers: [], powerReady: false, points: 0, ready: true },
             player2: { gold: state.game!.player2.gold, powers: [], powerReady: false, points: 0, ready: true },
+            choose: [],
+            chooseIndex: 0,
         }
         distribute("player1");
         distribute("player2");
@@ -587,8 +589,8 @@ export const gameEngine = () => {
             } else {
                 if (state.game!.nextAction === "choose") {
                     return {
-                        line1: `War Pact`,
-                        line2: `Choose a case to add a blue piece`,
+                        line1: `War Pact ${state.game!.chooseIndex + 1} / ${state.game!.choose.length}`,
+                        line2: state.game!.nextActionPlayer === you ? `Choose a case to add a blue piece` : "it is scum turn to choose a piece",
                     }
                 } else if (state.game!.nextAction === "selectHero") {
                     if (!state.game![you].powerReady) {
@@ -637,7 +639,9 @@ export const gameEngine = () => {
 
         const getUserCard = (card: Game["board"][number][number]) => {
             let streak = false;
-            const iCanSeeOp = (state.game!.roundResult || state.game![you].powers.includes("eye")) && state.game?.nextAction !== "selectHero"
+            const iCanSeeOp = (state.game!.roundResult || state.game![you].powers.includes("eye"))
+                && state.game?.nextAction !== "selectHero"
+                && state.game?.nextAction !== "choose"
 
             if (card.status === you && card[you].inStreak) {
                 streak = true;
