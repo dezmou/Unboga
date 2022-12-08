@@ -310,13 +310,16 @@ const gameEngine = () => {
         state.game.player1.ready = false;
         state.game.player2.ready = false;
         const result = state.game.roundResult;
+        if (result.reason === "knock_win") {
+            result.pointsWin += (state.game[result.winner].powers.filter(e => e === "watch").length) * 10;
+        }
         const basePointsWin = result.pointsWin;
         for (let player of ["player1", "player2"]) {
             for (let power of state.game[player].powers) {
                 state.game[player].gold += -powers_1.powers[power].cost;
             }
             if (state.game[player].powers.includes("phone")) {
-                result.pointsWin += Math.floor(basePointsWin * 0.3);
+                result.pointsWin += Math.floor(basePointsWin * state.game[player].powers.filter(e => e === "phone").length * 0.3);
             }
         }
         state.game[result.winner].gold += result.pointsWin;

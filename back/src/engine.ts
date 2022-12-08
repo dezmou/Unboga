@@ -345,13 +345,17 @@ export const gameEngine = () => {
 
         const result = state.game.roundResult!;
 
+        if (result.reason === "knock_win") {
+            result.pointsWin += (state.game[result.winner].powers.filter(e => e === "watch").length) * 10
+        }
+
         const basePointsWin = result.pointsWin;
         for (let player of ["player1", "player2"] as Player[]) {
             for (let power of state.game[player].powers) {
                 state.game[player].gold += -powers[power as keyof typeof powers].cost;
             }
             if (state.game[player].powers.includes("phone")) {
-                result.pointsWin += Math.floor(basePointsWin * 0.3)
+                result.pointsWin += Math.floor(basePointsWin * state.game[player].powers.filter(e => e === "phone").length * 0.3)
             }
         }
 

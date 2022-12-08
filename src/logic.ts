@@ -72,7 +72,8 @@ export const pickRandom = async () => {
 }
 
 export const pickPower = async (spowers: (keyof typeof powers)) => {
-    global.localState.hideButtons = true;
+    global.state.game!.youStatus.powerReady = true;
+    global.state.game!.youStatus.powers.push(spowers);
     render("game")
     apiCAll({ action: "play", play: "pickPower", powers: spowers } as PlayPickPower)
 }
