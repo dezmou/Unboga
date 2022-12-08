@@ -12,7 +12,11 @@
     --top-power-height: calc(var(--top-base-height) - var(--top-min-height));
     --power-card-width: calc(var(--width) * 0.95);
     --power-card-height: calc(var(--width) * 0.2);
-    --top-power-cirlce-size: min(calc(var(--top-power-height) * 0.8) , calc(var(--width) * 0.14))
+    --top-power-cirlce-size: min(calc(var(--top-power-height) * 0.8), calc(var(--width) * 0.14))
+}
+
+.blur {
+    filter: blur(calc(var(--width) * 0.01));
 }
 
 .bottom-zone {
@@ -42,15 +46,15 @@
 }
 
 .over-power-cont {
-    width : var(--width);
-    display : flex;
+    width: var(--width);
+    display: flex;
     justify-content: center;
-    position : absolute;
+    position: absolute;
     z-index: 3;
 }
 
 .power-circle {
-    width: calc(var(--top-power-cirlce-size) * 0.9) ;
+    width: calc(var(--top-power-cirlce-size) * 0.9);
     height: calc(var(--top-power-cirlce-size) * 0.9);
     border-radius: calc(var(--top-power-cirlce-size) * 0.9 * 0.5);
     box-shadow: 1px 1px 4px 3px rgba(0, 0, 0, 0.77);
@@ -162,7 +166,7 @@
 
 
 .board-flex {
-    display : flex;
+    display: flex;
     /* justify-content: center; */
 }
 
@@ -199,10 +203,10 @@
 }
 
 .side-power {
-    width : calc((var(--width) - var(--board-size)) * 0.5);
-    display : flex;
+    width: calc((var(--width) - var(--board-size)) * 0.5);
+    display: flex;
     justify-content: center;
-    z-index : 1;
+    z-index: 1;
 }
 
 .board-cont-grid {
@@ -220,7 +224,7 @@
     transition: height 0.35s, width 0.35s;
     /* box-shadow: 1px 1px 4px 3px rgba(0, 0, 0, 0.77); */
     box-shadow: 0px 4px 4px -1px rgba(0, 0, 0, 0.77);
-    z-index : 2;
+    z-index: 2;
 }
 
 .board-line {

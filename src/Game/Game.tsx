@@ -19,7 +19,7 @@ const PowerCard = (p: { powerId: keyof typeof powers }) => {
             </div>
         </div>
         <div className='power-infos-content'>
-            <div className='power-infos-content-header'>
+            <div className={`power-infos-content-header ${p.powerId === "unknow" ? "blur" : ""}`}>
                 <div>
                     {powers[p.powerId].name}
                 </div>
@@ -28,7 +28,7 @@ const PowerCard = (p: { powerId: keyof typeof powers }) => {
                 </div>
             </div>
             <div className='power-infos-desc-flex'>
-                <div className='power-infos-description' dangerouslySetInnerHTML={{ __html: powers[p.powerId].description }}>
+                <div className={`power-infos-description ${p.powerId === "unknow" ? "blur" : ""}`} dangerouslySetInnerHTML={{ __html: powers[p.powerId].description }}>
                 </div>
             </div>
         </div>

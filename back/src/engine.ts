@@ -240,6 +240,16 @@ export const gameEngine = () => {
         const game = state.game
         const baseFirstPlayer = game.nextActionPlayer;
         const hurrys = { player1: 0, player2: 0 }
+        for (let player of ["player1" as Player, "player2" as Player]) {
+            game[player].powers = game[player].powers.map(power => {
+                if (power === "fox") {
+                    const choices = (Object.keys(powers) as (keyof typeof powers)[]).filter(e => e !== "fox" && e !== "curse" && e !== "unknow")
+                    return choices[Math.floor(Math.random() * choices.length)];
+                }
+                return power;
+            })
+        }
+
         if (game.player1.powers.includes("karen") || game.player2.powers.includes("karen")) {
             game.board = getNewBoard()
             distribute("player1");
@@ -301,6 +311,17 @@ export const gameEngine = () => {
         state.game[player].powers.push(selectedPower);
         state.game[player].powerReady = true;
         if (state.game[op[player]].powerReady) {
+            if (
+                !(state.game.player1.powers[state.game.pickHeroTurn] === "curse"
+                    && state.game.player2.powers[state.game.pickHeroTurn] === "curse")
+            ) {
+                for (let player of ["player1" as Player, "player2" as Player]) {
+                    if (state.game[player].powers[state.game.pickHeroTurn] === "curse") {
+                        state.game[op[player]].powers[state.game.pickHeroTurn] = "lucien"
+                    }
+                }
+            }
+
             state.game.pickHeroTurn += 1;
             if (state.game.pickHeroTurn === 3) {
                 onPowersSelected();

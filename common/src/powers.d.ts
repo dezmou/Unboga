@@ -15,6 +15,14 @@ export declare const powers: {
         cost: number;
         max: number;
     };
+    fox: {
+        id: string;
+        name: string;
+        description: string;
+        image: string;
+        cost: number;
+        max: number;
+    };
     deserterJack: {
         id: string;
         name: string;
@@ -64,6 +72,14 @@ export declare const powers: {
         max: number;
     };
     fog: {
+        id: string;
+        name: string;
+        description: string;
+        image: string;
+        cost: number;
+        max: number;
+    };
+    curse: {
         id: string;
         name: string;
         description: string;

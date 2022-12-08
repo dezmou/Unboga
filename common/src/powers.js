@@ -18,6 +18,14 @@ exports.powers = {
         cost: 4,
         max: 3,
     },
+    fox: {
+        id: "fox",
+        name: "Jackson Gambler",
+        description: "Vous donne un pouvoir aleatoire",
+        image: "fox.jpg",
+        cost: 5,
+        max: 3,
+    },
     deserterJack: {
         id: "deserterJack",
         name: "Deserter Jack",
@@ -74,6 +82,14 @@ exports.powers = {
         cost: 18,
         max: 1,
     },
+    curse: {
+        id: "curse",
+        name: "Emma Curse",
+        description: "Votre adversaire est forcé de choisir Lucien",
+        image: "curse.png",
+        cost: 16,
+        max: 3,
+    },
     final: {
         id: "final",
         name: "Let's do it",
@@ -100,8 +116,8 @@ exports.powers = {
     },
     unknow: {
         id: "unknow",
-        name: "what is this",
-        description: "I don't know.",
+        name: "Some cloud...",
+        description: "whoever read this love adolph hitler",
         image: "unknow.png",
         cost: 88,
         max: 1,

@@ -5,7 +5,7 @@ export const powers = {
         description: "Ce pouvoir ne fait rien.",
         image: "lucien.jpg",
         cost: 0,
-        max : 3,
+        max: 3,
     },
 
 
@@ -15,7 +15,16 @@ export const powers = {
         description: "+30% sur vos gains et pertes en gold.<br/>N'inclus pas l'achat de pouvoirs.",
         image: "phone.png",
         cost: 4,
-        max : 3,
+        max: 3,
+    },
+
+    fox: {
+        id: "fox",
+        name: "Jackson Gambler",
+        description: "Vous donne un pouvoir aleatoire",
+        image: "fox.jpg",
+        cost: 5,
+        max: 3,
     },
 
     deserterJack: {
@@ -24,7 +33,7 @@ export const powers = {
         description: "Vous debutez avec une piece aléatoire en moins.",
         image: "leave.jpg",
         cost: 8,
-        max : 3,
+        max: 3,
     },
 
     monkeys: {
@@ -33,7 +42,7 @@ export const powers = {
         description: "Vos deux pieces avec le moins de points disparaissent.",
         image: "monkeys.png",
         cost: 14,
-        max : 3,
+        max: 3,
     },
 
     mirror: {
@@ -42,7 +51,7 @@ export const powers = {
         description: "Les points sur le board sont inversé <br/> ( que pour vous).",
         image: "mirror.jpg",
         cost: 7,
-        max : 1,
+        max: 1,
     },
 
     steve: {
@@ -51,7 +60,7 @@ export const powers = {
         description: "Vous commencez en premier.",
         image: "first.png",
         cost: 9,
-        max : 3,
+        max: 3,
     },
 
     pact: {
@@ -60,7 +69,7 @@ export const powers = {
         description: "Au debut du round, vous et votre adversaire ajoutez une piece de votre choix sur le board.",
         image: "pact.png",
         cost: 5,
-        max : 3,
+        max: 3,
     },
 
     watch: {
@@ -69,7 +78,7 @@ export const powers = {
         description: "Vos points maximum pour knocker augmentent de 10.<br/>Bonus de knock de 10 gold.",
         image: "watch.jpg",
         cost: 10,
-        max : 3,
+        max: 3,
     },
 
     fog: {
@@ -78,7 +87,16 @@ export const powers = {
         description: "Votre adversaire ne connnait pas les autres pouvoirs que vous choisissez.",
         image: "fog.png",
         cost: 18,
-        max : 1,
+        max: 1,
+    },
+
+    curse: {
+        id: "curse",
+        name: "Emma Curse",
+        description: "Votre adversaire est forcé de choisir Lucien",
+        image: "curse.png",
+        cost: 16,
+        max: 3,
     },
 
     final: {
@@ -87,7 +105,7 @@ export const powers = {
         description: "Vous pouvez knocker sans minimum de points.",
         image: "final.jpg",
         cost: 35,
-        max : 1,
+        max: 1,
     },
 
     karen: {
@@ -96,7 +114,7 @@ export const powers = {
         description: "Les pieces sont redistribués, pour tout le monde.",
         image: "karen.jpg",
         cost: 32,
-        max : 1,
+        max: 1,
     },
 
     eye: {
@@ -105,15 +123,15 @@ export const powers = {
         description: "Vous voyez toute les piece de l'adversaire (apres war pact) <br/>Vos points sont doublés.",
         image: "eye.png",
         cost: 15,
-        max : 1,
+        max: 1,
     },
 
     unknow: {
         id: "unknow",
-        name: "what is this",
-        description: "I don't know.",
+        name: "Some cloud...",
+        description: "whoever read this love adolph hitler",
         image: "unknow.png",
         cost: 88,
-        max : 1,
+        max: 1,
     },
 }
