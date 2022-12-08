@@ -53,7 +53,6 @@
     width: calc(var(--top-power-cirlce-size) * 0.9) ;
     height: calc(var(--top-power-cirlce-size) * 0.9);
     border-radius: calc(var(--top-power-cirlce-size) * 0.9 * 0.5);
-    background: white;
     box-shadow: 1px 1px 4px 3px rgba(0, 0, 0, 0.77);
     margin-left: calc(var(--width) * 0.015);
     margin-right: calc(var(--width) * 0.015);
@@ -203,6 +202,7 @@
     width : calc((var(--width) - var(--board-size)) * 0.5);
     display : flex;
     justify-content: center;
+    z-index : 1;
 }
 
 .board-cont-grid {
@@ -220,6 +220,7 @@
     transition: height 0.35s, width 0.35s;
     /* box-shadow: 1px 1px 4px 3px rgba(0, 0, 0, 0.77); */
     box-shadow: 0px 4px 4px -1px rgba(0, 0, 0, 0.77);
+    z-index : 2;
 }
 
 .board-line {

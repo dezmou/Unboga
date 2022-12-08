@@ -570,7 +570,7 @@ const gameEngine = () => {
                 else if (state.game.nextAction === "selectHero") {
                     if (!state.game[you].powerReady) {
                         return {
-                            line1: `Choose powers (${game_interface_1.MAX_POWER_NUMBER} max)`,
+                            line1: `Choose powers (${state.game[you].powers.length}/${game_interface_1.MAX_POWER_NUMBER})`,
                             line2: `You will play ${state.game.nextActionPlayer === you ? "first" : "second"}`,
                         };
                     }

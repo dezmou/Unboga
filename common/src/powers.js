@@ -2,12 +2,21 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.powers = void 0;
 exports.powers = {
+    lucien: {
+        id: "lucien",
+        name: "Lucien",
+        description: "Ce pouvoir ne fait rien.",
+        image: "lucien.jpg",
+        cost: 0,
+        max: 3,
+    },
     phone: {
         id: "phone",
         name: "Gramophone",
         description: "+30% sur vos gains et pertes en gold.<br/>N'inclus pas l'achat de pouvoirs.",
         image: "phone.png",
         cost: 4,
+        max: 3,
     },
     deserterJack: {
         id: "deserterJack",
@@ -15,6 +24,7 @@ exports.powers = {
         description: "Vous debutez avec une piece aléatoire en moins.",
         image: "leave.jpg",
         cost: 8,
+        max: 3,
     },
     monkeys: {
         id: "monkeys",
@@ -22,6 +32,7 @@ exports.powers = {
         description: "Vos deux pieces avec le moins de points disparaissent.",
         image: "monkeys.png",
         cost: 14,
+        max: 3,
     },
     mirror: {
         id: "mirror",
@@ -29,6 +40,7 @@ exports.powers = {
         description: "Les points sur le board sont inversé <br/> ( que pour vous).",
         image: "mirror.jpg",
         cost: 7,
+        max: 1,
     },
     steve: {
         id: "steve",
@@ -36,6 +48,7 @@ exports.powers = {
         description: "Vous commencez en premier.",
         image: "first.png",
         cost: 9,
+        max: 3,
     },
     pact: {
         id: "pact",
@@ -43,20 +56,15 @@ exports.powers = {
         description: "Au debut du round, vous et votre adversaire ajoutez une piece de votre choix sur le board.",
         image: "pact.png",
         cost: 5,
+        max: 3,
     },
-    // roulio: {
-    //     id: "roulio",
-    //     name: "Hurry Roulio",
-    //     description: "Vous commencez en premier",
-    //     image: "first2.png",
-    //     cost: 11,
-    // },
     watch: {
         id: "watch",
         name: "Early Fang",
-        description: "Vous pouvez knocker avec 40 points maximum.<br/>Bonus de knock de 10 gold.",
+        description: "Vos points maximum pour knocker augmentent de 10.<br/>Bonus de knock de 10 gold.",
         image: "watch.jpg",
         cost: 10,
+        max: 3,
     },
     fog: {
         id: "fog",
@@ -64,6 +72,7 @@ exports.powers = {
         description: "Votre adversaire ne connnait pas les autres pouvoirs que vous choisissez.",
         image: "fog.png",
         cost: 18,
+        max: 1,
     },
     final: {
         id: "final",
@@ -71,6 +80,7 @@ exports.powers = {
         description: "Vous pouvez knocker sans minimum de points.",
         image: "final.jpg",
         cost: 35,
+        max: 1,
     },
     karen: {
         id: "karen",
@@ -78,6 +88,7 @@ exports.powers = {
         description: "Les pieces sont redistribués, pour tout le monde.",
         image: "karen.jpg",
         cost: 32,
+        max: 1,
     },
     eye: {
         id: "eye",
@@ -85,6 +96,7 @@ exports.powers = {
         description: "Vous voyez toute les piece de l'adversaire (apres war pact) <br/>Vos points sont doublés.",
         image: "eye.png",
         cost: 15,
+        max: 1,
     },
     unknow: {
         id: "unknow",
@@ -92,5 +104,6 @@ exports.powers = {
         description: "I don't know.",
         image: "unknow.png",
         cost: 88,
+        max: 1,
     },
 };

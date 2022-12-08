@@ -70,7 +70,9 @@ const GameContent = () => {
             setTimeout(() => {
                 root.style.setProperty('--board-size', `calc(var(--board-width) * 0.45)`);
                 root.style.setProperty('--top-height', `var(--top-min-height)`);
-                root.style.setProperty('--button-zone-heigth', `3px`);
+                if (!game.gameResult) {
+                    root.style.setProperty('--button-zone-heigth', `3px`);
+                }
                 selectedPowers = {};
                 rd();
             }, 800)
@@ -82,6 +84,9 @@ const GameContent = () => {
         if (game.nextAction !== "selectHero") {
             root.style.setProperty('--board-size', `var(--board-width)`);
             root.style.setProperty('--top-height', `var(--top-base-height)`);
+            root.style.setProperty('--button-zone-heigth', `calc(var(--width) * 0.14)`);
+        }
+        if (game.gameResult) {
             root.style.setProperty('--button-zone-heigth', `calc(var(--width) * 0.14)`);
         }
     }, [game])
@@ -149,7 +154,7 @@ const GameContent = () => {
         return false
     }
 
-    const getSidePowers = (pows: (keyof typeof powers)[]) => {
+    const getSidePowers = (pows: (keyof typeof powers)[], you: boolean) => {
         return <div className='side-power'>
             <div className='side-power-center'>
                 {pows.map((power, i) => <div
@@ -158,7 +163,13 @@ const GameContent = () => {
 
                     key={i} className="power-circle" style={{
                         backgroundImage: `url(powers/${powers[power as keyof typeof powers].image})`,
-                        marginTop : `calc(var(--width) * 0.02)`
+                        marginTop: `calc(var(--width) * 0.02)`
+                    }}>
+                </div>)}
+                {Array.from({ length: 3 - pows.length }).map((e, i) => <div
+                    key={i} className="power-circle" style={{
+                        marginTop: `calc(var(--width) * 0.02)`,
+                        background: you ? "#0c305b" : "#870000",
                     }}>
                 </div>)}
             </div>
@@ -300,7 +311,7 @@ const GameContent = () => {
                 </div>
                 <div className='board-cont-grid grid'>
                     <div className='board-flex'>
-                        {game.nextAction === "selectHero" && getSidePowers(game.youStatus.powers)}
+                        {game.nextAction === "selectHero" && getSidePowers(game.youStatus.powers, true)}
                         <div className='board-cont' style={{
                             backgroundImage: "url(/wood.webp)",
                         }}>
@@ -343,7 +354,7 @@ const GameContent = () => {
                                 </div>)}
                             </div>)}
                         </div>
-                        {game.nextAction === "selectHero" && getSidePowers(game.opStatus.powers ? game.opStatus.powers : [])}
+                        {game.nextAction === "selectHero" && getSidePowers(game.opStatus.powers ? game.opStatus.powers : [], false)}
                     </div>
 
                 </div>
@@ -448,16 +459,25 @@ const GameContent = () => {
                         pointerEvents: game.nextAction === "selectHero" && !game.youStatus.powerReady ? "initial" : "none",
                     }}>
 
-                        {(Object.values(powers)).filter(e => e.id !== "unknow").sort((a, b) => a.cost - b.cost).map((power, i) => <div className='power-cont grid' key={i} onClick={() => {
-                            pickPower(power.id as keyof typeof powers)
-                        }}>
-                            <div className='power-content' style={{
-                                background: selectedPowers[power.id] ? "#259838" : "#0c305b",
-                                cursor: Object.keys(selectedPowers).length < MAX_POWER_NUMBER || selectedPowers[power.id] ? "pointer" : "initial",
-                            }}>
-                                <PowerCard powerId={power.id as keyof typeof powers}></PowerCard>
-                            </div>
-                        </div>)}
+                        {(Object.values(powers))
+                            .filter(e => e.id !== "unknow")
+                            .sort((a, b) => a.cost - b.cost)
+                            .map((power, i) => <div className='power-cont grid' key={i} onClick={() => {
+                                pickPower(power.id as keyof typeof powers)
+                            }}
+                                style={{
+                                    opacity: game.youStatus.powers.filter(e => e === power.id).length === power.max ? "0.5" : "1",
+                                    cursor: game.youStatus.powers.filter(e => e === power.id).length === power.max ? "initial" : "pointer",
+                                    pointerEvents: game.youStatus.powers.filter(e => e === power.id).length === power.max ? "none" : "initial",
+                                }}
+                            >
+                                <div className='power-content' style={{
+                                    // background: selectedPowers[power.id] ? "#259838" : "#0c305b",
+                                    // cursor: Object.keys(selectedPowers).length < MAX_POWER_NUMBER || selectedPowers[power.id] ? "pointer" : "initial",
+                                }}>
+                                    <PowerCard powerId={power.id as keyof typeof powers}></PowerCard>
+                                </div>
+                            </div>)}
 
                     </div>
                 </div>
