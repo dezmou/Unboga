@@ -417,20 +417,13 @@ const GameContent = () => {
 
                 </div>
                 <div className='bottom-zone'>
-                    <div className='power-select-cont'>
+                    <div className='power-select-cont' style={{
+                        opacity: game.nextAction === "selectHero" && !game.youStatus.powerReady ? "1" : "0.5",
+                        pointerEvents: game.nextAction === "selectHero" && !game.youStatus.powerReady ? "initial" : "none",
+                    }}>
 
-                        {(Object.values(powers)).sort((a, b) => a.cost - b.cost).map((power, i) => <div className='power-cont grid' style={{
-                            // background: selectedPowers[power.id] ? "#dadada" : "white"
-                        }} key={i} onClick={() => {
+                        {(Object.values(powers)).sort((a, b) => a.cost - b.cost).map((power, i) => <div className='power-cont grid' key={i} onClick={() => {
                             pickPower(power.id as keyof typeof powers)
-                            // if (selectedPowers[power.id]) {
-                            //     delete selectedPowers[power.id];
-                            // } else {
-                            //     if (Object.keys(selectedPowers).length < MAX_POWER_NUMBER) {
-                            //         selectedPowers[power.id] = true;
-                            //     }
-                            // }
-                            // rd();
                         }}>
                             <div className='power-content' style={{
                                 background: selectedPowers[power.id] ? "#259838" : "#0c305b",

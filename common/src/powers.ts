@@ -4,7 +4,7 @@ export const powers = {
         name: "Gramophone",
         description: "+30% sur vos gains et pertes en gold",
         image: "phone.png",
-        cost: 7,
+        cost: 4,
     },
 
     deserterJack: {
@@ -12,7 +12,7 @@ export const powers = {
         name: "Deserter Jack",
         description: "Vous debutez avec une piece aléatoire en moins",
         image: "leave.jpg",
-        cost: 10,
+        cost: 8,
     },
 
     monkeys: {
@@ -20,7 +20,7 @@ export const powers = {
         name: "Smart monkeys",
         description: "Vos deux pieces avec le moins de points disparaissent",
         image: "monkeys.png",
-        cost: 17,
+        cost: 14,
     },
 
     mirror: {
@@ -28,7 +28,7 @@ export const powers = {
         name: "Mirror of Darkness",
         description: "Les points sur le board sont inversé <br/> ( que pour vous)",
         image: "mirror.jpg",
-        cost: 10,
+        cost: 7,
     },
 
     steve: {
@@ -36,7 +36,7 @@ export const powers = {
         name: "Hurry Steve",
         description: "Vous commencez en premier",
         image: "first.png",
-        cost: 11,
+        cost: 9,
     },
 
     pact: {
@@ -44,23 +44,23 @@ export const powers = {
         name: "War pact",
         description: "Au debut du round, vous et votre adversaire ajoutez une piece de votre choix sur le board",
         image: "pact.png",
-        cost: 11,
+        cost: 5,
     },
 
-    roulio: {
-        id: "roulio",
-        name: "Hurry Roulio",
-        description: "Vous commencez en premier",
-        image: "first2.png",
-        cost: 11,
-    },
+    // roulio: {
+    //     id: "roulio",
+    //     name: "Hurry Roulio",
+    //     description: "Vous commencez en premier",
+    //     image: "first2.png",
+    //     cost: 11,
+    // },
 
     watch: {
         id: "watch",
         name: "Early Fang",
-        description: "Vous pouvez knocker avec 40 points maximum",
+        description: "Vous pouvez knocker avec 40 points maximum.<br/>Bonus de knock de 10 gold",
         image: "watch.jpg",
-        cost: 8,
+        cost: 10,
     },
 
     fog: {
@@ -93,5 +93,14 @@ export const powers = {
         description: "Vous voyez toute les piece de l'adversaire (apres war pact) <br/>Vos points sont doublés",
         image: "eye.png",
         cost: 15,
-    }
+    },
+
+    unknow: {
+        id: "unknow",
+        name: "what is this",
+        description: "I don't know",
+        image: "unknow.png",
+        cost: 88,
+    },
+
 }

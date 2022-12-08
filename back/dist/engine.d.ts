@@ -2,7 +2,7 @@ import { CardStatus, Game, Player, UserCard, UserGame } from "../../common/src/g
 import { powers } from "../../common/src/powers";
 export declare const gameEngine: () => {
     state: {
-        game: Game | undefined;
+        game: Game;
     };
     funcs: {
         newGame: (id: string, player1: string, player2: string) => void;

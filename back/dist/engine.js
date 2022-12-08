@@ -8,9 +8,7 @@ const makeId = () => {
         .toString(32);
 };
 const gameEngine = () => {
-    const state = {
-        game: undefined
-    };
+    const state = {};
     const op = {
         player1: "player2",
         player2: "player1",
@@ -242,7 +240,7 @@ const gameEngine = () => {
                         }
                     })();
                 }
-                if (powerStr === "roulio" || powerStr === "steve") {
+                if (powerStr === "steve") {
                     hurrys[player] += 1;
                 }
                 if (powerStr === "pact") {
@@ -470,6 +468,7 @@ const gameEngine = () => {
             onZeroPoint(player);
         }
     };
+    // TODO onZeroPoints
     const choose = (playerId, x, y) => {
         const player = getPlayerById(playerId);
         if (state.game.nextAction !== "choose")
@@ -481,9 +480,9 @@ const gameEngine = () => {
         cho[player].x = x;
         cho[player].y = y;
         const piece = state.game.board[y][x];
-        if (piece.status === op[player]) {
-            piece[op[player]].status = player;
-        }
+        // if (piece.status === op[player]) {
+        piece[op[player]].status = player;
+        // }
         piece.status = player;
         piece[player].status = player;
         cho[player].choosed = true;
@@ -491,7 +490,6 @@ const gameEngine = () => {
             state.game.chooseIndex += 1;
             cho.done = true;
         }
-        console.log(`choose index ${state.game.chooseIndex} length : ${state.game.choose.length}`);
         if (state.game.chooseIndex > state.game.choose.length - 1) {
             state.game.nextAction = "pick";
         }
@@ -523,13 +521,21 @@ const gameEngine = () => {
         const villain = state.game.player1Id === playerId ? "player2" : "player1";
         const getVillainStatus = () => {
             const getVillainPowers = () => {
+                const pows = state.game[villain].powers.map(pow => {
+                    if (state.game.roundResult) {
+                        return pow;
+                    }
+                    if (state.game[villain].powers.includes("fog")) {
+                        if (pow !== "fog") {
+                            return "unknow";
+                        }
+                    }
+                    return pow;
+                });
                 if (state.game.nextAction === "selectHero") {
-                    return state.game[villain].powers.filter((e, i) => i < state.game.pickHeroTurn);
+                    return pows.filter((e, i) => i < state.game.pickHeroTurn);
                 }
-                if (state.game[villain].powers.includes("fog") && !state.game.roundResult) {
-                    return state.game[villain].powers.filter(e => e === "fog");
-                }
-                return state.game[villain].powers;
+                return pows;
             };
             return Object.assign(Object.assign({}, state.game[villain]), { points: (state.game.roundResult || state.game[you].powers.includes("eye")) ? state.game[villain].points : undefined, powers: getVillainPowers() });
         };
