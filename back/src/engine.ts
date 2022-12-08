@@ -216,13 +216,10 @@ export const gameEngine = () => {
 
     const canKnock = (player: Player) => {
         if (state.game.nextActionPlayer === player && state.game.nextAction === "discard") {
-            if (state.game[player].powers.includes("watch") && state.game[player].points <= 40) {
-                return true;
-            }
             if (state.game[player].powers.includes("final")) {
                 return true;
             }
-            if (state.game[player].points <= MIN_TO_KNOCK) {
+            if (state.game[player].points - (state.game[player].powers.filter(e => e === "watch").length * 10) <= MIN_TO_KNOCK) {
                 return true;
             }
         }

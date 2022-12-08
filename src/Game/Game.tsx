@@ -166,12 +166,12 @@ const GameContent = () => {
                         marginTop: `calc(var(--width) * 0.02)`
                     }}>
                 </div>)}
-                {Array.from({ length: 3 - pows.length }).map((e, i) => <div
+                {/* {Array.from({ length: 3 - pows.length }).map((e, i) => <div
                     key={i} className="power-circle" style={{
                         marginTop: `calc(var(--width) * 0.02)`,
                         background: you ? "#0c305b" : "#870000",
                     }}>
-                </div>)}
+                </div>)} */}
             </div>
         </div>
     }
