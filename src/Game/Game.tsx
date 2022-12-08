@@ -6,7 +6,7 @@ import { useRender, render } from '../render';
 import { global } from '../state';
 import "./Game.css";
 import { Button } from '@mui/material';
-import { Game, MAX_POWER_NUMBER, UserCard, UserGame } from '../../common/src/game.interface';
+import { Game, MAX_POWER_NUMBER, Player, UserCard, UserGame } from '../../common/src/game.interface';
 
 let selectedPowers: any = {}
 
@@ -70,6 +70,7 @@ const GameContent = () => {
             setTimeout(() => {
                 root.style.setProperty('--board-size', `calc(var(--board-width) * 0.45)`);
                 root.style.setProperty('--top-height', `var(--top-min-height)`);
+                root.style.setProperty('--button-zone-heigth', `3px`);
                 selectedPowers = {};
                 rd();
             }, 800)
@@ -81,6 +82,7 @@ const GameContent = () => {
         if (game.nextAction !== "selectHero") {
             root.style.setProperty('--board-size', `var(--board-width)`);
             root.style.setProperty('--top-height', `var(--top-base-height)`);
+            root.style.setProperty('--button-zone-heigth', `calc(var(--width) * 0.14)`);
         }
     }, [game])
 
@@ -147,6 +149,22 @@ const GameContent = () => {
         return false
     }
 
+    const getSidePowers = (pows: (keyof typeof powers)[]) => {
+        return <div className='side-power'>
+            <div className='side-power-center'>
+                {pows.map((power, i) => <div
+                    onMouseEnter={() => { setOverHero(power as keyof typeof powers) }}
+                    onMouseLeave={() => { setOverHero(undefined) }}
+
+                    key={i} className="power-circle" style={{
+                        backgroundImage: `url(powers/${powers[power as keyof typeof powers].image})`,
+                        marginTop : `calc(var(--width) * 0.02)`
+                    }}>
+                </div>)}
+            </div>
+        </div>
+    }
+
     return <>
         <div className='game-main-cont' style={{
             opacity: global.state.page === "game" ? "1" : "0",
@@ -207,32 +225,35 @@ const GameContent = () => {
                             ({game.misc[vilain].elo}) {game.misc[vilain].name}
                         </div>
                     </div>
-                    <div className='top-power-cont'>
-                        <div className='top-power-flex'>
-                            <div className='top-powers'>
-                                {game.youStatus.powers!.map((power, i) => <div
-                                    onMouseEnter={() => { setOverHero(power as keyof typeof powers) }}
-                                    onMouseLeave={() => { setOverHero(undefined) }}
-
-                                    key={i} className="power-circle" style={{
-                                        backgroundImage: `url(powers/${powers[power as keyof typeof powers].image})`
-                                    }}>
-                                </div>)}
-                            </div>
-                            <div className='top-powers'>
-                                {game.opStatus.powers && <>
-                                    {game.opStatus.powers.map((power, i) => <div
+                    {game.nextAction !== "selectHero" && <>
+                        <div className='top-power-cont'>
+                            <div className='top-power-flex'>
+                                <div className='top-powers'>
+                                    {game.youStatus.powers!.map((power, i) => <div
                                         onMouseEnter={() => { setOverHero(power as keyof typeof powers) }}
                                         onMouseLeave={() => { setOverHero(undefined) }}
+
                                         key={i} className="power-circle" style={{
                                             backgroundImage: `url(powers/${powers[power as keyof typeof powers].image})`
                                         }}>
                                     </div>)}
-                                </>}
+                                </div>
+                                <div className='top-powers'>
+                                    {game.opStatus.powers && <>
+                                        {[...game.opStatus.powers].reverse().map((power, i) => <div
+                                            onMouseEnter={() => { setOverHero(power as keyof typeof powers) }}
+                                            onMouseLeave={() => { setOverHero(undefined) }}
+                                            key={i} className="power-circle" style={{
+                                                backgroundImage: `url(powers/${powers[power as keyof typeof powers].image})`
+                                            }}>
+                                        </div>)}
+                                    </>}
 
+                                </div>
                             </div>
                         </div>
-                    </div>
+
+                    </>}
                 </div>
                 <div className='gold-cont'>
                     <div className='gold-value-cont'>
@@ -278,48 +299,53 @@ const GameContent = () => {
                     </div>
                 </div>
                 <div className='board-cont-grid grid'>
-                    <div className='board-cont' style={{
-                        backgroundImage: "url(/wood.webp)",
-                    }}>
-                        {board.map((line, y) => <div className='board-line' key={y}>
-                            {line.map((card, x) => <div className={`board-case`} id={`card_${card.id}`} key={x}
-                                onClick={() => {
-                                    clickPiece(card)
-                                }}
-                            // style={{
-                            //     opacity : game.nextAction === "choose" ? (
-                            //         card.status.status === "deck" ? "1" : "0.5"
-                            //     ) : "1"
-                            // }}
-                            >
+                    <div className='board-flex'>
+                        {game.nextAction === "selectHero" && getSidePowers(game.youStatus.powers)}
+                        <div className='board-cont' style={{
+                            backgroundImage: "url(/wood.webp)",
+                        }}>
+                            {board.map((line, y) => <div className='board-line' key={y}>
+                                {line.map((card, x) => <div className={`board-case`} id={`card_${card.id}`} key={x}
+                                    onClick={() => {
+                                        clickPiece(card)
+                                    }}
+                                // style={{
+                                //     opacity : game.nextAction === "choose" ? (
+                                //         card.status.status === "deck" ? "1" : "0.5"
+                                //     ) : "1"
+                                // }}
+                                >
 
-                                <div className='board-case-background-effect' style={{
-                                    background: getBoardColor(card),
-                                }}>
-                                </div>
-                                {card.status.villainRefused && <div className='case-forbid'>
-                                </div>
-                                }
-
-                                <div className='case-point' >
-                                    {card.points}
-                                </div>
-                                <div className='case-piece-cont grid' >
-                                    <div className='case-piece' style={{
-                                        // backgroundImage: card.status.status === you ? "url(/blue_normal.png)" : "none",
-                                        backgroundImage: getPiecePicture(card),
-                                        // boxShadow: card.status.status === you ? `0px 0px 5px 0px #000000` : "none",
-                                        cursor: isPieceClickable(card) ? "pointer" : "initial",
-                                        boxShadow: (
-                                            game.nextAction === "choose" &&
-                                            game.nextActionPlayer === you &&
-                                            card.status.status === "deck") ? "0px 0px 5px 0px #000000" : "none"
+                                    <div className='board-case-background-effect' style={{
+                                        background: getBoardColor(card),
                                     }}>
                                     </div>
-                                </div>
+                                    {card.status.villainRefused && <div className='case-forbid'>
+                                    </div>
+                                    }
+
+                                    <div className='case-point' >
+                                        {card.points}
+                                    </div>
+                                    <div className='case-piece-cont grid' >
+                                        <div className='case-piece' style={{
+                                            // backgroundImage: card.status.status === you ? "url(/blue_normal.png)" : "none",
+                                            backgroundImage: getPiecePicture(card),
+                                            // boxShadow: card.status.status === you ? `0px 0px 5px 0px #000000` : "none",
+                                            cursor: isPieceClickable(card) ? "pointer" : "initial",
+                                            boxShadow: (
+                                                game.nextAction === "choose" &&
+                                                game.nextActionPlayer === you &&
+                                                card.status.status === "deck") ? "0px 0px 5px 0px #000000" : "none"
+                                        }}>
+                                        </div>
+                                    </div>
+                                </div>)}
                             </div>)}
-                        </div>)}
+                        </div>
+                        {game.nextAction === "selectHero" && getSidePowers(game.opStatus.powers ? game.opStatus.powers : [])}
                     </div>
+
                 </div>
                 <div className='buttons-zone' style={{
                     opacity: global.localState.hideButtons ? "0" : 1,
@@ -422,7 +448,7 @@ const GameContent = () => {
                         pointerEvents: game.nextAction === "selectHero" && !game.youStatus.powerReady ? "initial" : "none",
                     }}>
 
-                        {(Object.values(powers)).sort((a, b) => a.cost - b.cost).map((power, i) => <div className='power-cont grid' key={i} onClick={() => {
+                        {(Object.values(powers)).filter(e => e.id !== "unknow").sort((a, b) => a.cost - b.cost).map((power, i) => <div className='power-cont grid' key={i} onClick={() => {
                             pickPower(power.id as keyof typeof powers)
                         }}>
                             <div className='power-content' style={{

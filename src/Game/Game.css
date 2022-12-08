@@ -161,7 +161,11 @@
     background-size: contain;
 }
 
-.board-main-layout {}
+
+.board-flex {
+    display : flex;
+    /* justify-content: center; */
+}
 
 .game-top-cont {
     height: var(--top-height);
@@ -193,6 +197,12 @@
 
 .game-top-button-option {
     width: calc(var(--width) * 0.32);
+}
+
+.side-power {
+    width : calc((var(--width) - var(--board-size)) * 0.5);
+    display : flex;
+    justify-content: center;
 }
 
 .board-cont-grid {
