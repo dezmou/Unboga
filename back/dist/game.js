@@ -163,7 +163,7 @@ const play = (socket, param) => __awaiter(void 0, void 0, void 0, function* () {
             game.funcs.setReady(exports.BOT_ID);
         }
         if (!game.state.game.player2.powerReady) {
-            game.funcs.pickPower(exports.BOT_ID, "lucien");
+            game.funcs.pickPower(exports.BOT_ID, "fox");
         }
         if (game.state.game.gameResult) {
             game.state.game.gameResult.revenge.player2 = "yes";

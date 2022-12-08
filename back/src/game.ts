@@ -153,7 +153,7 @@ export const play = async (socket: SSocket, param: Play) => {
             game.funcs.setReady(BOT_ID);
         }
         if (!game.state.game!.player2.powerReady) {
-            game.funcs.pickPower(BOT_ID, "lucien")
+            game.funcs.pickPower(BOT_ID, "fox")
         }
         if (game.state.game!.gameResult) {
             game.state.game!.gameResult.revenge.player2 = "yes";
