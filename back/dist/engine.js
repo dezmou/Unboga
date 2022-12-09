@@ -237,6 +237,9 @@ const gameEngine = () => {
     const getPlayerById = (playerId) => {
         return state.game.player1Id === playerId ? "player1" : "player2";
     };
+    const getIdByPlayer = (player) => {
+        return player === "player1" ? state.game.player1Id : state.game.player2Id;
+    };
     const canKnock = (player) => {
         if (state.game.nextActionPlayer === player && state.game.nextAction === "discard") {
             if (state.game[player].powers.includes("final")) {
@@ -590,6 +593,7 @@ const gameEngine = () => {
     };
     const pickGreen = (playerId) => {
         const player = getPlayerById(playerId);
+        console.log("ccc", state.game.nextActionPlayer, player);
         if (state.game.nextActionPlayer !== player)
             throw "not you to play";
         if (state.game.nextAction !== "pick")
@@ -718,6 +722,19 @@ const gameEngine = () => {
             if (iCanSeeOp && card.status === villain && card[villain].inStreak) {
                 streak = true;
             }
+            if (state.game.pick && state.game.pick.x === card.x && state.game.pick.y === card.y) {
+                const fork = (0, exports.gameEngine)();
+                fork.funcs.loadGame(JSON.parse(JSON.stringify(state.game)));
+                fork.state.game.board[card.y][card.x].status = you;
+                fork.state.game.board[card.y][card.x][you].status = you;
+                fork.funcs.evaluate(you);
+                card[you].diagNeg = fork.state.game.board[card.y][card.x][you].diagNeg;
+                card[you].hori = fork.state.game.board[card.y][card.x][you].hori;
+                card[you].verti = fork.state.game.board[card.y][card.x][you].verti;
+                card[you].diagPos = fork.state.game.board[card.y][card.x][you].diagPos;
+                card[you].inStreak = fork.state.game.board[card.y][card.x][you].inStreak;
+                streak = true;
+            }
             const res = Object.assign(Object.assign({}, card), { player1: undefined, player2: undefined, status: Object.assign(Object.assign(Object.assign({}, card[you]), { status: iCanSeeOp ? card.status : card[you].status, inStreak: streak }), (card.status === villain ? {
                     diagNeg: streak ? card[villain].diagNeg : false,
                     diagPos: streak ? card[villain].diagPos : false,
@@ -746,6 +763,7 @@ const gameEngine = () => {
             capitulate,
             getAllCard,
             choose,
+            evaluate,
         }
     };
 };

@@ -26,5 +26,6 @@ export declare const gameEngine: () => {
             basePoints: number;
         }[];
         choose: (playerId: string, x: number, y: number) => void;
+        evaluate: (player: Player) => void;
     };
 };

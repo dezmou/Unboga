@@ -106,7 +106,11 @@ const GameContent = () => {
     const getPiecePicture = (piece: UserGame["board"][number][number]) => {
         if (game.pick) {
             if (game.pick.x === piece.x && game.pick.y === piece.y) {
-                return "url(/target.png)"
+                if (piece.status.inStreak) {
+                    return "url(/green_lined.png)"
+                } else {
+                    return "url(/target.png)"
+                }
             }
         }
         if (piece.status.status === you) {

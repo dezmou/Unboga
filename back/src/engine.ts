@@ -266,6 +266,10 @@ export const gameEngine = () => {
         return state.game.player1Id === playerId ? "player1" : "player2" as Player
     }
 
+    const getIdByPlayer = (player: Player) => {
+        return player === "player1" ? state.game.player1Id : state.game.player2Id
+    }
+
     const canKnock = (player: Player) => {
         if (state.game.nextActionPlayer === player && state.game.nextAction === "discard") {
             if (state.game[player].powers.includes("final")) {
@@ -649,6 +653,7 @@ export const gameEngine = () => {
 
     const pickGreen = (playerId: string) => {
         const player = getPlayerById(playerId)
+        console.log("ccc", state.game.nextActionPlayer, player);
         if (state.game.nextActionPlayer !== player) throw "not you to play"
         if (state.game.nextAction !== "pick") throw "not pick time"
         const gameCard = state.game.board[state.game.pick!.y][state.game.pick!.x]
@@ -767,7 +772,6 @@ export const gameEngine = () => {
             }
         }
 
-
         const getUserCard = (card: Game["board"][number][number]) => {
             let streak = false;
             const iCanSeeOp = (state.game.roundResult || state.game[you].powers.includes("eye"))
@@ -778,6 +782,20 @@ export const gameEngine = () => {
                 streak = true;
             }
             if (iCanSeeOp && card.status === villain && card[villain].inStreak) {
+                streak = true;
+            }
+
+            if (state.game.pick && state.game.pick.x === card.x && state.game.pick.y === card.y) {
+                const fork = gameEngine()
+                fork.funcs.loadGame(JSON.parse(JSON.stringify(state.game)));
+                fork.state.game.board[card.y][card.x].status = you;
+                fork.state.game.board[card.y][card.x][you].status = you;
+                fork.funcs.evaluate(you);
+                card[you].diagNeg = fork.state.game.board[card.y][card.x][you].diagNeg
+                card[you].hori = fork.state.game.board[card.y][card.x][you].hori
+                card[you].verti = fork.state.game.board[card.y][card.x][you].verti
+                card[you].diagPos = fork.state.game.board[card.y][card.x][you].diagPos
+                card[you].inStreak = fork.state.game.board[card.y][card.x][you].inStreak
                 streak = true;
             }
 
@@ -833,6 +851,7 @@ export const gameEngine = () => {
             capitulate,
             getAllCard,
             choose,
+            evaluate,
         }
     }
 }
