@@ -102,7 +102,7 @@ export const powers = {
     curse: {
         id: "curse",
         name: "Emma Curse",
-        description: "Votre adversaire est forcé de choisir Lucien",
+        description: "Votre adversaire est forcé de choisir Lucien<br/>Il ne depense pas les gold de son choix initial",
         image: "curse.png",
         cost: 16,
         max: 3,

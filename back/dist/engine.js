@@ -251,6 +251,13 @@ const gameEngine = () => {
         }
         return final;
     };
+    const shuffleCards = (cards) => {
+        for (let i = cards.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [cards[i], cards[j]] = [cards[j], cards[i]];
+        }
+        return cards;
+    };
     const applyHeros = () => {
         const game = state.game;
         const baseFirstPlayer = game.nextActionPlayer;
@@ -268,11 +275,11 @@ const gameEngine = () => {
             game.board = getNewBoard();
             distribute("player1");
             distribute("player2");
-            evaluate("player1");
-            evaluate("player2");
             const pick = getRandomFromDeck();
             game.pick = { x: pick.x, y: pick.y };
         }
+        evaluate("player1");
+        evaluate("player2");
         for (let player of ["player1", "player2"]) {
             for (let powerStr of state.game[player].powers) {
                 if (powerStr === "deserterJack") {
@@ -309,6 +316,17 @@ const gameEngine = () => {
                         target[player].status = "deck";
                     }
                 }
+            }
+            if (state.game[player].powers.includes("chimist")) {
+                shuffleCards(getAllCard()
+                    .filter(e => e.status === op[player] && !e[op[player]].inStreak))
+                    .sort((a, b) => b.basePoints - a.basePoints)
+                    .forEach((card, i) => {
+                    if (i < 3) {
+                        card.status = "deck";
+                        card[op[player]].status = "deck";
+                    }
+                });
             }
         }
         if (hurrys.player1 !== hurrys.player2) {
@@ -347,7 +365,6 @@ const gameEngine = () => {
                 player1: { choosed: false, x: 0, y: 0 },
                 player2: { choosed: false, x: 0, y: 0 },
             }));
-            console.log(state.game.choose);
             state.game.nextAction = "choose";
         }
         else {
