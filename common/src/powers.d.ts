@@ -71,6 +71,14 @@ export declare const powers: {
         cost: number;
         max: number;
     };
+    chimist: {
+        id: string;
+        name: string;
+        description: string;
+        image: string;
+        cost: number;
+        max: number;
+    };
     fog: {
         id: string;
         name: string;

@@ -76,9 +76,29 @@ const gameEngine = () => {
         }
         return points;
     };
+    const getAllDiagonal = () => {
+        const board = state.game.board;
+        const max_col = board[0].length;
+        const max_row = board.length;
+        const cols = Array.from({ length: max_col }).map(e => []);
+        const rows = Array.from({ length: max_row }).map(e => []);
+        const fdiag = Array.from({ length: max_row + max_col - 1 }).map(e => []);
+        const bdiag = Array.from({ length: fdiag.length }).map(e => []);
+        const min_bdiag = -max_row + 1;
+        for (let x = 0; x < max_col; x++) {
+            for (let y = 0; y < max_row; y++) {
+                cols[x].push(board[y][x]);
+                rows[y].push(board[y][x]);
+                fdiag[x + y].push(board[y][x]);
+                bdiag[x - y - min_bdiag].push(board[y][x]);
+            }
+        }
+        return [...fdiag, ...bdiag];
+    };
     const evaluate = (player) => {
         const horiStreak = [];
         const vertiStreak = [];
+        const diagStreak = [];
         const board = state.game.board;
         for (let y = 0; y < game_interface_1.BOARD_SIZE; y++) {
             let streak = [];
@@ -127,6 +147,28 @@ const gameEngine = () => {
             for (let card of verti) {
                 card[player].inStreak = true;
                 card[player].verti = true;
+            }
+        }
+        if (state.game[player].powers.includes("chimist")) {
+            const diags = getAllDiagonal();
+            for (let diag of diags) {
+                let streak = [];
+                diag.forEach((card, i) => {
+                    if (card.status === player) {
+                        streak.push(card);
+                    }
+                    if (card.status !== player || i + 1 === diag.length) {
+                        if (streak.length >= 3) {
+                            diagStreak.push(streak);
+                        }
+                        streak = [];
+                    }
+                });
+            }
+            for (let diag of diagStreak) {
+                for (let card of diag) {
+                    card[player].inStreak = true;
+                }
             }
         }
         const pointsRemaining = [];
@@ -562,15 +604,15 @@ const gameEngine = () => {
                 let line2 = "";
                 let line1 = "";
                 if (state.game.roundResult.reason === "knock_full") {
-                    line1 = `${state.game.roundResult.knocker === you ? "you" : "he"} made FULL and won ${state.game.roundResult.pointsWin}`;
+                    line1 = `${state.game.roundResult.knocker === you ? "Vous rentrez le FULL et gagnez" : "Le fumier rentre le FULL et gagne"} ${state.game.roundResult.pointsWin} gold`;
                 }
                 else if (state.game.roundResult.reason === "knock_win") {
-                    line1 = `${state.game.roundResult.knocker === you ? "you" : "scum"} Knocked with ${state.game[state.game.roundResult.knocker].points} points`;
-                    line2 = `${state.game.roundResult.knocker === you ? "you" : "he"}  won ${state.game.roundResult.pointsWin}`;
+                    line1 = `${state.game.roundResult.knocker === you ? "Vous knockez avec" : "Le Fumier knock avec"} ${state.game[state.game.roundResult.knocker].points} points`;
+                    line2 = `${state.game.roundResult.knocker === you ? "vous gagnez" : "il gagne"} ${state.game.roundResult.pointsWin} gold`;
                 }
                 else {
-                    line1 = `${state.game.roundResult.knocker === you ? "you" : "scum"} Knocked with ${state.game[state.game.roundResult.knocker].points} points`;
-                    line2 = `${state.game.roundResult.knocker === you ? "scum" : "you"} counter knocked and won ${state.game.roundResult.pointsWin}`;
+                    line1 = `${state.game.roundResult.knocker === you ? "Vous knockez" : "Le fumier knock"} avec ${state.game[state.game.roundResult.knocker].points} points`;
+                    line2 = `${state.game.roundResult.knocker === you ? "Le fumier contre knock et gagne" : "vous contre knockez et gagnez"} ${state.game.roundResult.pointsWin} gold`;
                 }
                 return {
                     line1,
@@ -581,33 +623,33 @@ const gameEngine = () => {
                 if (state.game.nextAction === "choose") {
                     return {
                         line1: `War Pact ${state.game.chooseIndex + 1} / ${state.game.choose.length}`,
-                        line2: state.game.nextActionPlayer === you ? `Choose a case to add a blue piece` : "it is scum turn to choose a piece",
+                        line2: state.game.nextActionPlayer === you ? `Choisissez une case vide` : "C'est au fumier de choisir une case vide",
                     };
                 }
                 else if (state.game.nextAction === "selectHero") {
                     if (!state.game[you].powerReady) {
                         return {
-                            line1: `Choose powers (${state.game[you].powers.length + 1}/${game_interface_1.MAX_POWER_NUMBER})`,
-                            line2: `You will play ${state.game.nextActionPlayer === you ? "first" : "second"}`,
+                            line1: `Choisissez un pouvoir (${state.game[you].powers.length + 1}/${game_interface_1.MAX_POWER_NUMBER})`,
+                            line2: `Vous jouez en ${state.game.nextActionPlayer === you ? "premier" : "deuxieme"}`,
                         };
                     }
                     else {
                         return {
-                            line1: "Waiting scum to choose powers",
-                            line2: "He is taking soo much time",
+                            line1: "On attend le fumier qu'il choisisse son pouvoir",
+                            line2: "Il prend un temps fou",
                         };
                     }
                 }
                 else if (state.game.nextAction === "pick") {
                     if (state.game.nextActionPlayer === you) {
                         return {
-                            line1: "Pick green or random",
-                            line2: ""
+                            line1: "Choisissez la piece verte",
+                            line2: "Ou choisissez une piece aleatoire"
                         };
                     }
                     else {
                         return {
-                            line1: "It is scum turn to pick",
+                            line1: "C'est au tour du fumier de jouer",
                             line2: ""
                         };
                     }
@@ -615,14 +657,14 @@ const gameEngine = () => {
                 else if (state.game.nextAction === "discard") {
                     if (state.game.nextActionPlayer === you) {
                         return {
-                            line1: "Discard a piece",
-                            line2: possibleKnock ? `or knock ${state.game[you].points}` : ""
+                            line1: "Defaussez vous d'une piece bleu",
+                            line2: possibleKnock ? `...ou knockez pour ${state.game[you].points} points` : ""
                         };
                     }
                     else {
                         return {
-                            line1: "It is scum turn",
-                            line2: "to discard a piece"
+                            line1: "C'est au tour du fumier",
+                            line2: "de se debarasser d'une piece"
                         };
                     }
                 }

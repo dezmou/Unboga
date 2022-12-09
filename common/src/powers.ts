@@ -41,7 +41,7 @@ export const powers = {
         name: "Smart monkeys",
         description: "Vos deux pieces avec le moins de points disparaissent.",
         image: "monkeys.png",
-        cost: 14,
+        cost: 11,
         max: 3,
     },
 
@@ -81,12 +81,21 @@ export const powers = {
         max: 3,
     },
 
+    chimist: {
+        id: "chimist",
+        name: "Stacy Chemistry",
+        description: "Vous pouvez aligner les pieces en diagonal.<br/>L'ennemi perd ses 3 plus grosses pieces non aligné.",
+        image: "chimist.png",
+        cost: 12,
+        max: 1,
+    },
+
     fog: {
         id: "fog",
         name: "Fog of war",
         description: "Votre adversaire ne connnait pas les autres pouvoirs que vous choisissez.",
         image: "fog.png",
-        cost: 18,
+        cost: 16,
         max: 1,
     },
 
@@ -104,16 +113,16 @@ export const powers = {
         name: "Let's do it",
         description: "Vous pouvez knocker sans minimum de points.",
         image: "final.jpg",
-        cost: 35,
+        cost: 32,
         max: 1,
     },
 
     karen: {
         id: "karen",
-        name: "Karen",
+        name: "Complain Karen",
         description: "Les pieces sont redistribués, pour tout le monde.",
         image: "karen.jpg",
-        cost: 32,
+        cost: 30,
         max: 1,
     },
 
@@ -122,7 +131,7 @@ export const powers = {
         name: "Eye of the god",
         description: "Vous voyez toute les piece de l'adversaire (apres war pact) <br/>Vos points sont doublés.",
         image: "eye.png",
-        cost: 15,
+        cost: 13,
         max: 1,
     },
 

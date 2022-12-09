@@ -381,7 +381,7 @@ const GameContent = () => {
                                                 height: "var(--button-zone-heigth)",
                                             }} className='login-button' variant='contained'
                                                 onClick={() => { pickgreen() }}
-                                            >Pick green</Button>
+                                            >Piece verte</Button>
                                         </div>
                                         <div>
                                             <Button style={{
@@ -390,7 +390,7 @@ const GameContent = () => {
                                                 height: "var(--button-zone-heigth)",
                                             }} className='login-button' variant='contained'
                                                 onClick={() => { pickRandom() }}
-                                            >Pick Random</Button>
+                                            >Piece aleatoire</Button>
                                         </div>
                                     </div>
                                 </>}
@@ -418,7 +418,7 @@ const GameContent = () => {
                                         height: "var(--button-zone-heigth)",
                                     }} className='login-button' variant='contained'
                                         onClick={() => { ready() }}
-                                    >Next round</Button>
+                                    >Round suivant</Button>
                                 </div>
                             </div>
                         </>}
@@ -433,7 +433,7 @@ const GameContent = () => {
                                         height: "var(--button-zone-heigth)",
                                     }} className='login-button' variant='contained'
                                         onClick={() => { exitLobby() }}
-                                    >Exit to Lobby</Button>
+                                    >Retour au lobby</Button>
                                 </div>
                                 <div>
                                     {game.gameResult.revenge[vilain] !== "no" && <>
@@ -445,7 +445,7 @@ const GameContent = () => {
                                             pointerEvents: game.gameResult.revenge[you] === "yes" ? "none" : "initial",
                                         }} className='login-button' variant='contained'
                                             onClick={() => { revenge() }}
-                                        >Revenge</Button>
+                                        >Revanche</Button>
                                     </>}
                                 </div>
                             </div>
