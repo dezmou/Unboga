@@ -15,6 +15,8 @@ export declare type UserCard = {
     inStreak: boolean;
     hori: boolean;
     verti: boolean;
+    diagPos: boolean;
+    diagNeg: boolean;
 };
 export declare type PlayerStatus = {
     gold: number;

@@ -269,6 +269,32 @@
     transition: height 0.35s, width 0.35s, background 0.35s;
 }
 
+.board-case-line-paint-cont {
+    position: absolute;
+    width: calc(var(--board-case-size));
+    height: var(--board-case-size);
+    /* height: calc(var(--board-case-size) * 0.2); */
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.board-case-line-paint-middle {
+    width: calc(var(--board-case-size));
+    height: calc(var(--board-case-size) * 0.2);
+    /* margin-top: calc(var(--board-case-size) * 0.15); */
+}
+
+.board-case-line {
+    position: absolute;
+    width: calc(var(--board-case-size));
+    border-radius: calc(var(--board-case-size) * 0.2 * 0.5);
+
+    height: calc(var(--board-case-size) * 0.2);
+    /* background: #880000; */
+}
+
 .case-point {
     position: absolute;
     margin-left: calc(var(--board-case-size) * 0.03);

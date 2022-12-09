@@ -30,6 +30,8 @@ export const gameEngine = () => {
             hori: false,
             inStreak: false,
             verti: false,
+            diagNeg: false,
+            diagPos: false,
         })
 
         for (let y = 0; y < BOARD_SIZE; y++) {
@@ -99,13 +101,12 @@ export const gameEngine = () => {
                 bdiag[x - y - min_bdiag].push(board[y][x])
             }
         }
-        return [...fdiag, ...bdiag];
+        return [fdiag, bdiag];
     }
 
     const evaluate = (player: Player) => {
         const horiStreak = []
         const vertiStreak = []
-        const diagStreak: typeof board = []
 
         const board = state.game.board
         for (let y = 0; y < BOARD_SIZE; y++) {
@@ -162,24 +163,29 @@ export const gameEngine = () => {
         }
 
         if (state.game[player].powers.includes("chimist")) {
-            const diags = getAllDiagonal()
-            for (let diag of diags) {
-                let streak: typeof board[number] = [];
-                diag.forEach((card, i) => {
-                    if (card.status === player) {
-                        streak.push(card);
-                    }
-                    if (card.status !== player || i + 1 === diag.length) {
-                        if (streak.length >= 3) {
-                            diagStreak.push(streak)
+            const allDiags = getAllDiagonal()
+            for (let i = 0; i < 2; i++) {
+                const diagStreak: typeof board = []
+                const diags = allDiags[i]
+                for (let diag of diags) {
+                    let streak: typeof board[number] = [];
+                    diag.forEach((card, i) => {
+                        if (card.status === player) {
+                            streak.push(card);
                         }
-                        streak = [];
+                        if (card.status !== player || i + 1 === diag.length) {
+                            if (streak.length >= 3) {
+                                diagStreak.push(streak)
+                            }
+                            streak = [];
+                        }
+                    })
+                }
+                for (let diag of diagStreak) {
+                    for (let card of diag) {
+                        card[player].inStreak = true;
+                        card[player][i === 0 ? "diagNeg" : "diagPos"] = true;
                     }
-                })
-            }
-            for (let diag of diagStreak) {
-                for (let card of diag) {
-                    card[player].inStreak = true;
                 }
             }
         }
@@ -783,6 +789,12 @@ export const gameEngine = () => {
                     ...card[you],
                     status: iCanSeeOp ? card.status : card[you].status,
                     inStreak: streak,
+                    ...(card.status === villain ? {
+                        diagNeg: streak ? card[villain].diagNeg : false,
+                        diagPos: streak ? card[villain].diagPos : false,
+                        hori: streak ? card[villain].hori : false,
+                        verti: streak ? card[villain].verti : false,
+                    } : {})
                 } as UserCard,
                 points: getCardValue(card, you),
             };

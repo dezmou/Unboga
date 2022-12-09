@@ -18,6 +18,8 @@ export type UserCard = {
     inStreak: boolean
     hori: boolean
     verti: boolean
+    diagPos : boolean
+    diagNeg : boolean
 }
 export type PlayerStatus = {
     gold: number

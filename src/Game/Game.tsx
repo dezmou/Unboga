@@ -6,7 +6,7 @@ import { useRender, render } from '../render';
 import { global } from '../state';
 import "./Game.css";
 import { Button } from '@mui/material';
-import { Game, MAX_POWER_NUMBER, Player, UserCard, UserGame } from '../../common/src/game.interface';
+import { Game, MAX_POWER_NUMBER, Player, START_GOLD, UserCard, UserGame } from '../../common/src/game.interface';
 
 let selectedPowers: any = {}
 
@@ -275,10 +275,10 @@ const GameContent = () => {
                         <div className='gold-bar-cont'>
                             <div className='gold-bar-cont-little'>
                                 <div className='gold-bar gold-bar-player1' style={{
-                                    width: `${Math.floor(game.youStatus.gold / 300 * 100) - 1}%`
+                                    width: `${Math.floor(game.youStatus.gold / (START_GOLD * 2) * 100) - 1}%`
                                 }}></div>
                                 <div className='gold-bar gold-bar-player2' style={{
-                                    width: `${Math.floor(game.opStatus.gold / 300 * 100) - 1}%`
+                                    width: `${Math.floor(game.opStatus.gold / (START_GOLD * 2) * 100) - 1}%`
                                 }}></div>
                             </div>
 
@@ -333,6 +333,34 @@ const GameContent = () => {
                                         background: getBoardColor(card),
                                     }}>
                                     </div>
+                                    <div className='board-case-line-paint-cont'>
+                                        <div className='board-case-line-paint-middle'>
+                                            <div className='board-case-line' style={{
+                                                opacity: card.status.hori ? "0.7" : "0",
+                                                background: card.status.status === vilain ? "#880000" : "#001488",
+                                                transform: "scaleX(0.95)",
+                                            }}></div>
+                                            <div className='board-case-line' style={{
+                                                opacity: card.status.verti ? "0.7" : "0",
+                                                transform: "rotate(90deg) scaleX(0.95)",
+                                                background: card.status.status === vilain ? "#880000" : "#001488"
+                                            }}></div>
+
+                                            <div className='board-case-line' style={{
+                                                opacity: card.status.diagNeg ? "0.8" : "0",
+                                                transform: "rotate(135deg) scaleX(1.2)",
+                                                background: card.status.status === vilain ? "#880000" : "#001488"
+                                            }}></div>
+                                            <div className='board-case-line' style={{
+                                                opacity: card.status.diagPos ? "0.8" : "0",
+                                                transform: "rotate(45deg) scaleX(1.2)",
+                                                background: card.status.status === vilain ? "#880000" : "#001488"
+                                            }}></div>
+
+
+                                        </div>
+                                    </div>
+
                                     {card.status.villainRefused && <div className='case-forbid'>
                                     </div>
                                     }
