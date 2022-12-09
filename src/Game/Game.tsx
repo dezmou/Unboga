@@ -106,7 +106,7 @@ const GameContent = () => {
     const getPiecePicture = (piece: UserGame["board"][number][number]) => {
         if (game.pick) {
             if (game.pick.x === piece.x && game.pick.y === piece.y) {
-                if (piece.status.inStreak) {
+                if (piece.status.greenStreak) {
                     return "url(/green_lined.png)"
                 } else {
                     return "url(/target.png)"
@@ -341,24 +341,24 @@ const GameContent = () => {
                                         <div className='board-case-line-paint-middle'>
                                             <div className='board-case-line' style={{
                                                 opacity: card.status.hori ? "0.7" : "0",
-                                                background: card.status.status === vilain ? "#880000" : "#001488",
+                                                background: card.status.status === vilain ? "#880000" : (card.status.greenStreak ? "green" : "#001488"),
                                                 transform: "scaleX(0.95)",
                                             }}></div>
                                             <div className='board-case-line' style={{
                                                 opacity: card.status.verti ? "0.7" : "0",
                                                 transform: "rotate(90deg) scaleX(0.95)",
-                                                background: card.status.status === vilain ? "#880000" : "#001488"
+                                                background: card.status.status === vilain ? "#880000" : (card.status.greenStreak ? "green" : "#001488")
                                             }}></div>
 
                                             <div className='board-case-line' style={{
                                                 opacity: card.status.diagNeg ? "0.8" : "0",
                                                 transform: "rotate(135deg) scaleX(1.2)",
-                                                background: card.status.status === vilain ? "#880000" : "#001488"
+                                                background: card.status.status === vilain ? "#880000" : (card.status.greenStreak ? "green" : "#001488")
                                             }}></div>
                                             <div className='board-case-line' style={{
                                                 opacity: card.status.diagPos ? "0.8" : "0",
                                                 transform: "rotate(45deg) scaleX(1.2)",
-                                                background: card.status.status === vilain ? "#880000" : "#001488"
+                                                background: card.status.status === vilain ? "#880000" : (card.status.greenStreak ? "green" : "#001488")
                                             }}></div>
 
 

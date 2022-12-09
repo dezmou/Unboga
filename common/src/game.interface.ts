@@ -18,8 +18,9 @@ export type UserCard = {
     inStreak: boolean
     hori: boolean
     verti: boolean
-    diagPos : boolean
-    diagNeg : boolean
+    diagPos: boolean
+    diagNeg: boolean
+    greenStreak: boolean
 }
 export type PlayerStatus = {
     gold: number
@@ -53,7 +54,7 @@ export type Game = {
         player2: { choosed: boolean, x: number, y: number },
         done: boolean,
     }[]
-    chooseIndex : number
+    chooseIndex: number
     roundResult?: {
         knocker: Player
         winner: Player
@@ -79,7 +80,7 @@ export type Game = {
         player2: { name: string, elo: number, roundWon: number },
         endGameProcessed: boolean,
     }
-    pickHeroTurn : number
+    pickHeroTurn: number
 }
 
 export type UserGame = Modify<Game, {

@@ -32,6 +32,7 @@ export const gameEngine = () => {
             verti: false,
             diagNeg: false,
             diagPos: false,
+            greenStreak: false,
         })
 
         for (let y = 0; y < BOARD_SIZE; y++) {
@@ -772,6 +773,39 @@ export const gameEngine = () => {
             }
         }
 
+        for (let card of getAllCard()) { card[you].greenStreak = false; } //TODO do this in evaluate()
+
+        if (state.game.pick) {
+            const card = state.game.board[state.game.pick.y][state.game.pick.x];
+            const fork = gameEngine()
+            fork.funcs.loadGame(JSON.parse(JSON.stringify(state.game)));
+            fork.state.game.board[card.y][card.x].status = you;
+            fork.state.game.board[card.y][card.x][you].status = you;
+            fork.funcs.evaluate(you);
+            // streak = true;
+
+            const forkCards = fork.funcs.getAllCard();
+            const cards = getAllCard();
+            for (let i = 0; i < forkCards.length; i++) {
+                const card = cards[i];
+                const fCard = forkCards[i];
+                if (!card[you].inStreak && fCard[you].inStreak) {
+                    card[you].diagNeg = fCard[you].diagNeg
+                    card[you].hori = fCard[you].hori
+                    card[you].verti = fCard[you].verti
+                    card[you].diagPos = fCard[you].diagPos
+                    card[you].greenStreak = true;
+                }
+            }
+
+            card[you].diagNeg = fork.state.game.board[card.y][card.x][you].diagNeg
+            card[you].hori = fork.state.game.board[card.y][card.x][you].hori
+            card[you].verti = fork.state.game.board[card.y][card.x][you].verti
+            card[you].diagPos = fork.state.game.board[card.y][card.x][you].diagPos
+            card[you].inStreak = fork.state.game.board[card.y][card.x][you].inStreak
+        }
+
+
         const getUserCard = (card: Game["board"][number][number]) => {
             let streak = false;
             const iCanSeeOp = (state.game.roundResult || state.game[you].powers.includes("eye"))
@@ -782,20 +816,6 @@ export const gameEngine = () => {
                 streak = true;
             }
             if (iCanSeeOp && card.status === villain && card[villain].inStreak) {
-                streak = true;
-            }
-
-            if (state.game.pick && state.game.pick.x === card.x && state.game.pick.y === card.y) {
-                const fork = gameEngine()
-                fork.funcs.loadGame(JSON.parse(JSON.stringify(state.game)));
-                fork.state.game.board[card.y][card.x].status = you;
-                fork.state.game.board[card.y][card.x][you].status = you;
-                fork.funcs.evaluate(you);
-                card[you].diagNeg = fork.state.game.board[card.y][card.x][you].diagNeg
-                card[you].hori = fork.state.game.board[card.y][card.x][you].hori
-                card[you].verti = fork.state.game.board[card.y][card.x][you].verti
-                card[you].diagPos = fork.state.game.board[card.y][card.x][you].diagPos
-                card[you].inStreak = fork.state.game.board[card.y][card.x][you].inStreak
                 streak = true;
             }
 
