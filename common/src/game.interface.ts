@@ -21,6 +21,7 @@ export type UserCard = {
 }
 export type PlayerStatus = {
     gold: number
+    goldPublic: number
     powers: (keyof typeof powers)[]
     powerReady: boolean
     points: number

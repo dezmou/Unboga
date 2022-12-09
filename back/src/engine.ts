@@ -208,8 +208,8 @@ export const gameEngine = () => {
             board: getNewBoard(),
             nextAction: "selectHero",
             nextActionPlayer: ["player1" as Player, "player2" as Player][Math.floor(Math.random() * 2)],
-            player1: { gold: state.game.player1.gold, powers: [], powerReady: false, points: 0, ready: true },
-            player2: { gold: state.game.player2.gold, powers: [], powerReady: false, points: 0, ready: true },
+            player1: { gold: state.game.player1.gold, goldPublic: state.game.player1.gold, powers: [], powerReady: false, points: 0, ready: true },
+            player2: { gold: state.game.player2.gold, goldPublic: state.game.player2.gold, powers: [], powerReady: false, points: 0, ready: true },
             choose: [],
             chooseIndex: 0,
             pickHeroTurn: 0,
@@ -233,8 +233,8 @@ export const gameEngine = () => {
             nextActionPlayer: ["player1" as Player, "player2" as Player][Math.floor(Math.random() * 2)],
             player1Id: player1,
             player2Id: player2,
-            player1: { gold: START_GOLD, powers: [], powerReady: false, points: 0, ready: true },
-            player2: { gold: START_GOLD, powers: [], powerReady: false, points: 0, ready: true },
+            player1: { gold: START_GOLD, goldPublic: START_GOLD, powers: [], powerReady: false, points: 0, ready: true },
+            player2: { gold: START_GOLD, goldPublic: START_GOLD, powers: [], powerReady: false, points: 0, ready: true },
             misc: {
                 player1: { elo: 0, name: "", roundWon: 0 },
                 player2: { elo: 0, name: "", roundWon: 0 },
@@ -393,6 +393,15 @@ export const gameEngine = () => {
                 }
             }
 
+            for (let player of ["player1" as Player, "player2" as Player]) {
+                if (!(state.game[player].powers.includes("fog")
+                    && state.game[player].powers[state.game.pickHeroTurn] !== "fog")
+                ) {
+                    state.game[player].goldPublic += -powers[state.game[player].powers[state.game.pickHeroTurn]].cost
+                }
+                state.game[player].gold += -powers[state.game[player].powers[state.game.pickHeroTurn]].cost
+            }
+
             state.game.pickHeroTurn += 1;
             if (state.game.pickHeroTurn === 3) {
                 onPowersSelected();
@@ -442,9 +451,9 @@ export const gameEngine = () => {
 
         const basePointsWin = result.pointsWin;
         for (let player of ["player1", "player2"] as Player[]) {
-            for (let power of state.game[player].powers) {
-                state.game[player].gold += -powers[power as keyof typeof powers].cost;
-            }
+            // for (let power of state.game[player].powers) {
+            //     state.game[player].gold += -powers[power as keyof typeof powers].cost;
+            // }
             if (state.game[player].powers.includes("phone")) {
                 result.pointsWin += Math.floor(basePointsWin * state.game[player].powers.filter(e => e === "phone").length * 0.3)
             }
@@ -476,6 +485,8 @@ export const gameEngine = () => {
                 reason: "win"
             }
         }
+        state.game.player1.goldPublic = state.game.player1.gold
+        state.game.player2.goldPublic = state.game.player2.gold
     }
 
     const onZeroPoint = (player: Player) => {
@@ -678,6 +689,7 @@ export const gameEngine = () => {
                 ...state.game[villain],
                 points: (state.game.roundResult || state.game[you].powers.includes("eye")) ? state.game[villain].points : undefined,
                 powers: getVillainPowers(),
+                gold: state.game[villain].goldPublic
             }
         }
         const possibleKnock = canKnock(you);

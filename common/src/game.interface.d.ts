@@ -18,6 +18,7 @@ export declare type UserCard = {
 };
 export declare type PlayerStatus = {
     gold: number;
+    goldPublic: number;
     powers: (keyof typeof powers)[];
     powerReady: boolean;
     points: number;

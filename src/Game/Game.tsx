@@ -284,8 +284,10 @@ const GameContent = () => {
 
                         </div>
                         <div className='gold-value-flex'>
-                            <div className='gold-value-symb'></div>
-                            <div className='gold-value'>{game.opStatus.gold}</div>
+                            <div className='gold-value-symb' style={{
+                                filter: !game.roundResult && game.opStatus.powers && game.opStatus.powers.includes("fog") && game.opStatus.powers.length > 1 ? "blur(2px)" : "none"
+                            }}></div>
+                            <div className='gold-value' >{game.opStatus.gold}</div>
                         </div>
                     </div>
                 </div>

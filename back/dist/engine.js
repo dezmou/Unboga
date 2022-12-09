@@ -188,7 +188,7 @@ const gameEngine = () => {
     };
     // TODO no duplicate code
     const newRound = () => {
-        state.game = Object.assign(Object.assign({}, state.game), { roundId: makeId(), board: getNewBoard(), nextAction: "selectHero", nextActionPlayer: ["player1", "player2"][Math.floor(Math.random() * 2)], player1: { gold: state.game.player1.gold, powers: [], powerReady: false, points: 0, ready: true }, player2: { gold: state.game.player2.gold, powers: [], powerReady: false, points: 0, ready: true }, choose: [], chooseIndex: 0, pickHeroTurn: 0 });
+        state.game = Object.assign(Object.assign({}, state.game), { roundId: makeId(), board: getNewBoard(), nextAction: "selectHero", nextActionPlayer: ["player1", "player2"][Math.floor(Math.random() * 2)], player1: { gold: state.game.player1.gold, goldPublic: state.game.player1.gold, powers: [], powerReady: false, points: 0, ready: true }, player2: { gold: state.game.player2.gold, goldPublic: state.game.player2.gold, powers: [], powerReady: false, points: 0, ready: true }, choose: [], chooseIndex: 0, pickHeroTurn: 0 });
         distribute("player1");
         distribute("player2");
         evaluate("player1");
@@ -207,8 +207,8 @@ const gameEngine = () => {
             nextActionPlayer: ["player1", "player2"][Math.floor(Math.random() * 2)],
             player1Id: player1,
             player2Id: player2,
-            player1: { gold: game_interface_1.START_GOLD, powers: [], powerReady: false, points: 0, ready: true },
-            player2: { gold: game_interface_1.START_GOLD, powers: [], powerReady: false, points: 0, ready: true },
+            player1: { gold: game_interface_1.START_GOLD, goldPublic: game_interface_1.START_GOLD, powers: [], powerReady: false, points: 0, ready: true },
+            player2: { gold: game_interface_1.START_GOLD, goldPublic: game_interface_1.START_GOLD, powers: [], powerReady: false, points: 0, ready: true },
             misc: {
                 player1: { elo: 0, name: "", roundWon: 0 },
                 player2: { elo: 0, name: "", roundWon: 0 },
@@ -346,6 +346,13 @@ const gameEngine = () => {
                     }
                 }
             }
+            for (let player of ["player1", "player2"]) {
+                if (!(state.game[player].powers.includes("fog")
+                    && state.game[player].powers[state.game.pickHeroTurn] !== "fog")) {
+                    state.game[player].goldPublic += -powers_1.powers[state.game[player].powers[state.game.pickHeroTurn]].cost;
+                }
+                state.game[player].gold += -powers_1.powers[state.game[player].powers[state.game.pickHeroTurn]].cost;
+            }
             state.game.pickHeroTurn += 1;
             if (state.game.pickHeroTurn === 3) {
                 onPowersSelected();
@@ -391,9 +398,9 @@ const gameEngine = () => {
         }
         const basePointsWin = result.pointsWin;
         for (let player of ["player1", "player2"]) {
-            for (let power of state.game[player].powers) {
-                state.game[player].gold += -powers_1.powers[power].cost;
-            }
+            // for (let power of state.game[player].powers) {
+            //     state.game[player].gold += -powers[power as keyof typeof powers].cost;
+            // }
             if (state.game[player].powers.includes("phone")) {
                 result.pointsWin += Math.floor(basePointsWin * state.game[player].powers.filter(e => e === "phone").length * 0.3);
             }
@@ -425,6 +432,8 @@ const gameEngine = () => {
                 reason: "win"
             };
         }
+        state.game.player1.goldPublic = state.game.player1.gold;
+        state.game.player2.goldPublic = state.game.player2.gold;
     };
     const onZeroPoint = (player) => {
         if (state.game[player].points !== 0)
@@ -613,7 +622,7 @@ const gameEngine = () => {
                 }
                 return pows;
             };
-            return Object.assign(Object.assign({}, state.game[villain]), { points: (state.game.roundResult || state.game[you].powers.includes("eye")) ? state.game[villain].points : undefined, powers: getVillainPowers() });
+            return Object.assign(Object.assign({}, state.game[villain]), { points: (state.game.roundResult || state.game[you].powers.includes("eye")) ? state.game[villain].points : undefined, powers: getVillainPowers(), gold: state.game[villain].goldPublic });
         };
         const possibleKnock = canKnock(you);
         const getInfos = () => {
