@@ -490,19 +490,23 @@ const GameContent = () => {
                 <div className='bottom-zone'>
                     <div className='power-select-cont' style={{
                         opacity: game.nextAction === "selectHero" && !game.youStatus.powerReady ? "1" : "0.5",
-                        pointerEvents: game.nextAction === "selectHero" && !game.youStatus.powerReady ? "initial" : "none",
+                        // pointerEvents: game.nextAction === "selectHero" && !game.youStatus.powerReady ? "initial" : "none",
                     }}>
 
                         {(Object.values(powers))
                             .filter(e => e.id !== "unknow")
                             .sort((a, b) => a.cost - b.cost)
                             .map((power, i) => <div className='power-cont grid' key={i} onClick={() => {
-                                pickPower(power.id as keyof typeof powers)
+                                if (game.nextAction === "selectHero"
+                                    && !game.youStatus.powerReady
+                                    && !(game.youStatus.powers.filter(e => e === power.id).length === power.max)
+                                )
+                                    pickPower(power.id as keyof typeof powers)
                             }}
                                 style={{
                                     opacity: game.youStatus.powers.filter(e => e === power.id).length === power.max ? "0.5" : "1",
                                     cursor: game.youStatus.powers.filter(e => e === power.id).length === power.max ? "initial" : "pointer",
-                                    pointerEvents: game.youStatus.powers.filter(e => e === power.id).length === power.max ? "none" : "initial",
+                                    // pointerEvents: game.youStatus.powers.filter(e => e === power.id).length === power.max ? "none" : "initial",
                                 }}
                             >
                                 <div className='power-content' style={{

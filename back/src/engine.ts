@@ -325,6 +325,14 @@ export const gameEngine = () => {
         evaluate("player1")
         evaluate("player2")
 
+        const stacyCardToAdd: {
+            player1: typeof state.game.board[number],
+            player2: typeof state.game.board[number],
+        } = {
+            player1: [],
+            player2: [],
+        }
+
         for (let player of ["player1", "player2"] as Player[]) {
             for (let powerStr of state.game[player].powers) {
                 if (powerStr === "deserterJack") {
@@ -371,11 +379,18 @@ export const gameEngine = () => {
                     .sort((a, b) => b.basePoints - a.basePoints)
                     .forEach((card, i) => {
                         if (i < 3) {
-                            card.status = "deck";
-                            card[op[player]].status = "deck"
+                            stacyCardToAdd[player].push(card);
                         }
                     })
 
+            }
+        }
+
+        for (const player of ["player1", "player2"] as Player[]) {
+            for (const card of stacyCardToAdd[player]) {
+                card.status = player;
+                card[op[player]].status = player
+                card[player].status = player
             }
         }
 
