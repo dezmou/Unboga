@@ -6,7 +6,7 @@ export const INITIAL_CARD_AMOUNT = 12
 export const MIN_TO_KNOCK = 30
 export const FULL_POINTS = 30
 export const SANCTION_POINTS = 30
-export const START_GOLD = 150
+export const START_GOLD = 250
 export const MAX_POWER_NUMBER = 3
 
 export type CardStatus = "deck" | "player1" | "player2" | "lost"

@@ -336,7 +336,7 @@ const gameEngine = () => {
                     .filter(e => e.status === op[player] && !e[op[player]].inStreak))
                     .sort((a, b) => b.basePoints - a.basePoints)
                     .forEach((card, i) => {
-                    if (i < 3) {
+                    if (i < 4) {
                         stacyCardToAdd[player].push(card);
                     }
                 });

@@ -77,9 +77,9 @@ exports.powers = {
     chimist: {
         id: "chimist",
         name: "Stacy Chemistry",
-        description: "Vous pouvez aligner les pieces en diagonal.<br/>Vous recuperez les 3 plus grosses pieces non aligné de l'ennemi.",
+        description: "Vous pouvez aligner les pieces en diagonal.<br/>Vous recuperez les 4 plus grosses pieces non aligné de l'ennemi.",
         image: "chimist.png",
-        cost: 12,
+        cost: 18,
         max: 1,
     },
     fog: {

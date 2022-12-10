@@ -6,5 +6,5 @@ exports.INITIAL_CARD_AMOUNT = 12;
 exports.MIN_TO_KNOCK = 30;
 exports.FULL_POINTS = 30;
 exports.SANCTION_POINTS = 30;
-exports.START_GOLD = 150;
+exports.START_GOLD = 250;
 exports.MAX_POWER_NUMBER = 3;
