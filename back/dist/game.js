@@ -15,6 +15,7 @@ const bdd_1 = require("./bdd");
 const engine_1 = require("./engine");
 const lobby_1 = require("./lobby");
 const users_1 = require("./users");
+const powers_1 = require("../../common/src/powers");
 exports.BOT_ID = "aaaaaaaaaaaaaaaaaaaaaaaa";
 const calculateElo = (myRating, opponentRating, myGameResult) => {
     const getRatingDelta = (myRating, opponentRating, myGameResult) => {
@@ -163,7 +164,17 @@ const play = (socket, param) => __awaiter(void 0, void 0, void 0, function* () {
             game.funcs.setReady(exports.BOT_ID);
         }
         if (!game.state.game.player2.powerReady) {
-            game.funcs.pickPower(exports.BOT_ID, "fox");
+            const pows = Object.keys(powers_1.powers).filter((e) => {
+                if (e === "unknow") {
+                    return false;
+                }
+                if (game.state.game.player2.powers.filter(b => b === e).length >= (powers_1.powers[e]).max) {
+                    return false;
+                }
+                return true;
+            });
+            console.log(pows);
+            game.funcs.pickPower(exports.BOT_ID, pows[Math.floor(Math.random() * pows.length)]);
         }
         if (game.state.game.gameResult) {
             game.state.game.gameResult.revenge.player2 = "yes";

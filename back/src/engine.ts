@@ -418,7 +418,6 @@ export const gameEngine = () => {
                     }
                 }
             }
-
             for (let player of ["player1" as Player, "player2" as Player]) {
                 if (!(state.game[player].powers.includes("fog")
                     && state.game[player].powers[state.game.pickHeroTurn] !== "fog")

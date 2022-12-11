@@ -5,6 +5,7 @@ import { gameEngine } from "./engine"
 import { playBot, updateLobby } from "./lobby"
 import { SSocket } from "./state"
 import { sendStateToUser } from "./users"
+import { powers } from "../../common/src/powers"
 
 export const BOT_ID = "aaaaaaaaaaaaaaaaaaaaaaaa";
 
@@ -153,7 +154,17 @@ export const play = async (socket: SSocket, param: Play) => {
             game.funcs.setReady(BOT_ID);
         }
         if (!game.state.game!.player2.powerReady) {
-            game.funcs.pickPower(BOT_ID, "fox")
+            const pows = Object.keys(powers).filter((e) => {
+                if (e === "unknow") {
+                    return false;
+                }
+                if (game.state.game.player2.powers.filter(b => b === e).length >= (powers[e as keyof typeof powers]).max) {
+                    return false
+                }
+                return true;
+            }) as (keyof typeof powers)[]
+            console.log(pows);
+            game.funcs.pickPower(BOT_ID, pows[Math.floor(Math.random() * pows.length)]);
         }
         if (game.state.game!.gameResult) {
             game.state.game!.gameResult.revenge.player2 = "yes";
