@@ -1,18 +1,20 @@
 import { getUserState } from "./bdd";
 import { ApiCallBase, Challenge, PlayBot, ToastEvent } from "../../common/src/api.interface";
 import { BOT_ID, newGame } from "./game";
-import { io, lobby, SSocket, userIdToSocket } from "./state";
+import { io, lobby, SSocket, userIdToSockets } from "./state";
 
 export const cancelChallenge = async (socket: SSocket, param: ApiCallBase) => {
     if (!lobby[param.user!.id] || !lobby[param.user!.id].challenge) return;
     if (lobby[param.user!.id].challenge!.initiator !== param.user!.id) {
-        const op = userIdToSocket[lobby[param.user!.id].challenge!.player1];
+        const op = userIdToSockets[lobby[param.user!.id].challenge!.player1];
         if (op) {
-            op.emit("toast", JSON.stringify({
-                color: "blue",
-                msg: "Challenge declined",
-                time: 2000,
-            } as ToastEvent))
+            for (const sock of Object.values(op)) {
+                sock.emit("toast", JSON.stringify({
+                    color: "blue",
+                    msg: "Challenge declined",
+                    time: 2000,
+                } as ToastEvent))
+            }
         }
     }
     const player1 = lobby[param.user!.id].challenge!.player1
@@ -55,8 +57,8 @@ export const challenge = async (socket: SSocket, param: Challenge) => {
     ])
     if (!user!.inGame
         && !target!.inGame
-        && userIdToSocket[param.id]
-        && userIdToSocket[param.user!.id]
+        && userIdToSockets[param.id]
+        && userIdToSockets[param.user!.id]
         && (lobby[param.id] && lobby[param.id].status === "online")
         && (lobby[param.user!.id] && lobby[param.user!.id].status === "online")
         && !lobby[param.id].challenge
@@ -76,7 +78,7 @@ export const challenge = async (socket: SSocket, param: Challenge) => {
 
 export const updateLobby = async (userIds: string[]) => {
     await Promise.all(userIds.map(userId => (async () => {
-        if (!userIdToSocket[userId]) {
+        if (!userIdToSockets[userId]) {
             if (lobby[userId]) {
                 delete lobby[userId];
             }

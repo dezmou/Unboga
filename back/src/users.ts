@@ -1,14 +1,19 @@
 import { addUser, getUserState, getUserByName } from "./bdd";
 import { ApiCallBase, AskState, CreateUser, Login, State, ToastEvent } from "../../common/src/api.interface";
 import { updateLobby } from "./lobby";
-import { lobby, sendState, socketIdToUserId, SSocket, userIdToSocket } from "./state";
+import { lobby, sendState, socketIdToUserId, SSocket, userIdToSockets } from "./state";
 
 export const disconnect = async (socket: SSocket, param: ApiCallBase) => {
     console.log("DISCONNECT");
     const userId = socketIdToUserId[socket.id]
     if (userId) {
         delete socketIdToUserId[socket.id];
-        delete userIdToSocket[userId];
+        if (userIdToSockets[userId]) {
+            delete userIdToSockets[userId][socket.id]
+            if (Object.keys(userIdToSockets[userId]).length === 0) {
+                delete userIdToSockets[userId];
+            }
+        }
         if (lobby[userId].challenge) {
             const [player1, player2] = [lobby[userId].challenge!.player1, lobby[userId].challenge!.player2]
             delete lobby[player1].challenge
@@ -28,7 +33,7 @@ export const login = async (socket: SSocket, param: Login) => {
         } as ToastEvent))
         return;
     }
-    if (param.name.length > 10){
+    if (param.name.length > 10) {
         socket.emit("toast", JSON.stringify({
             color: "red",
             msg: "Username too long",
@@ -40,12 +45,21 @@ export const login = async (socket: SSocket, param: Login) => {
 }
 
 export const sendStateToUser = (userId: string, state: State) => {
-    if (!userIdToSocket[userId]) {
-        console.log(Object.keys(userIdToSocket));
-        console.log("NOT FOUND", userId);
+    if (!userIdToSockets[userId]) {
         return;
     }
-    sendState(userIdToSocket[userId], state);
+    // for (const sock of Object.keys(userIdToSockets[userId])) {
+    //     if (!userIdToSockets[userId][sock].connected) {
+    //         delete userIdToSockets[userId][sock];
+    //     }
+    // }
+
+
+    console.log();
+    for (const sock of Object.values(userIdToSockets[userId])) {
+        sendState(sock, state);
+    }
+    console.log();
 }
 
 export const askState = async (socket: SSocket, param: AskState) => {
@@ -62,12 +76,17 @@ export const askState = async (socket: SSocket, param: AskState) => {
                 render: ["login"]
             })
         } else {
-            if (!userIdToSocket[param.user!.id]) {
-                userIdToSocket[param.user!.id] = socket;
-                socketIdToUserId[socket.id] = param.user!.id;
-                updateLobby([param.user!.id]);
+            if (!userIdToSockets[param.user!.id]) {
+                userIdToSockets[param.user!.id] = {};
             }
-            return sendState(socket, res);
+            if (!userIdToSockets[param.user!.id][socket.id]) {
+                userIdToSockets[param.user!.id][socket.id] = socket;
+            }
+            socketIdToUserId[socket.id] = param.user!.id;
+            updateLobby([param.user!.id]);
+
+            // if (userIdToSockets[param])
+            return sendStateToUser(param.user.id, res);
         }
     }
 }

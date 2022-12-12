@@ -18,7 +18,12 @@ const disconnect = (socket, param) => __awaiter(void 0, void 0, void 0, function
     const userId = state_1.socketIdToUserId[socket.id];
     if (userId) {
         delete state_1.socketIdToUserId[socket.id];
-        delete state_1.userIdToSocket[userId];
+        if (state_1.userIdToSockets[userId]) {
+            delete state_1.userIdToSockets[userId][socket.id];
+            if (Object.keys(state_1.userIdToSockets[userId]).length === 0) {
+                delete state_1.userIdToSockets[userId];
+            }
+        }
         if (state_1.lobby[userId].challenge) {
             const [player1, player2] = [state_1.lobby[userId].challenge.player1, state_1.lobby[userId].challenge.player2];
             delete state_1.lobby[player1].challenge;
@@ -50,12 +55,17 @@ const login = (socket, param) => __awaiter(void 0, void 0, void 0, function* () 
 });
 exports.login = login;
 const sendStateToUser = (userId, state) => {
-    if (!state_1.userIdToSocket[userId]) {
-        console.log(Object.keys(state_1.userIdToSocket));
-        console.log("NOT FOUND", userId);
+    if (!state_1.userIdToSockets[userId]) {
         return;
     }
-    (0, state_1.sendState)(state_1.userIdToSocket[userId], state);
+    for (const sock of Object.keys(state_1.userIdToSockets[userId])) {
+        if (!state_1.userIdToSockets[userId][sock].connected) {
+            delete state_1.userIdToSockets[userId][sock];
+        }
+    }
+    for (const sock of Object.values(state_1.userIdToSockets[userId])) {
+        (0, state_1.sendState)(sock, state);
+    }
 };
 exports.sendStateToUser = sendStateToUser;
 const askState = (socket, param) => __awaiter(void 0, void 0, void 0, function* () {
@@ -74,12 +84,16 @@ const askState = (socket, param) => __awaiter(void 0, void 0, void 0, function* 
             });
         }
         else {
-            if (!state_1.userIdToSocket[param.user.id]) {
-                state_1.userIdToSocket[param.user.id] = socket;
-                state_1.socketIdToUserId[socket.id] = param.user.id;
-                (0, lobby_1.updateLobby)([param.user.id]);
+            if (!state_1.userIdToSockets[param.user.id]) {
+                state_1.userIdToSockets[param.user.id] = {};
             }
-            return (0, state_1.sendState)(socket, res);
+            if (!state_1.userIdToSockets[param.user.id][socket.id]) {
+                state_1.userIdToSockets[param.user.id][socket.id] = socket;
+            }
+            state_1.socketIdToUserId[socket.id] = param.user.id;
+            (0, lobby_1.updateLobby)([param.user.id]);
+            // if (userIdToSockets[param])
+            return (0, exports.sendStateToUser)(param.user.id, res);
         }
     }
 });

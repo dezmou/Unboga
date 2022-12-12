@@ -17,13 +17,15 @@ const cancelChallenge = (socket, param) => __awaiter(void 0, void 0, void 0, fun
     if (!state_1.lobby[param.user.id] || !state_1.lobby[param.user.id].challenge)
         return;
     if (state_1.lobby[param.user.id].challenge.initiator !== param.user.id) {
-        const op = state_1.userIdToSocket[state_1.lobby[param.user.id].challenge.player1];
+        const op = state_1.userIdToSockets[state_1.lobby[param.user.id].challenge.player1];
         if (op) {
-            op.emit("toast", JSON.stringify({
-                color: "blue",
-                msg: "Challenge declined",
-                time: 2000,
-            }));
+            for (const sock of Object.values(op)) {
+                sock.emit("toast", JSON.stringify({
+                    color: "blue",
+                    msg: "Challenge declined",
+                    time: 2000,
+                }));
+            }
         }
     }
     const player1 = state_1.lobby[param.user.id].challenge.player1;
@@ -66,8 +68,8 @@ const challenge = (socket, param) => __awaiter(void 0, void 0, void 0, function*
     ]);
     if (!user.inGame
         && !target.inGame
-        && state_1.userIdToSocket[param.id]
-        && state_1.userIdToSocket[param.user.id]
+        && state_1.userIdToSockets[param.id]
+        && state_1.userIdToSockets[param.user.id]
         && (state_1.lobby[param.id] && state_1.lobby[param.id].status === "online")
         && (state_1.lobby[param.user.id] && state_1.lobby[param.user.id].status === "online")
         && !state_1.lobby[param.id].challenge
@@ -87,7 +89,7 @@ const challenge = (socket, param) => __awaiter(void 0, void 0, void 0, function*
 exports.challenge = challenge;
 const updateLobby = (userIds) => __awaiter(void 0, void 0, void 0, function* () {
     yield Promise.all(userIds.map(userId => (() => __awaiter(void 0, void 0, void 0, function* () {
-        if (!state_1.userIdToSocket[userId]) {
+        if (!state_1.userIdToSockets[userId]) {
             if (state_1.lobby[userId]) {
                 delete state_1.lobby[userId];
             }

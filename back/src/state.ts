@@ -18,5 +18,5 @@ export type SSocket = Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMa
 
 export const io = new Server(server, { path: '/api' });
 export const lobby: { [key: string]: LobbyEntry } = {}
-export const userIdToSocket: { [key: string]: SSocket } = {}
+export const userIdToSockets: { [key: string]: { [key: string]: SSocket } } = {}
 export const socketIdToUserId: { [key: string]: string } = {}

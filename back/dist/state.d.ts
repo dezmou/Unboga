@@ -7,8 +7,10 @@ export declare const io: Server<DefaultEventsMap, DefaultEventsMap, DefaultEvent
 export declare const lobby: {
     [key: string]: LobbyEntry;
 };
-export declare const userIdToSocket: {
-    [key: string]: SSocket;
+export declare const userIdToSockets: {
+    [key: string]: {
+        [key: string]: SSocket;
+    };
 };
 export declare const socketIdToUserId: {
     [key: string]: string;
