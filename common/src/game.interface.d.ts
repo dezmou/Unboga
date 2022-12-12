@@ -7,6 +7,7 @@ export declare const FULL_POINTS = 30;
 export declare const SANCTION_POINTS = 30;
 export declare const START_GOLD = 250;
 export declare const MAX_POWER_NUMBER = 3;
+export declare const BOT_ID = "aaaaaaaaaaaaaaaaaaaaaaaa";
 export declare type CardStatus = "deck" | "player1" | "player2" | "lost";
 export declare type UserCard = {
     status: CardStatus;

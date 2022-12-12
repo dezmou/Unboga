@@ -3,6 +3,7 @@ import { render } from "./render";
 import { global } from "./state"
 import { ApiCAll, Call, Capitulate, ExitLobby, PlayChosse, PlayDiscard, PlayKnock, PlayPickGreen, PlayPickRandom, PlayReady, PlayPickPower, Revenge, State, ToastEvent } from "../common/src/api.interface"
 import { powers } from "../common/src/powers";
+import { Howl } from "howler";
 
 const socket = io(`${window.location.origin}`, {
     path: "/api",
@@ -139,7 +140,13 @@ const watchLayout = async () => {
 }
 
 export const audios = {
-    close : new Audio("close.mp3"),
+    close: new Howl({ src: ['close.mp3'] }),
+    choose: new Howl({ src: ['choose.mp3'] }),
+    knock: new Howl({ src: ['knock.mp3'] }),
+    pomp: new Howl({ src: ['pomp.mp3'] }),
+    you: new Howl({ src: ['you.mp3'] }),
+    fool: new Howl({ src: ['fool.mp3'],  }),
+    full: new Howl({ src: ['full.mp3'],  }),
 }
 
 export const main = async () => {

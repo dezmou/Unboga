@@ -8,6 +8,7 @@ export const FULL_POINTS = 30
 export const SANCTION_POINTS = 30
 export const START_GOLD = 250
 export const MAX_POWER_NUMBER = 3
+export const BOT_ID = "aaaaaaaaaaaaaaaaaaaaaaaa";
 
 export type CardStatus = "deck" | "player1" | "player2" | "lost"
 

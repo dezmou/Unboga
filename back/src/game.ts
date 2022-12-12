@@ -6,8 +6,7 @@ import { playBot, updateLobby } from "./lobby"
 import { SSocket } from "./state"
 import { sendStateToUser } from "./users"
 import { powers } from "../../common/src/powers"
-
-export const BOT_ID = "aaaaaaaaaaaaaaaaaaaaaaaa";
+import { BOT_ID } from "../../common/src/game.interface"
 
 const calculateElo = (myRating: number, opponentRating: number, myGameResult: number) => {
 

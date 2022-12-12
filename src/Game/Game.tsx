@@ -1,12 +1,12 @@
 import anime from 'animejs';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { capitulate, choose, discard, exitLobby, knock, pickgreen, pickRandom, ready, revenge, pickPower } from '../logic';
+import { capitulate, choose, discard, exitLobby, knock, pickgreen, pickRandom, ready, revenge, pickPower, audios } from '../logic';
 import { powers } from "./../../common/src/powers"
 import { useRender, render } from '../render';
 import { global } from '../state';
 import "./Game.css";
 import { Button } from '@mui/material';
-import { Game, MAX_POWER_NUMBER, Player, START_GOLD, UserCard, UserGame } from '../../common/src/game.interface';
+import { BOT_ID, Game, MAX_POWER_NUMBER, Player, START_GOLD, UserCard, UserGame } from '../../common/src/game.interface';
 
 let selectedPowers: any = {}
 
@@ -47,10 +47,38 @@ const GameContent = () => {
     const [overHero, setOverHero] = useState<undefined | keyof typeof powers>()
 
     useEffect(() => {
+        if (!game.roundResult) {
+            if (game.nextAction === "discard" && game.nextActionPlayer === you) {
+                audios.pomp.play()
+            }
+            if ((game.nextAction === "pick" || game.nextAction === "choose") && game.nextActionPlayer !== you) {
+                if (game.player2Id === BOT_ID) {
+                    audios.pomp.play()
+                } else {
+                    audios.you.play()
+                }
+            }
+        }
+        if (game.roundResult) {
+            if (game.roundResult.reason === "knock_win") {
+                audios.knock.play()
+            }
+            if (game.roundResult.reason === "knock_lost") {
+                audios.fool.play()
+            }
+            if (game.roundResult.reason === "knock_full") {
+                audios.full.play()
+            }
+        }
+
+    }, [global.state.game])
+
+    useEffect(() => {
         const root = document.documentElement
         if (game.nextAction === "selectHero") {
             for (let line of board) {
                 for (let card of line) {
+                    const delay = Math.random() * 300;
                     if (card.status.status === you) {
                         anime({
                             targets: `#card_${card.id} .case-piece`,
@@ -62,7 +90,7 @@ const GameContent = () => {
                             targets: `#card_${card.id} .case-piece`,
                             scale: "1",
                             opacity: 1,
-                            delay: Math.random() * 300,
+                            delay,
                         })
                     }
                 }
@@ -507,7 +535,8 @@ const GameContent = () => {
                                     && !game.youStatus.powerReady
                                     && !(game.youStatus.powers.filter(e => e === power.id).length === power.max)
                                 )
-                                    pickPower(power.id as keyof typeof powers)
+                                    audios.choose.play();
+                                pickPower(power.id as keyof typeof powers)
                             }}
                                 style={{
                                     opacity: game.youStatus.powers.filter(e => e === power.id).length === power.max ? "0.5" : "1",

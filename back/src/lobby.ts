@@ -1,7 +1,8 @@
 import { getUserState } from "./bdd";
 import { ApiCallBase, Challenge, PlayBot, ToastEvent } from "../../common/src/api.interface";
-import { BOT_ID, newGame } from "./game";
+import {  newGame } from "./game";
 import { io, lobby, SSocket, userIdToSockets } from "./state";
+import { BOT_ID } from "../../common/src/game.interface";
 
 export const cancelChallenge = async (socket: SSocket, param: ApiCallBase) => {
     if (!lobby[param.user!.id] || !lobby[param.user!.id].challenge) return;
