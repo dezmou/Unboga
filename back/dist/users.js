@@ -58,11 +58,6 @@ const sendStateToUser = (userId, state) => {
     if (!state_1.userIdToSockets[userId]) {
         return;
     }
-    for (const sock of Object.keys(state_1.userIdToSockets[userId])) {
-        if (!state_1.userIdToSockets[userId][sock].connected) {
-            delete state_1.userIdToSockets[userId][sock];
-        }
-    }
     for (const sock of Object.values(state_1.userIdToSockets[userId])) {
         (0, state_1.sendState)(sock, state);
     }

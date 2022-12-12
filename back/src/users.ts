@@ -48,18 +48,10 @@ export const sendStateToUser = (userId: string, state: State) => {
     if (!userIdToSockets[userId]) {
         return;
     }
-    // for (const sock of Object.keys(userIdToSockets[userId])) {
-    //     if (!userIdToSockets[userId][sock].connected) {
-    //         delete userIdToSockets[userId][sock];
-    //     }
-    // }
 
-
-    console.log();
     for (const sock of Object.values(userIdToSockets[userId])) {
         sendState(sock, state);
     }
-    console.log();
 }
 
 export const askState = async (socket: SSocket, param: AskState) => {
