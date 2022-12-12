@@ -138,6 +138,10 @@ const watchLayout = async () => {
     }
 }
 
+export const audios = {
+    close : new Audio("close.mp3"),
+}
+
 export const main = async () => {
 
     window.onbeforeunload = () => {

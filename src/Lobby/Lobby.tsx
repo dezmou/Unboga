@@ -1,7 +1,7 @@
 import { Button } from "@mui/material";
 import { useEffect, useRef } from 'react';
 import { LobbyEntry } from '../../common/src/api.interface';
-import { acceptChallenge, cancelChallenge, challenge, playBot } from '../logic';
+import { acceptChallenge, audios, cancelChallenge, challenge, playBot } from '../logic';
 import { useRender } from '../render';
 import { global } from '../state';
 import "./Lobby.css";
@@ -62,9 +62,10 @@ export default () => {
     const lastPage = useRef(global.state.page);
 
     useEffect(() => {
-        if (global.state.page === "lobby") {
-
+        if (global.state.page !== lastPage.current && lastPage.current === "game" && global.state.page === "lobby") {
+            audios.close.play()
         }
+        lastPage.current = global.state.page;
     }, [global.state.page])
 
     const clickChallenge = (userId: string) => {

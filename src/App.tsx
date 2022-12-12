@@ -13,8 +13,10 @@ function App() {
   const rd = useRender("global")
 
   useEffect(() => {
-    rd();
-    main()
+    ;(async () => {
+      rd();
+      main()
+    })()
   }, [])
 
   return <>
