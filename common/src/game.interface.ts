@@ -16,11 +16,10 @@ export type UserCard = {
     villainRefused: boolean
     points: number
     inStreak: boolean
-    hori: boolean
-    verti: boolean
-    diagPos: boolean
-    diagNeg: boolean
-    greenStreak: boolean
+    hori:  "futur" | "you" | "none"
+    verti:  "futur" | "you" | "none"
+    diagPos:  "futur" | "you" | "none"
+    diagNeg:  "futur" | "you" | "none"
 }
 export type PlayerStatus = {
     gold: number

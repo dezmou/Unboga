@@ -26,12 +26,11 @@ const gameEngine = () => {
             status: "deck",
             villainRefused: false,
             points: getBasePoint(x, y),
-            hori: false,
+            hori: "none",
             inStreak: false,
-            verti: false,
-            diagNeg: false,
-            diagPos: false,
-            greenStreak: false,
+            verti: "none",
+            diagNeg: "none",
+            diagPos: "none",
         });
         for (let y = 0; y < game_interface_1.BOARD_SIZE; y++) {
             const line = [];
@@ -135,20 +134,22 @@ const gameEngine = () => {
         for (let line of board) {
             for (let card of line) {
                 card[player].inStreak = false;
-                card[player].hori = false;
-                card[player].verti = false;
+                card[player].hori = "none";
+                card[player].verti = "none";
+                card[player].diagNeg = "none";
+                card[player].diagPos = "none";
             }
         }
         for (let hori of horiStreak) {
             for (let card of hori) {
                 card[player].inStreak = true;
-                card[player].hori = true;
+                card[player].hori = "you";
             }
         }
         for (let verti of vertiStreak) {
             for (let card of verti) {
                 card[player].inStreak = true;
-                card[player].verti = true;
+                card[player].verti = "you";
             }
         }
         if (state.game[player].powers.includes("chimist")) {
@@ -173,7 +174,7 @@ const gameEngine = () => {
                 for (let diag of diagStreak) {
                     for (let card of diag) {
                         card[player].inStreak = true;
-                        card[player][i === 0 ? "diagNeg" : "diagPos"] = true;
+                        card[player][i === 0 ? "diagNeg" : "diagPos"] = "you";
                     }
                 }
             }
@@ -721,9 +722,7 @@ const gameEngine = () => {
                 line2: "",
             };
         };
-        for (let card of getAllCard()) {
-            card[you].greenStreak = false;
-        } //TODO do this in evaluate()
+        // for (let card of getAllCard()) { card[you].greenStreak = false; } //TODO do this in evaluate()
         if (state.game.pick) {
             const card = state.game.board[state.game.pick.y][state.game.pick.x];
             const fork = (0, exports.gameEngine)();
@@ -737,18 +736,15 @@ const gameEngine = () => {
             for (let i = 0; i < forkCards.length; i++) {
                 const card = cards[i];
                 const fCard = forkCards[i];
-                if (!card[you].inStreak && fCard[you].inStreak) {
-                    card[you].diagNeg = fCard[you].diagNeg;
-                    card[you].hori = fCard[you].hori;
-                    card[you].verti = fCard[you].verti;
-                    card[you].diagPos = fCard[you].diagPos;
-                    card[you].greenStreak = true;
-                }
+                if (card[you].hori === "none" && fCard[you].hori === "you")
+                    card[you].hori = "futur";
+                if (card[you].verti === "none" && fCard[you].verti === "you")
+                    card[you].verti = "futur";
+                if (card[you].diagNeg === "none" && fCard[you].diagNeg === "you")
+                    card[you].diagNeg = "futur";
+                if (card[you].diagPos === "none" && fCard[you].diagPos === "you")
+                    card[you].diagPos = "futur";
             }
-            card[you].diagNeg = fork.state.game.board[card.y][card.x][you].diagNeg;
-            card[you].hori = fork.state.game.board[card.y][card.x][you].hori;
-            card[you].verti = fork.state.game.board[card.y][card.x][you].verti;
-            card[you].diagPos = fork.state.game.board[card.y][card.x][you].diagPos;
             card[you].inStreak = fork.state.game.board[card.y][card.x][you].inStreak;
         }
         const getUserCard = (card) => {
@@ -763,11 +759,14 @@ const gameEngine = () => {
             if (iCanSeeOp && card.status === villain && card[villain].inStreak) {
                 streak = true;
             }
+            if (state.game.pick && card.x === state.game.pick.x && card.y === state.game.pick.y && card[you].inStreak) {
+                streak = true;
+            }
             const res = Object.assign(Object.assign({}, card), { player1: undefined, player2: undefined, status: Object.assign(Object.assign(Object.assign({}, card[you]), { status: iCanSeeOp ? card.status : card[you].status, inStreak: streak }), (card.status === villain ? {
-                    diagNeg: streak ? card[villain].diagNeg : false,
-                    diagPos: streak ? card[villain].diagPos : false,
-                    hori: streak ? card[villain].hori : false,
-                    verti: streak ? card[villain].verti : false,
+                    diagNeg: streak ? card[villain].diagNeg : "none",
+                    diagPos: streak ? card[villain].diagPos : "none",
+                    hori: streak ? card[villain].hori : "none",
+                    verti: streak ? card[villain].verti : "none",
                 } : {})), points: getCardValue(card, you) });
             return res;
         };
