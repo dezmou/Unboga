@@ -14,6 +14,10 @@ export const gameEngine = () => {
         player2: "player1" as Player,
     }
 
+    const getOpId = (id: string) => {
+        return state.game.player1Id === id ? state.game.player2Id : state.game.player1Id;
+    }
+
     const getNewBoard = () => {
         const getBasePoint = (x: number, y: number) => {
             if (x >= 4) x += -1
@@ -882,6 +886,7 @@ export const gameEngine = () => {
             getAllCard,
             choose,
             evaluate,
+            getOpId,
         }
     }
 }

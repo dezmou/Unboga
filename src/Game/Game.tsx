@@ -2,7 +2,7 @@ import { Button } from '@mui/material';
 import anime from 'animejs';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { BOT_ID, START_GOLD, UserGame } from '../../common/src/game.interface';
-import { audios, capitulate, choose, discard, exitLobby, knock, pickgreen, pickPower, pickRandom, ready, revenge } from '../logic';
+import { capitulate, choose, discard, exitLobby, knock, pickgreen, pickPower, pickRandom, ready, revenge } from '../logic';
 import { render, useRender } from '../render';
 import { global } from '../state';
 import { powers } from "./../../common/src/powers";
@@ -45,42 +45,42 @@ const GameContent = () => {
 
     const [overHero, setOverHero] = useState<undefined | keyof typeof powers>()
 
-    useEffect(() => {
-        if (!game.roundResult && !game.gameResult) {
-            // if (game.nextAction === "discard" && game.nextActionPlayer === you) {
-            //     audios.pomp.play()
-            // }
-            if ((game.nextAction === "pick" || game.nextAction === "choose") && game.nextActionPlayer === you) {
-                if (game.player2Id === BOT_ID) {
-                    // audios.pomp.play()
-                } else {
-                    audios.you.play()
-                }
-            }
-        }
-        if (game.gameResult) {
-            if (game.gameResult.reason === "capitulate") {
-                audios.close.play();
-            }
-        }
+    // useEffect(() => {
+    //     if (!game.roundResult && !game.gameResult) {
+    //         // if (game.nextAction === "discard" && game.nextActionPlayer === you) {
+    //         //     audios.pomp.play()
+    //         // }
+    //         if ((game.nextAction === "pick" || game.nextAction === "choose") && game.nextActionPlayer === you) {
+    //             if (game.player2Id === BOT_ID) {
+    //                 // audios.pomp.play()
+    //             } else {
+    //                 audios.you.play()
+    //             }
+    //         }
+    //     }
+    //     if (game.gameResult) {
+    //         if (game.gameResult.reason === "capitulate") {
+    //             audios.close.play();
+    //         }
+    //     }
 
-        if (game.roundResult) {
-            if ((game.opStatus.ready || game.youStatus.ready) && game.player2Id !== BOT_ID) {
+    //     if (game.roundResult) {
+    //         if ((game.opStatus.ready || game.youStatus.ready) && game.player2Id !== BOT_ID) {
 
-            } else {
-                if (game.roundResult.reason === "knock_win") {
-                    audios.knock.play()
-                }
-                if (game.roundResult.reason === "knock_lost") {
-                    audios.fool.play()
-                }
-                if (game.roundResult.reason === "knock_full") {
-                    audios.full.play()
-                }
-            }
-        }
+    //         } else {
+    //             if (game.roundResult.reason === "knock_win") {
+    //                 audios.knock.play()
+    //             }
+    //             if (game.roundResult.reason === "knock_lost") {
+    //                 audios.fool.play()
+    //             }
+    //             if (game.roundResult.reason === "knock_full") {
+    //                 audios.full.play()
+    //             }
+    //         }
+    //     }
 
-    }, [global.state.game])
+    // }, [global.state.game])
 
     useEffect(() => {
         const root = document.documentElement
@@ -104,7 +104,7 @@ const GameContent = () => {
                     }
                 }
             }
-            audios.shuffle.play()
+            // audios.shuffle.play()
             setTimeout(() => {
                 root.style.setProperty('--board-size', `calc(var(--board-width) * 0.45)`);
                 root.style.setProperty('--top-height', `var(--top-min-height)`);
@@ -172,10 +172,10 @@ const GameContent = () => {
     const clickPiece = (piece: UserGame["board"][number][number]) => {
         if (isPieceClickable(piece)) {
             if (game.nextAction === "choose") {
-                audios.pomp.play()
+                // audios.pomp.play()
                 choose(piece.x, piece.y)
             } else {
-                audios.pomp.play()
+                // audios.pomp.play()
                 discard(piece.x, piece.y)
             }
         }
@@ -461,7 +461,7 @@ const GameContent = () => {
                                                 height: "var(--button-zone-heigth)",
                                             }} className='login-button' variant='contained'
                                                 onClick={() => {
-                                                    audios.pomp.play()
+                                                    // audios.pomp.play()
                                                     pickgreen()
                                                 }}
                                             >Piece verte</Button>
@@ -473,7 +473,7 @@ const GameContent = () => {
                                                 height: "var(--button-zone-heigth)",
                                             }} className='login-button' variant='contained'
                                                 onClick={() => {
-                                                    audios.pomp.play()
+                                                    // audios.pomp.play()
                                                     pickRandom()
                                                 }}
                                             >Piece aleatoire</Button>
@@ -553,7 +553,7 @@ const GameContent = () => {
                                     && !game.youStatus.powerReady
                                     && !(game.youStatus.powers.filter(e => e === power.id).length === power.max)
                                 ) {
-                                    audios.choose.play();
+                                    // audios.choose.play();
                                     pickPower(power.id as keyof typeof powers)
                                 }
                             }}

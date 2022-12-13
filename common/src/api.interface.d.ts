@@ -91,6 +91,9 @@ export interface LobbyEntry {
         initiator: string;
     };
 }
+export declare type Consume = {
+    audios: string[];
+};
 export declare type State = {
     page: "blank" | "login" | "lobby" | "game";
     render: string[];
@@ -102,5 +105,6 @@ export declare type State = {
     };
     inGame?: string;
     game?: UserGame;
+    consume?: Consume;
 };
 //# sourceMappingURL=api.interface.d.ts.map

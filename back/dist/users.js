@@ -59,8 +59,9 @@ const sendStateToUser = (userId, state) => {
         return;
     }
     for (const sock of Object.values(state_1.userIdToSockets[userId])) {
-        (0, state_1.sendState)(sock, state);
+        (0, state_1.sendState)(sock, Object.assign(Object.assign({}, state), { consume: state_1.consumeList[userId] }));
     }
+    state_1.consumeList[userId] = undefined;
 };
 exports.sendStateToUser = sendStateToUser;
 const askState = (socket, param) => __awaiter(void 0, void 0, void 0, function* () {

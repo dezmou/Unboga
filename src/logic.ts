@@ -145,9 +145,9 @@ export const audios = {
     knock: new Howl({ src: ['knock.mp3'] }),
     pomp: new Howl({ src: ['pomp.mp3'] }),
     you: new Howl({ src: ['you.mp3'] }),
-    fool: new Howl({ src: ['fool.mp3'],  }),
-    full: new Howl({ src: ['full.mp3'],  }),
-    shuffle: new Howl({ src: ['shuffle.mp3'],  }),
+    fool: new Howl({ src: ['fool.mp3'], }),
+    full: new Howl({ src: ['full.mp3'], }),
+    shuffle: new Howl({ src: ['shuffle.mp3'], }),
 }
 
 export const main = async () => {
@@ -200,6 +200,11 @@ export const main = async () => {
             localStorage.removeItem("user");
         }
         global.localState.ready = true;
+        if (global.state.consume) {
+            for (let audio of global.state.consume.audios as (keyof typeof audios)[]) {
+                audios[audio].play();
+            }
+        }
         renderAll(global.state.render)
     })
     watchLayout();

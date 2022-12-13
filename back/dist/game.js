@@ -14,6 +14,7 @@ const bson_1 = require("bson");
 const bdd_1 = require("./bdd");
 const engine_1 = require("./engine");
 const lobby_1 = require("./lobby");
+const state_1 = require("./state");
 const users_1 = require("./users");
 const powers_1 = require("../../common/src/powers");
 const game_interface_1 = require("../../common/src/game.interface");
@@ -68,11 +69,19 @@ const play = (socket, param) => __awaiter(void 0, void 0, void 0, function* () {
     game.funcs.loadGame(gameState);
     if (param.play === "pickPower") {
         const p = param;
+        if (game.state.game.player1.powerReady || game.state.game.player2.powerReady) {
+            for (const playerId of [game.state.game.player1Id, game.state.game.player2Id]) {
+                (0, state_1.addConsume)(playerId, { audios: ["choose"] });
+            }
+        }
         game.funcs.pickPower(p.userId, p.powers);
     }
     else if (param.play === "pickGreen") {
         const p = param;
         game.funcs.pickGreen(p.userId);
+        for (const playerId of [game.state.game.player1Id, game.state.game.player2Id]) {
+            (0, state_1.addConsume)(playerId, { audios: ["pomp"] });
+        }
     }
     else if (param.play === "choose") {
         const p = param;
@@ -81,10 +90,15 @@ const play = (socket, param) => __awaiter(void 0, void 0, void 0, function* () {
     else if (param.play === "pickRandom") {
         const p = param;
         game.funcs.pickRandom(p.userId);
+        for (const playerId of [game.state.game.player1Id, game.state.game.player2Id]) {
+            (0, state_1.addConsume)(playerId, { audios: ["pomp"] });
+        }
     }
     else if (param.play === "discard") {
         const p = param;
         game.funcs.discard(p.userId, p.x, p.y);
+        (0, state_1.addConsume)(p.userId, { audios: ["pomp"] });
+        (0, state_1.addConsume)(game.funcs.getOpId(p.userId), { audios: ["you"] });
     }
     else if (param.play === "knock") {
         const p = param;
@@ -96,6 +110,9 @@ const play = (socket, param) => __awaiter(void 0, void 0, void 0, function* () {
     }
     else if (param.play === "capitulate") {
         const p = param;
+        for (const playerId of [game.state.game.player1Id, game.state.game.player2Id]) {
+            (0, state_1.addConsume)(playerId, { audios: ["close"] });
+        }
         game.funcs.capitulate(p.userId);
     }
     else if (param.play === "exitLobby") {
@@ -111,6 +128,20 @@ const play = (socket, param) => __awaiter(void 0, void 0, void 0, function* () {
             && game.state.game.gameResult.revenge.player2 === "yes") {
             yield (0, exports.newGame)(game.state.game.player1Id, game.state.game.player2Id);
             return;
+        }
+    }
+    if (game.state.game.roundResult && !game.state.game.player1.ready && !game.state.game.player2.ready) {
+        if (game.state.game.roundResult.reason === "knock_win") {
+            (0, state_1.addConsume)(param.userId, { audios: ["knock"] });
+            (0, state_1.addConsume)(game.funcs.getOpId(param.userId), { audios: ["knock"] });
+        }
+        if (game.state.game.roundResult.reason === "knock_lost") {
+            (0, state_1.addConsume)(param.userId, { audios: ["fool"] });
+            (0, state_1.addConsume)(game.funcs.getOpId(param.userId), { audios: ["fool"] });
+        }
+        if (game.state.game.roundResult.reason === "knock_full") {
+            (0, state_1.addConsume)(param.userId, { audios: ["full"] });
+            (0, state_1.addConsume)(game.funcs.getOpId(param.userId), { audios: ["full"] });
         }
     }
     const updateUserGame = (state) => __awaiter(void 0, void 0, void 0, function* () {

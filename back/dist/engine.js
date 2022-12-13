@@ -13,6 +13,9 @@ const gameEngine = () => {
         player1: "player2",
         player2: "player1",
     };
+    const getOpId = (id) => {
+        return state.game.player1Id === id ? state.game.player2Id : state.game.player1Id;
+    };
     const getNewBoard = () => {
         const getBasePoint = (x, y) => {
             if (x >= 4)
@@ -791,6 +794,7 @@ const gameEngine = () => {
             getAllCard,
             choose,
             evaluate,
+            getOpId,
         }
     };
 };

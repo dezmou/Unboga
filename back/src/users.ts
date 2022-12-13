@@ -1,7 +1,7 @@
 import { addUser, getUserState, getUserByName } from "./bdd";
 import { ApiCallBase, AskState, CreateUser, Login, State, ToastEvent } from "../../common/src/api.interface";
 import { updateLobby } from "./lobby";
-import { lobby, sendState, socketIdToUserId, SSocket, userIdToSockets } from "./state";
+import { consumeList, lobby, sendState, socketIdToUserId, SSocket, userIdToSockets } from "./state";
 
 export const disconnect = async (socket: SSocket, param: ApiCallBase) => {
     console.log("DISCONNECT");
@@ -50,8 +50,9 @@ export const sendStateToUser = (userId: string, state: State) => {
     }
 
     for (const sock of Object.values(userIdToSockets[userId])) {
-        sendState(sock, state);
+        sendState(sock, { ...state, consume: consumeList[userId] });
     }
+    consumeList[userId] = undefined;
 }
 
 export const askState = async (socket: SSocket, param: AskState) => {

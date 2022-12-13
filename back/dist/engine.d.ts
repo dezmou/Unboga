@@ -27,5 +27,6 @@ export declare const gameEngine: () => {
         }[];
         choose: (playerId: string, x: number, y: number) => void;
         evaluate: (player: Player) => void;
+        getOpId: (id: string) => string;
     };
 };

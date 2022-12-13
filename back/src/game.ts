@@ -3,7 +3,7 @@ import { addGame, getGame, getUserState, updateGame, updateUserState } from "./b
 import { Capitulate, Play, PlayChosse, PlayDiscard, PlayKnock, PlayPickGreen, PlayPickRandom, PlayPickPower, State } from "../../common/src/api.interface"
 import { gameEngine } from "./engine"
 import { playBot, updateLobby } from "./lobby"
-import { SSocket } from "./state"
+import { addConsume, SSocket } from "./state"
 import { sendStateToUser } from "./users"
 import { powers } from "../../common/src/powers"
 import { BOT_ID } from "../../common/src/game.interface"
@@ -62,19 +62,32 @@ export const play = async (socket: SSocket, param: Play) => {
 
     if (param.play === "pickPower") {
         const p = param as PlayPickPower
+        if (game.state.game.player1.powerReady || game.state.game.player2.powerReady) {
+            for (const playerId of [game.state.game.player1Id, game.state.game.player2Id]) {
+                addConsume(playerId, { audios: ["choose"] })
+            }
+        }
         game.funcs.pickPower(p.userId!, p.powers);
     } else if (param.play === "pickGreen") {
         const p = param as PlayPickGreen
         game.funcs.pickGreen(p.userId!)
+        for (const playerId of [game.state.game.player1Id, game.state.game.player2Id]) {
+            addConsume(playerId, { audios: ["pomp"] })
+        }
     } else if (param.play === "choose") {
         const p = param as PlayChosse
         game.funcs.choose(p.userId!, p.x, p.y!)
     } else if (param.play === "pickRandom") {
         const p = param as PlayPickRandom
         game.funcs.pickRandom(p.userId!)
+        for (const playerId of [game.state.game.player1Id, game.state.game.player2Id]) {
+            addConsume(playerId, { audios: ["pomp"] })
+        }
     } else if (param.play === "discard") {
         const p = param as PlayDiscard
         game.funcs.discard(p.userId!, p.x, p.y);
+        addConsume(p.userId!, { audios: ["pomp"] })
+        addConsume(game.funcs.getOpId(p.userId!), { audios: ["you"] })
     } else if (param.play === "knock") {
         const p = param as PlayKnock
         game.funcs.knock(p.userId!);
@@ -83,6 +96,9 @@ export const play = async (socket: SSocket, param: Play) => {
         game.funcs.setReady(p.userId!);
     } else if (param.play === "capitulate") {
         const p = param as Capitulate
+        for (const playerId of [game.state.game.player1Id, game.state.game.player2Id]) {
+            addConsume(playerId, { audios: ["close"] })
+        }
         game.funcs.capitulate(p.userId!);
     } else if (param.play === "exitLobby") {
         user.inGame = undefined;
@@ -98,6 +114,21 @@ export const play = async (socket: SSocket, param: Play) => {
         ) {
             await newGame(game.state.game!.player1Id, game.state.game!.player2Id);
             return;
+        }
+    }
+
+    if (game.state.game.roundResult && !game.state.game.player1.ready && !game.state.game.player2.ready) {
+        if (game.state.game.roundResult.reason === "knock_win") {
+            addConsume(param.userId!, { audios: ["knock"] })
+            addConsume(game.funcs.getOpId(param.userId!), { audios: ["knock"] })
+        }
+        if (game.state.game.roundResult.reason === "knock_lost") {
+            addConsume(param.userId!, { audios: ["fool"] })
+            addConsume(game.funcs.getOpId(param.userId!), { audios: ["fool"] })
+        }
+        if (game.state.game.roundResult.reason === "knock_full") {
+            addConsume(param.userId!, { audios: ["full"] })
+            addConsume(game.funcs.getOpId(param.userId!), { audios: ["full"] })
         }
     }
 

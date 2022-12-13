@@ -111,6 +111,8 @@ export interface LobbyEntry {
     challenge?: { player1: string, player2: string, initiator: string }
 }
 
+export type Consume = { audios: string[] }
+
 export type State = {
     page: "blank" | "login" | "lobby" | "game"
     render: string[]
@@ -122,4 +124,5 @@ export type State = {
     }
     inGame?: string
     game?: UserGame
+    consume?: Consume
 }
