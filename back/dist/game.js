@@ -9,14 +9,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.newGame = exports.play = exports.BOT_ID = void 0;
+exports.newGame = exports.play = void 0;
 const bson_1 = require("bson");
 const bdd_1 = require("./bdd");
 const engine_1 = require("./engine");
 const lobby_1 = require("./lobby");
 const users_1 = require("./users");
 const powers_1 = require("../../common/src/powers");
-exports.BOT_ID = "aaaaaaaaaaaaaaaaaaaaaaaa";
+const game_interface_1 = require("../../common/src/game.interface");
 const calculateElo = (myRating, opponentRating, myGameResult) => {
     const getRatingDelta = (myRating, opponentRating, myGameResult) => {
         var myChanceToWin = 1 / (1 + Math.pow(10, (opponentRating - myRating) / 400));
@@ -31,14 +31,14 @@ const botPlay = (gameState) => __awaiter(void 0, void 0, void 0, function* () {
     if (game.nextAction === "pick") {
         const fork = (0, engine_1.gameEngine)();
         fork.funcs.loadGame(JSON.parse(JSON.stringify(game)));
-        fork.funcs.pickGreen(exports.BOT_ID);
+        fork.funcs.pickGreen(game_interface_1.BOT_ID);
         const cards = func.getAllCard();
         const forkCards = fork.funcs.getAllCard();
         if (forkCards.filter(c => c.player2.inStreak).length > cards.filter(c => c.player2.inStreak).length) {
-            func.pickGreen(exports.BOT_ID);
+            func.pickGreen(game_interface_1.BOT_ID);
         }
         else {
-            func.pickRandom(exports.BOT_ID);
+            func.pickRandom(game_interface_1.BOT_ID);
         }
     }
     else if (game.nextAction === "discard") {
@@ -52,7 +52,7 @@ const botPlay = (gameState) => __awaiter(void 0, void 0, void 0, function* () {
                 }
             }
         })();
-        func.discard(exports.BOT_ID, card.x, card.y);
+        func.discard(game_interface_1.BOT_ID, card.x, card.y);
     }
     else if (game.nextAction === "choose") {
         const choices = func.getAllCard().filter(c => c.player2.status === "deck");
@@ -125,7 +125,7 @@ const play = (socket, param) => __awaiter(void 0, void 0, void 0, function* () {
         }
         (0, users_1.sendStateToUser)(state.user.id, state);
     });
-    if (game.state.game.player2Id !== exports.BOT_ID) {
+    if (game.state.game.player2Id !== game_interface_1.BOT_ID) {
         const op = ((yield (0, bdd_1.getUserState)(gameState.player1Id === param.userId ? gameState.player2Id : gameState.player1Id)));
         let lobbyNeedUpdate = false;
         if (game.state.game.gameResult) {
@@ -161,7 +161,7 @@ const play = (socket, param) => __awaiter(void 0, void 0, void 0, function* () {
     }
     else {
         if (!game.state.game.player2.ready) {
-            game.funcs.setReady(exports.BOT_ID);
+            game.funcs.setReady(game_interface_1.BOT_ID);
         }
         if (!game.state.game.player2.powerReady) {
             const pows = Object.keys(powers_1.powers).filter((e) => {
@@ -174,7 +174,7 @@ const play = (socket, param) => __awaiter(void 0, void 0, void 0, function* () {
                 return true;
             });
             console.log(pows);
-            game.funcs.pickPower(exports.BOT_ID, pows[Math.floor(Math.random() * pows.length)]);
+            game.funcs.pickPower(game_interface_1.BOT_ID, pows[Math.floor(Math.random() * pows.length)]);
         }
         if (game.state.game.gameResult) {
             game.state.game.gameResult.revenge.player2 = "yes";
@@ -202,7 +202,7 @@ const newGame = (player1, player2) => __awaiter(void 0, void 0, void 0, function
     game.state.game.misc.player2 = { elo: p2State.user.elo, name: p2State.user.name, roundWon: 0 };
     yield Promise.all([
         (0, bdd_1.addGame)(game.state.game),
-        ...(player2 !== exports.BOT_ID ? [p1State, p2State] : [p1State]).map((pState) => __awaiter(void 0, void 0, void 0, function* () {
+        ...(player2 !== game_interface_1.BOT_ID ? [p1State, p2State] : [p1State]).map((pState) => __awaiter(void 0, void 0, void 0, function* () {
             pState.inGame = game.state.game.id;
             const userGame = game.funcs.getUserGame(pState.user.id);
             pState.game = userGame;

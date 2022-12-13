@@ -47,13 +47,13 @@ const GameContent = () => {
     const [overHero, setOverHero] = useState<undefined | keyof typeof powers>()
 
     useEffect(() => {
-        if (!game.roundResult) {
-            if (game.nextAction === "discard" && game.nextActionPlayer === you) {
-                audios.pomp.play()
-            }
-            if ((game.nextAction === "pick" || game.nextAction === "choose") && game.nextActionPlayer !== you) {
+        if (!game.roundResult && !game.gameResult) {
+            // if (game.nextAction === "discard" && game.nextActionPlayer === you) {
+            //     audios.pomp.play()
+            // }
+            if ((game.nextAction === "pick" || game.nextAction === "choose") && game.nextActionPlayer === you) {
                 if (game.player2Id === BOT_ID) {
-                    audios.pomp.play()
+                    // audios.pomp.play()
                 } else {
                     audios.you.play()
                 }
@@ -162,8 +162,10 @@ const GameContent = () => {
     const clickPiece = (piece: UserGame["board"][number][number]) => {
         if (isPieceClickable(piece)) {
             if (game.nextAction === "choose") {
+                audios.pomp.play()
                 choose(piece.x, piece.y)
             } else {
+                audios.pomp.play()
                 discard(piece.x, piece.y)
             }
         }
@@ -448,7 +450,10 @@ const GameContent = () => {
                                                 width: "calc(var(--width) * 0.5)",
                                                 height: "var(--button-zone-heigth)",
                                             }} className='login-button' variant='contained'
-                                                onClick={() => { pickgreen() }}
+                                                onClick={() => {
+                                                    audios.pomp.play()
+                                                    pickgreen()
+                                                }}
                                             >Piece verte</Button>
                                         </div>
                                         <div>
@@ -457,7 +462,10 @@ const GameContent = () => {
                                                 width: "calc(var(--width) * 0.5)",
                                                 height: "var(--button-zone-heigth)",
                                             }} className='login-button' variant='contained'
-                                                onClick={() => { pickRandom() }}
+                                                onClick={() => {
+                                                    audios.pomp.play()
+                                                    pickRandom()
+                                                }}
                                             >Piece aleatoire</Button>
                                         </div>
                                     </div>
@@ -534,9 +542,10 @@ const GameContent = () => {
                                 if (game.nextAction === "selectHero"
                                     && !game.youStatus.powerReady
                                     && !(game.youStatus.powers.filter(e => e === power.id).length === power.max)
-                                )
+                                ) {
                                     audios.choose.play();
-                                pickPower(power.id as keyof typeof powers)
+                                    pickPower(power.id as keyof typeof powers)
+                                }
                             }}
                                 style={{
                                     opacity: game.youStatus.powers.filter(e => e === power.id).length === power.max ? "0.5" : "1",

@@ -13,6 +13,7 @@ exports.updateLobby = exports.challenge = exports.playBot = exports.acceptChalle
 const bdd_1 = require("./bdd");
 const game_1 = require("./game");
 const state_1 = require("./state");
+const game_interface_1 = require("../../common/src/game.interface");
 const cancelChallenge = (socket, param) => __awaiter(void 0, void 0, void 0, function* () {
     if (!state_1.lobby[param.user.id] || !state_1.lobby[param.user.id].challenge)
         return;
@@ -53,7 +54,7 @@ const acceptChallenge = (socket, param) => __awaiter(void 0, void 0, void 0, fun
 });
 exports.acceptChallenge = acceptChallenge;
 const playBot = (socket, param) => __awaiter(void 0, void 0, void 0, function* () {
-    yield (0, game_1.newGame)(param.userId, game_1.BOT_ID);
+    yield (0, game_1.newGame)(param.userId, game_interface_1.BOT_ID);
     if (state_1.lobby[param.userId]) {
         state_1.lobby[param.userId].status = "inGame";
         state_1.lobby[param.userId].challenge = undefined;
