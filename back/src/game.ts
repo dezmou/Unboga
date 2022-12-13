@@ -35,15 +35,9 @@ const botPlay = async (gameState: ReturnType<typeof gameEngine>) => {
         }
     } else if (game.nextAction === "discard") {
         const card = (() => {
-            while (true) {
-                const x = Math.floor(Math.random() * 8);
-                const y = Math.floor(Math.random() * 8);
-                if (game.board[y][x].status === "player2"
-                    && !game.board[y][x].player2.inStreak
-                ) {
-                    return game.board[y][x];
-                }
-            }
+            return (func.getAllCard()
+                .filter(c => !c.player2.inStreak && c.status === "player2")
+                .sort((a, b) => b.player2.points - a.player2.points))[0];
         })()
         func.discard(BOT_ID, card.x, card.y)
     } else if (game.nextAction === "choose") {
@@ -62,7 +56,7 @@ export const play = async (socket: SSocket, param: Play) => {
 
     if (param.play === "pickPower") {
         const p = param as PlayPickPower
-        if (game.state.game.player1.powerReady || game.state.game.player2.powerReady) {
+        if (game.state.game.player1.powerReady || game.state.game.player2.powerReady || game.state.game.player2Id === BOT_ID) {
             for (const playerId of [game.state.game.player1Id, game.state.game.player2Id]) {
                 addConsume(playerId, { audios: ["choose"] })
             }
@@ -117,21 +111,6 @@ export const play = async (socket: SSocket, param: Play) => {
         }
     }
 
-    if (game.state.game.roundResult && !game.state.game.player1.ready && !game.state.game.player2.ready) {
-        if (game.state.game.roundResult.reason === "knock_win") {
-            addConsume(param.userId!, { audios: ["knock"] })
-            addConsume(game.funcs.getOpId(param.userId!), { audios: ["knock"] })
-        }
-        if (game.state.game.roundResult.reason === "knock_lost") {
-            addConsume(param.userId!, { audios: ["fool"] })
-            addConsume(game.funcs.getOpId(param.userId!), { audios: ["fool"] })
-        }
-        if (game.state.game.roundResult.reason === "knock_full") {
-            addConsume(param.userId!, { audios: ["full"] })
-            addConsume(game.funcs.getOpId(param.userId!), { audios: ["full"] })
-        }
-    }
-
     const updateUserGame = async (state: State) => {
         if (state.inGame) {
             const userGame = game.funcs.getUserGame(state!.user!.id);
@@ -145,6 +124,24 @@ export const play = async (socket: SSocket, param: Play) => {
         sendStateToUser(state!.user!.id, state!);
     }
 
+    const checkRoundResult = () => {
+        if (game.state.game.roundResult
+            && !game.state.game.player1.ready
+            && (game.state.game.player2Id === BOT_ID ? true : !game.state.game.player2.ready)) {
+            if (game.state.game.roundResult.reason === "knock_win") {
+                addConsume(param.userId!, { audios: ["knock"] })
+                addConsume(game.funcs.getOpId(param.userId!), { audios: ["knock"] })
+            }
+            if (game.state.game.roundResult.reason === "knock_lost") {
+                addConsume(param.userId!, { audios: ["fool"] })
+                addConsume(game.funcs.getOpId(param.userId!), { audios: ["fool"] })
+            }
+            if (game.state.game.roundResult.reason === "knock_full") {
+                addConsume(param.userId!, { audios: ["full"] })
+                addConsume(game.funcs.getOpId(param.userId!), { audios: ["full"] })
+            }
+        }
+    }
 
     if (game.state.game!.player2Id !== BOT_ID) {
         const op = ((await getUserState(gameState.player1Id === param.userId! ? gameState.player2Id : gameState.player1Id)))!
@@ -171,7 +168,7 @@ export const play = async (socket: SSocket, param: Play) => {
                 lobbyNeedUpdate = true
             }
         }
-
+        checkRoundResult()
         await Promise.all([
             updateGame(game.state.game!),
             ...[user, op].map(async pState => updateUserGame(pState))]
@@ -206,9 +203,11 @@ export const play = async (socket: SSocket, param: Play) => {
             && !game.state.game!.gameResult
         ) {
             await botPlay(game);
+            checkRoundResult()
             await Promise.all([updateUserGame(user), updateGame(game.state.game!)]);
         }
     }
+
 }
 
 export const newGame = async (player1: string, player2: string) => {

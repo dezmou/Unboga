@@ -44,14 +44,9 @@ const botPlay = (gameState) => __awaiter(void 0, void 0, void 0, function* () {
     }
     else if (game.nextAction === "discard") {
         const card = (() => {
-            while (true) {
-                const x = Math.floor(Math.random() * 8);
-                const y = Math.floor(Math.random() * 8);
-                if (game.board[y][x].status === "player2"
-                    && !game.board[y][x].player2.inStreak) {
-                    return game.board[y][x];
-                }
-            }
+            return (func.getAllCard()
+                .filter(c => !c.player2.inStreak && c.status === "player2")
+                .sort((a, b) => b.player2.points - a.player2.points))[0];
         })();
         func.discard(game_interface_1.BOT_ID, card.x, card.y);
     }
@@ -69,7 +64,7 @@ const play = (socket, param) => __awaiter(void 0, void 0, void 0, function* () {
     game.funcs.loadGame(gameState);
     if (param.play === "pickPower") {
         const p = param;
-        if (game.state.game.player1.powerReady || game.state.game.player2.powerReady) {
+        if (game.state.game.player1.powerReady || game.state.game.player2.powerReady || game.state.game.player2Id === game_interface_1.BOT_ID) {
             for (const playerId of [game.state.game.player1Id, game.state.game.player2Id]) {
                 (0, state_1.addConsume)(playerId, { audios: ["choose"] });
             }
@@ -130,20 +125,6 @@ const play = (socket, param) => __awaiter(void 0, void 0, void 0, function* () {
             return;
         }
     }
-    if (game.state.game.roundResult && !game.state.game.player1.ready && !game.state.game.player2.ready) {
-        if (game.state.game.roundResult.reason === "knock_win") {
-            (0, state_1.addConsume)(param.userId, { audios: ["knock"] });
-            (0, state_1.addConsume)(game.funcs.getOpId(param.userId), { audios: ["knock"] });
-        }
-        if (game.state.game.roundResult.reason === "knock_lost") {
-            (0, state_1.addConsume)(param.userId, { audios: ["fool"] });
-            (0, state_1.addConsume)(game.funcs.getOpId(param.userId), { audios: ["fool"] });
-        }
-        if (game.state.game.roundResult.reason === "knock_full") {
-            (0, state_1.addConsume)(param.userId, { audios: ["full"] });
-            (0, state_1.addConsume)(game.funcs.getOpId(param.userId), { audios: ["full"] });
-        }
-    }
     const updateUserGame = (state) => __awaiter(void 0, void 0, void 0, function* () {
         if (state.inGame) {
             const userGame = game.funcs.getUserGame(state.user.id);
@@ -156,6 +137,24 @@ const play = (socket, param) => __awaiter(void 0, void 0, void 0, function* () {
         }
         (0, users_1.sendStateToUser)(state.user.id, state);
     });
+    const checkRoundResult = () => {
+        if (game.state.game.roundResult
+            && !game.state.game.player1.ready
+            && (game.state.game.player2Id === game_interface_1.BOT_ID ? true : !game.state.game.player2.ready)) {
+            if (game.state.game.roundResult.reason === "knock_win") {
+                (0, state_1.addConsume)(param.userId, { audios: ["knock"] });
+                (0, state_1.addConsume)(game.funcs.getOpId(param.userId), { audios: ["knock"] });
+            }
+            if (game.state.game.roundResult.reason === "knock_lost") {
+                (0, state_1.addConsume)(param.userId, { audios: ["fool"] });
+                (0, state_1.addConsume)(game.funcs.getOpId(param.userId), { audios: ["fool"] });
+            }
+            if (game.state.game.roundResult.reason === "knock_full") {
+                (0, state_1.addConsume)(param.userId, { audios: ["full"] });
+                (0, state_1.addConsume)(game.funcs.getOpId(param.userId), { audios: ["full"] });
+            }
+        }
+    };
     if (game.state.game.player2Id !== game_interface_1.BOT_ID) {
         const op = ((yield (0, bdd_1.getUserState)(gameState.player1Id === param.userId ? gameState.player2Id : gameState.player1Id)));
         let lobbyNeedUpdate = false;
@@ -182,6 +181,7 @@ const play = (socket, param) => __awaiter(void 0, void 0, void 0, function* () {
                 lobbyNeedUpdate = true;
             }
         }
+        checkRoundResult();
         yield Promise.all([
             (0, bdd_1.updateGame)(game.state.game),
             ...[user, op].map((pState) => __awaiter(void 0, void 0, void 0, function* () { return updateUserGame(pState); }))
@@ -216,6 +216,7 @@ const play = (socket, param) => __awaiter(void 0, void 0, void 0, function* () {
             && game.state.game.player1.powerReady
             && !game.state.game.gameResult) {
             yield botPlay(game);
+            checkRoundResult();
             yield Promise.all([updateUserGame(user), (0, bdd_1.updateGame)(game.state.game)]);
         }
     }

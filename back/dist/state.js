@@ -30,7 +30,7 @@ const addConsume = (userId, con) => {
     }
     else {
         exports.consumeList[userId] = {
-            audios: Object.assign(Object.assign({}, (exports.consumeList[userId]).audios), con.audios)
+            audios: [...(exports.consumeList[userId]).audios, ...con.audios]
         };
     }
 };

@@ -29,7 +29,7 @@ export const addConsume = (userId: string, con: Consume) => {
         consumeList[userId] = con;
     } else {
         consumeList[userId] = {
-            audios: { ...(consumeList[userId]!).audios, ...con.audios }
+            audios: [...(consumeList[userId]!).audios, ...con.audios]
         };
     }
 }
