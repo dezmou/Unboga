@@ -62,10 +62,10 @@ export default () => {
     const lastPage = useRef(global.state.page);
 
     useEffect(() => {
-        if (global.state.page !== lastPage.current && lastPage.current === "game" && global.state.page === "lobby") {
-            audios.close.play()
-        }
-        lastPage.current = global.state.page;
+        // if (global.state.page !== lastPage.current && lastPage.current === "game" && global.state.page === "lobby") {
+        //     audios.close.play()
+        // }
+        // lastPage.current = global.state.page;
     }, [global.state.page])
 
     const clickChallenge = (userId: string) => {

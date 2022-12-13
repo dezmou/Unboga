@@ -147,6 +147,7 @@ export const audios = {
     you: new Howl({ src: ['you.mp3'] }),
     fool: new Howl({ src: ['fool.mp3'],  }),
     full: new Howl({ src: ['full.mp3'],  }),
+    shuffle: new Howl({ src: ['shuffle.mp3'],  }),
 }
 
 export const main = async () => {

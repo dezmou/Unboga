@@ -58,15 +58,25 @@ const GameContent = () => {
                 }
             }
         }
-        if (game.roundResult && !game.opStatus.ready && !game.youStatus.ready) {
-            if (game.roundResult.reason === "knock_win") {
-                audios.knock.play()
+        if (game.gameResult) {
+            if (game.gameResult.reason === "capitulate") {
+                audios.close.play();
             }
-            if (game.roundResult.reason === "knock_lost") {
-                audios.fool.play()
-            }
-            if (game.roundResult.reason === "knock_full") {
-                audios.full.play()
+        }
+
+        if (game.roundResult) {
+            if ((game.opStatus.ready || game.youStatus.ready) && game.player2Id !== BOT_ID) {
+
+            } else {
+                if (game.roundResult.reason === "knock_win") {
+                    audios.knock.play()
+                }
+                if (game.roundResult.reason === "knock_lost") {
+                    audios.fool.play()
+                }
+                if (game.roundResult.reason === "knock_full") {
+                    audios.full.play()
+                }
             }
         }
 
@@ -94,6 +104,7 @@ const GameContent = () => {
                     }
                 }
             }
+            audios.shuffle.play()
             setTimeout(() => {
                 root.style.setProperty('--board-size', `calc(var(--board-width) * 0.45)`);
                 root.style.setProperty('--top-height', `var(--top-min-height)`);
@@ -314,10 +325,10 @@ const GameContent = () => {
                         <div className='gold-bar-cont'>
                             <div className='gold-bar-cont-little'>
                                 <div className='gold-bar gold-bar-player1' style={{
-                                    width: `${Math.floor(game.youStatus.gold / (START_GOLD * 2) * 99)}%`
+                                    width: game.youStatus.gold <= 0 ? "0%" : `${Math.floor(game.youStatus.gold / (START_GOLD * 2) * 99)}%`
                                 }}></div>
                                 <div className='gold-bar gold-bar-player2' style={{
-                                    width: `${Math.floor(game.opStatus.gold / (START_GOLD * 2) * 99)}%`
+                                    width: game.opStatus.gold <= 0 ? "0%" : `${Math.floor(game.opStatus.gold / (START_GOLD * 2) * 99)}%`
                                 }}></div>
                             </div>
 
