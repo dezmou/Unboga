@@ -1,12 +1,12 @@
+import { Button } from '@mui/material';
 import anime from 'animejs';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { capitulate, choose, discard, exitLobby, knock, pickgreen, pickRandom, ready, revenge, pickPower, audios } from '../logic';
-import { powers } from "./../../common/src/powers"
-import { useRender, render } from '../render';
+import { BOT_ID, START_GOLD, UserGame } from '../../common/src/game.interface';
+import { audios, capitulate, choose, discard, exitLobby, knock, pickgreen, pickPower, pickRandom, ready, revenge } from '../logic';
+import { render, useRender } from '../render';
 import { global } from '../state';
+import { powers } from "./../../common/src/powers";
 import "./Game.css";
-import { Button } from '@mui/material';
-import { BOT_ID, Game, MAX_POWER_NUMBER, Player, START_GOLD, UserCard, UserGame } from '../../common/src/game.interface';
 
 let selectedPowers: any = {}
 
@@ -33,7 +33,6 @@ const PowerCard = (p: { powerId: keyof typeof powers }) => {
             </div>
         </div>
     </>
-
 }
 
 const GameContent = () => {
@@ -59,7 +58,7 @@ const GameContent = () => {
                 }
             }
         }
-        if (game.roundResult) {
+        if (game.roundResult && !game.opStatus.ready && !game.youStatus.ready) {
             if (game.roundResult.reason === "knock_win") {
                 audios.knock.play()
             }
@@ -315,10 +314,10 @@ const GameContent = () => {
                         <div className='gold-bar-cont'>
                             <div className='gold-bar-cont-little'>
                                 <div className='gold-bar gold-bar-player1' style={{
-                                    width: `${Math.floor(game.youStatus.gold / (START_GOLD * 2) * 100) - 1}%`
+                                    width: `${Math.floor(game.youStatus.gold / (START_GOLD * 2) * 99)}%`
                                 }}></div>
                                 <div className='gold-bar gold-bar-player2' style={{
-                                    width: `${Math.floor(game.opStatus.gold / (START_GOLD * 2) * 100) - 1}%`
+                                    width: `${Math.floor(game.opStatus.gold / (START_GOLD * 2) * 99)}%`
                                 }}></div>
                             </div>
 
