@@ -210,6 +210,7 @@ const play = (socket, param) => __awaiter(void 0, void 0, void 0, function* () {
         if (game.state.game.gameResult) {
             game.state.game.gameResult.revenge.player2 = "yes";
         }
+        checkRoundResult();
         yield Promise.all([updateUserGame(user), (0, bdd_1.updateGame)(game.state.game)]);
         while (game.state.game.nextActionPlayer === "player2"
             && game.state.game.player1.ready

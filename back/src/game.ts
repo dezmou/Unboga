@@ -196,6 +196,7 @@ export const play = async (socket: SSocket, param: Play) => {
         if (game.state.game!.gameResult) {
             game.state.game!.gameResult.revenge.player2 = "yes";
         }
+        checkRoundResult()
         await Promise.all([updateUserGame(user), updateGame(game.state.game!)]);
         while (game.state.game!.nextActionPlayer === "player2"
             && game.state.game!.player1.ready
