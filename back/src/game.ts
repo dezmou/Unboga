@@ -127,6 +127,7 @@ export const play = async (socket: SSocket, param: Play) => {
     const checkRoundResult = () => {
         if (game.state.game.roundResult
             && !game.state.game.player1.ready
+            && !game.state.game.gameResult
             && (game.state.game.player2Id === BOT_ID ? true : !game.state.game.player2.ready)) {
             if (game.state.game.roundResult.reason === "knock_win") {
                 addConsume(param.userId!, { audios: ["knock"] })
@@ -147,7 +148,7 @@ export const play = async (socket: SSocket, param: Play) => {
         const op = ((await getUserState(gameState.player1Id === param.userId! ? gameState.player2Id : gameState.player1Id)))!
 
         let lobbyNeedUpdate = false;
-        if (game.state.game!.gameResult) {
+        if (game.state.game!.gameResult && !(game.state.game.gameResult && game.state.game.gameResult.reason === "capitulate")) {
             if (!game.state.game!.misc.endGameProcessed) {
                 const res = game.state.game!.gameResult
                 const player1 = game.state.game!.player1Id === user.user!.id ? user : op;

@@ -158,7 +158,7 @@ const play = (socket, param) => __awaiter(void 0, void 0, void 0, function* () {
     if (game.state.game.player2Id !== game_interface_1.BOT_ID) {
         const op = ((yield (0, bdd_1.getUserState)(gameState.player1Id === param.userId ? gameState.player2Id : gameState.player1Id)));
         let lobbyNeedUpdate = false;
-        if (game.state.game.gameResult) {
+        if (game.state.game.gameResult && !(game.state.game.gameResult && game.state.game.gameResult.reason === "capitulate")) {
             if (!game.state.game.misc.endGameProcessed) {
                 const res = game.state.game.gameResult;
                 const player1 = game.state.game.player1Id === user.user.id ? user : op;
