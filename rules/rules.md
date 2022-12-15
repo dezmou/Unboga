@@ -1,6 +1,6 @@
 ## Le terrain de jeux se compose d'un board de 64 case, chaque case a une certaine valeur en points. 
 ## Les cases les plus proches du centre ont moins de points.
-![alt text](./rules-img/empty.png "Title")
+![alt text](./empty.png "Title")
 #
 #
 #
@@ -10,9 +10,9 @@
 ## La pièce verte ne vous appartient pas.
 ## Votre adversaire reçoit lui aussi 12 pièces mais vous ne les voyez pas.
 ## Chaque pièce ajoute à votre total de points le nombre indiqué sur sa case.
-## Ici le total de vos points est de 66
-## Le but du jeu est d'avoir le moin de points possible 
-![alt text](./rules-img/1.png "Title")
+## Ici le total de vos points est de 66.
+## Le but du jeu est d'avoir le moin de points possible.
+![alt text](./1.png "Title")
 
 #
 #
@@ -22,7 +22,7 @@
 ## Quand c'est à votre tour de jouer, vous avez deux choix : 
 ## - Soit vous décidez de prendre la pièce verte, elle se transforme donc en bleu
 ## - Soit vous décidez de transformer une case aléatoire vide en pièce bleu.
-![alt text](./rules-img/pick.png "Title")
+![alt text](./pick.png "Title")
 
 # 
 # 
@@ -32,7 +32,7 @@
 ## La piece precedement verte devient noir.
 ## C'est encore à vous de jouer, maintenant il faut que vous cliquez sur une pièce bleu  pour vous en débarrasser
 ## Ici nous choisissons la pièce à 11 points en haut à droite.
-![alt text](./rules-img/picked.png "Title")
+![alt text](./picked.png "Title")
 
 #
 #
@@ -42,7 +42,7 @@
 ## C'est maintenant au tour de l'adversaire de jouer. 
 ## Comme pour votre tour, il a le choix entre prendre la pièce verte (11) ou une pièce aléatoire.
 ## Ici il décide de prendre la pièce verte.
-![alt text](./rules-img/disckard.png "Title")
+![alt text](./disckard.png "Title")
 
 #
 #
@@ -51,7 +51,7 @@
 ## Vous connaissez le choix de l'adversaire, si il a choisi la pièce verte, alors vous la voyez maintenant en rouge et vous savez que l'adversaire possède cette pièce.
 ## Si il avait choisi une piece aleatoire, alors la piece verte serais devenue noir.
 ## C'est encore au tour de l'adversaire de jouer, il décide de jeter sa pièce à 3 points.
-![alt text](./rules-img/op_took.png "Title")
+![alt text](./op_took.png "Title")
 
 
 #
@@ -59,7 +59,7 @@
 #
 #
 ## c'est de nouveau à vous de jouer, et la case verte qui vous est proposée est donc celle jetée par l'adversaire.
-![alt text](./rules-img/op-dis.png "Title")
+![alt text](./op-dis.png "Title")
 
 
 #
@@ -68,8 +68,8 @@
 #
 # Alignements
 ## Quand 3 pièces ou plus sont alignées, elles ne comptent plus dans votre total de points.
-## Vous devez donc chercher à en aligner le plus possible
-![alt text](./rules-img/align.png "Title")
+## Vous devez donc chercher à en aligner le plus possible.
+![alt text](./align.png "Title")
 
 #
 #
@@ -106,4 +106,4 @@
 # Pouvoirs spéciaux 
 ## Pour épicer les parties, avant chaque round, vous choisissez 3 pouvoirs qui changeront certaines règles.
 ## Chaque pouvoir vous coûte un prix en gold.
-![alt text](./rules-img/power2.png "Title")
+![alt text](./power2.png "Title")

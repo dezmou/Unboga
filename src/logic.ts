@@ -158,6 +158,10 @@ export const audios = {
 }
 
 export const main = async () => {
+    const res = localStorage.getItem("lang");
+    if (res) {
+        global.localState.langage = res as "fr" | "en";
+    }
 
     window.onbeforeunload = () => {
         console.log("UNLOAD");
