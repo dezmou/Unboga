@@ -114,3 +114,27 @@
     margin-top: calc(var(--width) * 0.05);
     margin-bottom: calc(var(--width) * 0.05);
 }
+
+.langage {
+    margin-top: calc(var(--width) * 0.025);
+    
+    width: var(--width);
+    display: flex;
+    justify-content: center;
+}
+
+.langage-center {
+    width: calc(var(--width) * 0.3);
+    height: calc(var(--width) * 0.08);
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.langage-flag {
+    width: calc(var(--width) * 0.14);
+    height: 100%;
+    cursor : pointer;
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+}

@@ -2,7 +2,7 @@ import { Button } from "@mui/material";
 import { useEffect, useRef } from 'react';
 import { LobbyEntry } from '../../common/src/api.interface';
 import { acceptChallenge, cancelChallenge, challenge, getLang, playBot } from '../logic';
-import { useRender } from '../render';
+import { useRender, render } from '../render';
 import { global } from '../state';
 import "./Lobby.css";
 
@@ -83,6 +83,31 @@ export default () => {
                 <div className="lobby-title-cont">
                     <span style={{ color: "#4b0000" }}>Un</span>
                     nammed <span style={{ color: "#4b0000" }}>Bo</span>ard <span style={{ color: "#4b0000" }}>Ga</span>me
+
+                </div>
+                <div className="langage">
+                    <div className="langage-center">
+                        <div className="langage-flag" style={{
+                            backgroundImage: `url(en_flag.png)`,
+                            opacity: global.localState.langage === "fr" ? "1" : "0.4",
+                            cursor: global.localState.langage === "fr" ? "pointer" : "initial",
+                        }} onClick={() => {
+                            global.localState.langage = "en"
+                            localStorage.setItem("lang", "en");
+                            render(["global"])
+                        }}>
+                        </div>
+                        <div className="langage-flag" style={{
+                            backgroundImage: `url(fr_flag.png)`,
+                            opacity: global.localState.langage === "fr" ? "0.4" : "1",
+                            cursor: global.localState.langage === "fr" ? "initial" : "pointer",
+                        }} onClick={() => {
+                            global.localState.langage = "fr"
+                            localStorage.setItem("lang", "fr");
+                            render(["global"])
+                        }}>
+                        </div>
+                    </div>
 
                 </div>
                 <div className="lobby-playbot-cont grid">
