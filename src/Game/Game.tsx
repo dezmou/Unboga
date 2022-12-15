@@ -48,43 +48,6 @@ const GameContent = () => {
     const [overHero, setOverHero] = useState<undefined | keyof typeof powers>()
     const [infos, setInfos] = useState({ line1: "", line2: "" });
 
-    // useEffect(() => {
-    //     if (!game.roundResult && !game.gameResult) {
-    //         // if (game.nextAction === "discard" && game.nextActionPlayer === you) {
-    //         //     audios.pomp.play()
-    //         // }
-    //         if ((game.nextAction === "pick" || game.nextAction === "choose") && game.nextActionPlayer === you) {
-    //             if (game.player2Id === BOT_ID) {
-    //                 // audios.pomp.play()
-    //             } else {
-    //                 audios.you.play()
-    //             }
-    //         }
-    //     }
-    //     if (game.gameResult) {
-    //         if (game.gameResult.reason === "capitulate") {
-    //             audios.close.play();
-    //         }
-    //     }
-
-    //     if (game.roundResult) {
-    //         if ((game.opStatus.ready || game.youStatus.ready) && game.player2Id !== BOT_ID) {
-
-    //         } else {
-    //             if (game.roundResult.reason === "knock_win") {
-    //                 audios.knock.play()
-    //             }
-    //             if (game.roundResult.reason === "knock_lost") {
-    //                 audios.fool.play()
-    //             }
-    //             if (game.roundResult.reason === "knock_full") {
-    //                 audios.full.play()
-    //             }
-    //         }
-    //     }
-
-    // }, [global.state.game])
-
     useEffect(() => {
         const lines = (() => {
             if (game.roundResult) {
