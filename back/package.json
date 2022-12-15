@@ -14,6 +14,7 @@
     "@types/mongodb": "^4.0.7",
     "better-sqlite3": "^7.6.2",
     "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "mongodb": "^4.12.1",
     "rxjs": "^7.5.7",

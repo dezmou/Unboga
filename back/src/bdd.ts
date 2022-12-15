@@ -2,8 +2,10 @@ import { MongoClient, ObjectId } from "mongodb"
 import { State } from "../../common/src/api.interface";
 import { BOT_ID, Game } from "../../common/src/game.interface";
 import { Subject } from "rxjs"
+import { config } from "dotenv"
 
-const client = new MongoClient(`mongodb://root:chien@mongo:27017`);
+config()
+const client = new MongoClient(`mongodb://${process.env.MONGO_INITDB_ROOT_USERNAME}:${process.env.MONGO_INITDB_ROOT_PASSWORD}@mongo:27017`);
 let db: ReturnType<MongoClient["db"]>;
 
 export const onReady = new Subject<boolean>()

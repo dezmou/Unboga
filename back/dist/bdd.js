@@ -13,7 +13,9 @@ exports.getUserByName = exports.getUserState = exports.updateUserState = exports
 const mongodb_1 = require("mongodb");
 const game_interface_1 = require("../../common/src/game.interface");
 const rxjs_1 = require("rxjs");
-const client = new mongodb_1.MongoClient(`mongodb://root:chien@mongo:27017`);
+const dotenv_1 = require("dotenv");
+(0, dotenv_1.config)();
+const client = new mongodb_1.MongoClient(`mongodb://${process.env.MONGO_INITDB_ROOT_USERNAME}:${process.env.MONGO_INITDB_ROOT_PASSWORD}@mongo:27017`);
 let db;
 exports.onReady = new rxjs_1.Subject();
 client.connect().then((r) => __awaiter(void 0, void 0, void 0, function* () {
