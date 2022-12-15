@@ -57,6 +57,9 @@ const Challenge = (p: { challenge: LobbyEntry["challenge"] }) => {
     </>
 }
 
+// https://github.com/dezmou/Unboga/blob/master/rules/rules-fr.md
+// https://github.com/dezmou/Unboga/blob/master/rules/rules.md
+
 export default () => {
     useRender('lobby')
     const lastPage = useRef(global.state.page);
