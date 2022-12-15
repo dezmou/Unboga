@@ -1,3 +1,13 @@
+# Debut de la partie 
+## Pour épicer les parties, avant chaque round, vous choisissez 3 pouvoirs qui changeront certaines règles.
+## Chaque pouvoir vous coûte un prix en gold.
+## Si vous êtes nouveau sur le jeu, vous pouvez choisir 3 fois le premier pouvoir "lucien" 
+![alt text](./power2.png "Title")
+
+#
+#
+#
+#
 ## Le terrain de jeux se compose d'un board de 64 case, chaque case a une certaine valeur en points. 
 ## Les cases les plus proches du centre ont moins de points.
 ![alt text](./empty.png "Title")
@@ -99,11 +109,3 @@
 
 # Le premier joueur à avoir 0 gold ou moins à la fin d'un round perd la partie.
 
-#
-#
-#
-#
-# Pouvoirs spéciaux 
-## Pour épicer les parties, avant chaque round, vous choisissez 3 pouvoirs qui changeront certaines règles.
-## Chaque pouvoir vous coûte un prix en gold.
-![alt text](./power2.png "Title")

@@ -1,3 +1,13 @@
+# Start of the game
+## To spice up the game, before each round, you choose 3 powers that will change some rules.
+## Each power costs you a gold price.
+## If you are new to the game, you can pick 3 time the first power "Lucien"
+![alt text](./power2.png "Title")
+
+#
+#
+#
+#
 ## The playing field consists of a 64 square board, each square has a certain point value. 
 ## The squares closer to the center have fewer points.
 ![alt text](./empty.png "Title")
@@ -92,12 +102,3 @@
 #
 
 # The first player to have 0 gold or less at the end of a round loses the game.
-
-#
-#
-#
-#
-# Special powers 
-## To spice up the game, before each round, you choose 3 powers that will change some rules.
-## Each power costs you a gold price.
-![alt text](./power2.png "Title")
