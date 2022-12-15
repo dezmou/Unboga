@@ -71,4 +71,5 @@ exports.default = {
     orKnockFor: "...ou knockez pour",
     opTurnDiscard1: "C'est au tour du fumier",
     opTurnDiscard2: "de se debarasser d'une piece",
+    rules: "Règle du jeu",
 };

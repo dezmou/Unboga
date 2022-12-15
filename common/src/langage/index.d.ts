@@ -70,6 +70,7 @@ declare const _default: {
         orKnockFor: string;
         opTurnDiscard1: string;
         opTurnDiscard2: string;
+        rules: string;
     };
     en: {
         power_lucien: string;
@@ -142,6 +143,7 @@ declare const _default: {
         orKnockFor: string;
         opTurnDiscard1: string;
         opTurnDiscard2: string;
+        rules: string;
     };
 };
 export default _default;

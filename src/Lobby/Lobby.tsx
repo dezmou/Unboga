@@ -115,6 +115,23 @@ export default () => {
                 </div>
                 <div className="lobby-playbot-cont grid">
                     <div>
+                        <a style={{
+                            textDecoration: "none",
+                        }} href={global.localState.langage === "fr" ? "https://github.com/dezmou/Unboga/blob/master/rules/rules-fr.md" : "https://github.com/dezmou/Unboga/blob/master/rules/rules.md"}>
+                            <Button style={{
+                                backgroundColor: "#53ac62",
+                                width: "calc( var(--width) * 0.5)",
+                                height: "calc(var( --line-height) * 1)",
+                                fontSize: `calc(var(--fontSize) * 0.7)`,
+                            }} className='login-button' variant='contained'
+                                onClick={() => { }}
+                            >{getLang("rules")}</Button>
+                        </a>
+                    </div>
+
+                    <div style={{
+                        marginTop: "10px",
+                    }}>
                         <Button style={{
                             backgroundColor: "#53ac62",
                             width: "calc( var(--width) * 0.5)",
@@ -123,6 +140,7 @@ export default () => {
                         }} className='login-button' variant='contained'
                             onClick={() => { playBot() }}
                         >{getLang("playbot")}</Button>
+
                     </div>
 
                 </div>

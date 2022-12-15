@@ -72,4 +72,5 @@ export default {
     orKnockFor : "..Or knock for",
     opTurnDiscard1 : "it is scum turn",
     opTurnDiscard2 : "to discard a piece",
+    rules : "Rule of the game",
 }

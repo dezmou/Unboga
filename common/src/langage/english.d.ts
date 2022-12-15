@@ -69,6 +69,7 @@ declare const _default: {
     orKnockFor: string;
     opTurnDiscard1: string;
     opTurnDiscard2: string;
+    rules: string;
 };
 export default _default;
 //# sourceMappingURL=english.d.ts.map
