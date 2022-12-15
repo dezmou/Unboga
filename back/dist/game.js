@@ -140,6 +140,7 @@ const play = (socket, param) => __awaiter(void 0, void 0, void 0, function* () {
     const checkRoundResult = () => {
         if (game.state.game.roundResult
             && !game.state.game.player1.ready
+            && !game.state.game.gameResult
             && (game.state.game.player2Id === game_interface_1.BOT_ID ? true : !game.state.game.player2.ready)) {
             if (game.state.game.roundResult.reason === "knock_win") {
                 (0, state_1.addConsume)(param.userId, { audios: ["knock"] });

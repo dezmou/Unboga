@@ -1,4 +1,5 @@
 import { LobbyEntry, State } from "../common/src/api.interface"
+import lang from "../common/src/langage/index"
 
 export const global = {
     localState: {
@@ -19,6 +20,7 @@ export const global = {
             time: 0,
         },
         hideButtons: false,
+        langage: "fr" as keyof typeof lang,
     },
     lobby: {} as { [key: string]: LobbyEntry },
     state: {

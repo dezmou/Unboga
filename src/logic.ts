@@ -4,6 +4,8 @@ import { global } from "./state"
 import { ApiCAll, Call, Capitulate, ExitLobby, PlayChosse, PlayDiscard, PlayKnock, PlayPickGreen, PlayPickRandom, PlayReady, PlayPickPower, Revenge, State, ToastEvent } from "../common/src/api.interface"
 import { powers } from "../common/src/powers";
 import { Howl } from "howler";
+import langage from "../common/src/langage";
+import french from "../common/src/langage/french";
 
 const socket = io(`${window.location.origin}`, {
     path: "/api",
@@ -16,6 +18,10 @@ const apiCAll = (params: ApiCAll) => {
         ...params,
         user: global.localState.user
     }));
+}
+
+export const getLang = (id: keyof typeof french) => {
+    return langage[global.localState.langage][id]
 }
 
 export const exitLobby = async () => {

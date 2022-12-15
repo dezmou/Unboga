@@ -1,8 +1,8 @@
 import { Button } from '@mui/material';
 import anime from 'animejs';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { BOT_ID, START_GOLD, UserGame } from '../../common/src/game.interface';
-import { capitulate, choose, discard, exitLobby, knock, pickgreen, pickPower, pickRandom, ready, revenge } from '../logic';
+import { START_GOLD, UserGame } from '../../common/src/game.interface';
+import { capitulate, choose, discard, exitLobby, getLang, knock, pickgreen, pickPower, pickRandom, ready, revenge } from '../logic';
 import { render, useRender } from '../render';
 import { global } from '../state';
 import { powers } from "./../../common/src/powers";
@@ -28,7 +28,9 @@ const PowerCard = (p: { powerId: keyof typeof powers }) => {
                 </div>
             </div>
             <div className='power-infos-desc-flex'>
-                <div className={`power-infos-description ${p.powerId === "unknow" ? "blur" : ""}`} dangerouslySetInnerHTML={{ __html: powers[p.powerId].description }}>
+                <div className={`power-infos-description ${p.powerId === "unknow" ? "blur" : ""}`} dangerouslySetInnerHTML={{
+                    __html: getLang(powers[p.powerId].description as any)
+                }}>
                 </div>
             </div>
         </div>

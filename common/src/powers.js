@@ -5,7 +5,7 @@ exports.powers = {
     lucien: {
         id: "lucien",
         name: "Lucien",
-        description: "Ce pouvoir ne fait rien.",
+        description: "power_lucien",
         image: "lucien.jpg",
         cost: 0,
         max: 3,
@@ -13,7 +13,7 @@ exports.powers = {
     phone: {
         id: "phone",
         name: "Gramophone",
-        description: "+30% sur vos gains et pertes en gold.<br/>N'inclus pas l'achat de pouvoirs.",
+        description: "power_phone",
         image: "phone.jpg",
         cost: 4,
         max: 3,
@@ -21,7 +21,7 @@ exports.powers = {
     fox: {
         id: "fox",
         name: "Jackson Gambler",
-        description: "Vous donne un pouvoir aleatoire",
+        description: "power_fox",
         image: "fox.jpg",
         cost: 5,
         max: 3,
@@ -29,7 +29,7 @@ exports.powers = {
     deserterJack: {
         id: "deserterJack",
         name: "Deserter Jack",
-        description: "Vous debutez avec une piece aléatoire en moins.",
+        description: "power_deserterJack",
         image: "leave.jpg",
         cost: 8,
         max: 3,
@@ -37,7 +37,7 @@ exports.powers = {
     monkeys: {
         id: "monkeys",
         name: "Smart monkeys",
-        description: "Vos deux pieces avec le moins de points disparaissent.",
+        description: "power_monkeys",
         image: "monkeys.jpg",
         cost: 11,
         max: 3,
@@ -45,7 +45,7 @@ exports.powers = {
     mirror: {
         id: "mirror",
         name: "Mirror of Darkness",
-        description: "Les points sur le board sont inversé <br/> ( que pour vous).",
+        description: "power_mirror",
         image: "mirror.jpg",
         cost: 7,
         max: 1,
@@ -53,7 +53,7 @@ exports.powers = {
     steve: {
         id: "steve",
         name: "Hurry Steve",
-        description: "Vous commencez en premier.",
+        description: "power_steve",
         image: "first.jpg",
         cost: 9,
         max: 3,
@@ -61,7 +61,7 @@ exports.powers = {
     pact: {
         id: "pact",
         name: "War pact",
-        description: "Au debut du round, vous et votre adversaire ajoutez une piece de votre choix sur le board.",
+        description: "power_pact",
         image: "pact.jpg",
         cost: 5,
         max: 3,
@@ -69,7 +69,7 @@ exports.powers = {
     watch: {
         id: "watch",
         name: "Early Fang",
-        description: "Vos points maximum pour knocker augmentent de 10.<br/>Bonus de knock de 10 gold.",
+        description: "power_watch",
         image: "watch.jpg",
         cost: 10,
         max: 3,
@@ -77,7 +77,7 @@ exports.powers = {
     chimist: {
         id: "chimist",
         name: "Stacy Chemistry",
-        description: "Vous pouvez aligner les pieces en diagonal.<br/>Vous recuperez les 4 plus grosses pieces non aligné de l'ennemi.",
+        description: "power_chimist",
         image: "chimist.jpg",
         cost: 18,
         max: 1,
@@ -85,7 +85,7 @@ exports.powers = {
     fog: {
         id: "fog",
         name: "Fog of war",
-        description: "Votre adversaire ne connnait pas les autres pouvoirs que vous choisissez.",
+        description: "power_fog",
         image: "fog.jpg",
         cost: 16,
         max: 1,
@@ -93,7 +93,7 @@ exports.powers = {
     curse: {
         id: "curse",
         name: "Emma Curse",
-        description: "Votre adversaire est forcé de choisir Lucien<br/>Il ne depense pas les gold de son choix initial",
+        description: "power_curse",
         image: "curse.jpg",
         cost: 16,
         max: 3,
@@ -101,7 +101,7 @@ exports.powers = {
     final: {
         id: "final",
         name: "Let's do it",
-        description: "Vous pouvez knocker sans minimum de points.",
+        description: "power_final",
         image: "final.jpg",
         cost: 32,
         max: 1,
@@ -109,7 +109,7 @@ exports.powers = {
     karen: {
         id: "karen",
         name: "Complain Karen",
-        description: "Les pieces sont redistribués, pour tout le monde.",
+        description: "power_karen",
         image: "karen.jpg",
         cost: 30,
         max: 1,
@@ -117,7 +117,7 @@ exports.powers = {
     eye: {
         id: "eye",
         name: "Eye of the god",
-        description: "Vous voyez toute les piece de l'adversaire (apres war pact) <br/>Vos points sont doublés.",
+        description: "power_eye",
         image: "eye.jpg",
         cost: 13,
         max: 1,
@@ -125,7 +125,7 @@ exports.powers = {
     unknow: {
         id: "unknow",
         name: "Some cloud...",
-        description: "whoever read this love adolph hitler",
+        description: "power_unknow",
         image: "unknow.jpg",
         cost: 88,
         max: 1,
