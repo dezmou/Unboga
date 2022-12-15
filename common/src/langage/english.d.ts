@@ -71,4 +71,4 @@ declare const _default: {
     opTurnDiscard2: string;
 };
 export default _default;
-//# sourceMappingURL=french.d.ts.map
+//# sourceMappingURL=english.d.ts.map

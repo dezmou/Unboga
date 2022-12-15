@@ -118,10 +118,6 @@ export declare type UserGame = Modify<Game, {
     player2: undefined;
     youStatus: PlayerStatus;
     opStatus: OpStatus;
-    infos: {
-        line1: string;
-        line2: string;
-    };
 }>;
 export {};
 //# sourceMappingURL=game.interface.d.ts.map

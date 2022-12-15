@@ -1,5 +1,7 @@
 import french from "./french"
+import english from "./english"
 
 export default {
-    fr: french
+    fr: french,
+    en: english,
 }

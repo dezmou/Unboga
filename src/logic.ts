@@ -6,6 +6,7 @@ import { powers } from "../common/src/powers";
 import { Howl } from "howler";
 import langage from "../common/src/langage";
 import french from "../common/src/langage/french";
+import { Game, UserGame } from "../common/src";
 
 const socket = io(`${window.location.origin}`, {
     path: "/api",

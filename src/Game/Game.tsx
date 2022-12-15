@@ -1,7 +1,7 @@
 import { Button } from '@mui/material';
 import anime from 'animejs';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { START_GOLD, UserGame } from '../../common/src/game.interface';
+import { MAX_POWER_NUMBER, START_GOLD, UserGame } from '../../common/src/game.interface';
 import { capitulate, choose, discard, exitLobby, getLang, knock, pickgreen, pickPower, pickRandom, ready, revenge } from '../logic';
 import { render, useRender } from '../render';
 import { global } from '../state';
@@ -46,6 +46,7 @@ const GameContent = () => {
     const game = useMemo(() => global.state.game!, [global.state.game])
 
     const [overHero, setOverHero] = useState<undefined | keyof typeof powers>()
+    const [infos, setInfos] = useState({ line1: "", line2: "" });
 
     // useEffect(() => {
     //     if (!game.roundResult && !game.gameResult) {
@@ -83,6 +84,76 @@ const GameContent = () => {
     //     }
 
     // }, [global.state.game])
+
+    useEffect(() => {
+        const lines = (() => {
+            if (game.roundResult) {
+                let line2 = ""
+                let line1 = ""
+                if (game.roundResult.reason === "knock_full") {
+                    line1 = `${game.roundResult.knocker === you ? getLang("youFull") : getLang("heFull")} ${game.roundResult.pointsWin} gold`
+                } else if (game.roundResult.reason === "knock_win") {
+                    line1 = `${game.roundResult.knocker === you ? getLang("youKnockWith") : getLang("heKnockWith")} ${(game.roundResult.knocker === you ? game.youStatus : game.opStatus)!.points} points`
+                    line2 = `${game.roundResult.knocker === you ? getLang("youAreWinning") : getLang("heIsWinning")} ${game.roundResult.pointsWin} gold`
+                } else {
+                    line1 = `${game.roundResult.knocker === you ? getLang("youKnock") : getLang("heKnock")} ${getLang("with")} ${(game.roundResult.knocker === you ? game.youStatus : game.opStatus)!.points} points`
+                    line2 = `${game.roundResult.knocker === you ? getLang("heCounter") : getLang("youCounter")} ${game.roundResult.pointsWin} gold`
+                }
+                return {
+                    line1,
+                    line2
+                }
+            } else {
+                if (game.nextAction === "choose") {
+                    return {
+                        line1: `War Pact ${game.chooseIndex + 1} / ${game.choose.length}`,
+                        line2: game.nextActionPlayer === you ? getLang("youPick") : getLang("hePick"),
+                    }
+                } else if (game.nextAction === "selectHero") {
+                    if (!game.youStatus.powerReady) {
+                        return {
+                            line1: `${getLang("pickPower")} (${game.youStatus.powers.length + 1}/${MAX_POWER_NUMBER})`,
+                            line2: `${getLang("youPlay")} ${game.nextActionPlayer === you ? getLang("first") : getLang("second")}`,
+                        }
+                    } else {
+                        return {
+                            line1: getLang("waitPower"),
+                            line2: getLang("waitPower2"),
+                        }
+                    }
+                } else if (game.nextAction === "pick") {
+                    if (game.nextActionPlayer === you) {
+                        return {
+                            line1: getLang("infoPickGreen"),
+                            line2: getLang("infoPickRandom")
+                        }
+                    } else {
+                        return {
+                            line1: getLang("opTurn"),
+                            line2: ""
+                        }
+                    }
+                } else if (game.nextAction === "discard") {
+                    if (game.nextActionPlayer === you) {
+                        return {
+                            line1: getLang("discardBlue"),
+                            line2: game.canKnock ? `${getLang("orKnockFor")} ${game.youStatus.points} points` : ""
+                        }
+                    } else {
+                        return {
+                            line1: getLang("opTurnDiscard1"),
+                            line2: getLang("opTurnDiscard2")
+                        }
+                    }
+                }
+            }
+            return {
+                line1: "",
+                line2: "",
+            }
+        })()
+        setInfos(lines);
+    }, [global.state.game])
 
     useEffect(() => {
         const root = document.documentElement
@@ -244,16 +315,16 @@ const GameContent = () => {
                             <div className='endGame-result'>
                                 {(() => {
                                     if (game.gameResult.winner === "draw") {
-                                        return <span style={{ color: "orange" }}>DRAW</span>
+                                        return <span style={{ color: "orange" }}>{getLang("draw")}</span>
                                     } else {
                                         if (game.gameResult.winner === you && game.gameResult.reason === "win") {
-                                            return <span style={{ color: "green" }}>YOU WON</span>
+                                            return <span style={{ color: "green" }}>{getLang("win")}</span>
                                         } else if (game.gameResult.winner === you && game.gameResult.reason === "capitulate") {
-                                            return <span style={{ color: "green" }}>SCUM CAPITULATED</span>
+                                            return <span style={{ color: "green" }}>{getLang("he_capitulate")}</span>
                                         } else if (game.gameResult.winner === vilain && game.gameResult.reason === "win") {
-                                            return <span style={{ color: "red" }}>YOU LOST</span>
+                                            return <span style={{ color: "red" }}>{getLang("lost")}</span>
                                         } else if (game.gameResult.winner === vilain && game.gameResult.reason === "capitulate") {
-                                            return <span style={{ color: "red" }}>YOU CAPITULATED</span>
+                                            return <span style={{ color: "red" }}>{getLang("you_capitulate")}</span>
                                         }
                                     }
                                     return <></>
@@ -466,7 +537,7 @@ const GameContent = () => {
                                                     // audios.pomp.play()
                                                     pickgreen()
                                                 }}
-                                            >Piece verte</Button>
+                                            >{getLang("greenPiece")}</Button>
                                         </div>
                                         <div>
                                             <Button style={{
@@ -478,7 +549,7 @@ const GameContent = () => {
                                                     // audios.pomp.play()
                                                     pickRandom()
                                                 }}
-                                            >Piece aleatoire</Button>
+                                            >{getLang("randomPiece")}</Button>
                                         </div>
                                     </div>
                                 </>}
@@ -506,7 +577,7 @@ const GameContent = () => {
                                         height: "var(--button-zone-heigth)",
                                     }} className='login-button' variant='contained'
                                         onClick={() => { ready() }}
-                                    >Round suivant</Button>
+                                    >{getLang("nextRound")}</Button>
                                 </div>
                             </div>
                         </>}
@@ -577,8 +648,8 @@ const GameContent = () => {
                 </div>
                 <div className='infos-cont grid'>
                     <div>
-                        <div className='info-line'>{game.infos.line1}</div>
-                        <div className='info-line'>{game.infos.line2}</div>
+                        <div className='info-line'>{infos.line1}</div>
+                        <div className='info-line'>{infos.line2}</div>
                     </div>
                 </div>
 

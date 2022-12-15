@@ -725,73 +725,6 @@ export const gameEngine = () => {
         }
         const possibleKnock = canKnock(you);
 
-        const getInfos = (): UserGame["infos"] => {
-            if (state.game.roundResult) {
-                let line2 = ""
-                let line1 = ""
-                if (state.game.roundResult.reason === "knock_full") {
-                    line1 = `${state.game.roundResult.knocker === you ? "Vous rentrez le FULL et gagnez" : "Le fumier rentre le FULL et gagne"} ${state.game.roundResult.pointsWin} gold`
-                } else if (state.game.roundResult.reason === "knock_win") {
-                    line1 = `${state.game.roundResult.knocker === you ? "Vous knockez avec" : "Le Fumier knock avec"} ${state.game[state.game.roundResult.knocker].points} points`
-                    line2 = `${state.game.roundResult.knocker === you ? "vous gagnez" : "il gagne"} ${state.game.roundResult.pointsWin} gold`
-                } else {
-                    line1 = `${state.game.roundResult.knocker === you ? "Vous knockez" : "Le fumier knock"} avec ${state.game[state.game.roundResult.knocker].points} points`
-                    line2 = `${state.game.roundResult.knocker === you ? "Le fumier contre knock et gagne" : "vous contre knockez et gagnez"} ${state.game.roundResult.pointsWin} gold`
-                }
-                return {
-                    line1,
-                    line2
-                }
-            } else {
-                if (state.game.nextAction === "choose") {
-                    return {
-                        line1: `War Pact ${state.game.chooseIndex + 1} / ${state.game.choose.length}`,
-                        line2: state.game.nextActionPlayer === you ? `Choisissez une case vide` : "C'est au fumier de choisir une case vide",
-                    }
-                } else if (state.game.nextAction === "selectHero") {
-                    if (!state.game[you].powerReady) {
-                        return {
-                            line1: `Choisissez un pouvoir (${state.game[you].powers.length + 1}/${MAX_POWER_NUMBER})`,
-                            line2: `Vous jouez en ${state.game.nextActionPlayer === you ? "premier" : "deuxieme"}`,
-                        }
-                    } else {
-                        return {
-                            line1: "On attend le fumier qu'il choisisse son pouvoir",
-                            line2: "Il prend un temps fou",
-                        }
-                    }
-                } else if (state.game.nextAction === "pick") {
-                    if (state.game.nextActionPlayer === you) {
-                        return {
-                            line1: "Choisissez la piece verte",
-                            line2: "Ou choisissez une piece aleatoire"
-                        }
-                    } else {
-                        return {
-                            line1: "C'est au tour du fumier de jouer",
-                            line2: ""
-                        }
-                    }
-                } else if (state.game.nextAction === "discard") {
-                    if (state.game.nextActionPlayer === you) {
-                        return {
-                            line1: "Defaussez vous d'une piece bleu",
-                            line2: possibleKnock ? `...ou knockez pour ${state.game[you].points} points` : ""
-                        }
-                    } else {
-                        return {
-                            line1: "C'est au tour du fumier",
-                            line2: "de se debarasser d'une piece"
-                        }
-                    }
-                }
-            }
-            return {
-                line1: "",
-                line2: "",
-            }
-        }
-
         // for (let card of getAllCard()) { card[you].greenStreak = false; } //TODO do this in evaluate()
 
         if (state.game.pick) {
@@ -863,7 +796,6 @@ export const gameEngine = () => {
             player2: undefined,
             youStatus: state.game[you],
             opStatus: getVillainStatus(),
-            infos: getInfos(),
             canKnock: possibleKnock
         }
         return userGame;

@@ -20,7 +20,7 @@ export const global = {
             time: 0,
         },
         hideButtons: false,
-        langage: "fr" as keyof typeof lang,
+        langage: "en" as keyof typeof lang,
     },
     lobby: {} as { [key: string]: LobbyEntry },
     state: {
