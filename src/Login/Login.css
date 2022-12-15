@@ -1,5 +1,5 @@
 :root {
-    --login-field-width: min(370px, calc(var(--width) * 0.7));
+    --login-field-width: min(500px, calc(var(--width) * 0.9));
     /* --login-field-height: calc(var(--login-field-width) * 0.5); */
 }
 

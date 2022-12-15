@@ -276,12 +276,12 @@ const GameContent = () => {
                                     height: "calc(var(--top-min-height) * 0.8) ",
                                 }} className='login-button' variant='contained'
                                     onClick={() => {
-                                        if (window.confirm("Capitulate ?")) {
+                                        if (window.confirm(`${getLang("capitulate")} ?`)) {
                                             capitulate()
                                         }
                                     }
                                     }
-                                >CAPITULATE</Button>
+                                >{getLang("capitulate")}</Button>
                             </>}
                         </div>
                         <div className='game-top-button-player game-top-button-player2'>
@@ -521,7 +521,7 @@ const GameContent = () => {
                                         height: "var(--button-zone-heigth)",
                                     }} className='login-button' variant='contained'
                                         onClick={() => { exitLobby() }}
-                                    >Retour au lobby</Button>
+                                    >{getLang("back_lobby")}</Button>
                                 </div>
                                 <div>
                                     {game.gameResult.revenge[vilain] !== "no" && <>
@@ -533,7 +533,7 @@ const GameContent = () => {
                                             pointerEvents: game.gameResult.revenge[you] === "yes" ? "none" : "initial",
                                         }} className='login-button' variant='contained'
                                             onClick={() => { revenge() }}
-                                        >Revanche</Button>
+                                        >{getLang("revenge")}</Button>
                                     </>}
                                 </div>
                             </div>

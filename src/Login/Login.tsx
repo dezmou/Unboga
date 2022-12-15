@@ -1,7 +1,7 @@
 import { Button, TextField } from "@mui/material";
 import anime from "animejs";
 import { useEffect, useRef, useState } from 'react';
-import { createUser, login, toast } from '../logic';
+import { createUser, getLang, login, toast } from '../logic';
 import { useRender } from '../render';
 import { global } from '../state';
 import "./Login.css";
@@ -35,23 +35,23 @@ export default () => {
         if (field.name === "") {
             const login = (document.querySelector("#login-login")! as HTMLDivElement);
             animeTarget(login);
-            error += "Username field is empty<br/>"
+            error += `${getLang("userEmpty")}<br/>`
         } else {
             if (!field.name.match(/^[0-9a-z]+$/)) {
                 const login = (document.querySelector("#login-login")! as HTMLDivElement);
                 animeTarget(login);
-                error += "Username must only contain alphanum<br/>"
+                error += `${getLang("userAlphaNum")}<br/>`
             }
             if (field.name.length > 15) {
                 const login = (document.querySelector("#login-login")! as HTMLDivElement);
                 animeTarget(login);
-                error += "Username too long<br/>"
+                error += `${getLang("userTooLong")}<br/>`
             }
         }
 
         if (field.pass === "") {
             const pass = (document.querySelector("#login-pass")! as HTMLDivElement);
-            error += "Password field is empty<br/>"
+            error += `${getLang("passEmpty")}<br/>`
             animeTarget(pass);
         }
 
@@ -127,13 +127,13 @@ export default () => {
             <div className='login-field-cont' ref={loginContRef}>
                 <div>
                     <div id="login-login" className='login-field-div'>
-                        <TextField placeholder='User name' className='login-input' onChange={(e) => {
+                        <TextField placeholder={getLang("name")} className='login-input' onChange={(e) => {
                             setField(a => ({ ...a, name: e.target.value }))
 
                         }}></TextField>
                     </div>
                     <div className='login-field-div' id="login-pass">
-                        <TextField type="password" placeholder='Password' className='login-input' onChange={(e) => {
+                        <TextField type="password" placeholder={getLang("password")} className='login-input' onChange={(e) => {
                             setField(a => ({ ...a, pass: e.target.value }))
                         }}></TextField>
                     </div>
@@ -145,7 +145,7 @@ export default () => {
                             fontSize: `calc(var(--fontSize) * 0.7)`,
                         }} className='login-button' variant='contained'
                             onClick={() => { applyLogin() }}
-                        >Login</Button>
+                        >{getLang("login")}</Button>
                     </div>
                     <div>
                         <Button style={{
@@ -153,7 +153,7 @@ export default () => {
                             fontSize: `calc(var(--fontSize) * 0.7)`,
                         }} className='login-button' variant='contained'
                             onClick={() => { creatUser() }}
-                        >New Account</Button>
+                        >{getLang("newAccount")}</Button>
                     </div>
                 </div>
             </div>
